@@ -21,15 +21,15 @@
 ## Disclaimer
 이 문서는 참고하기 위한 자료일뿐이며 여기에 있는 내용을 따라 했다고 하여 보안이 보장되지 않으며 잘못된 결과에 대해서는 저자는 아무 책임이 없습니다.
 
-### 제안과 기여
+## 제안과 기여
 본 문서에서 틀린 부분이나 수정/추가되야 할 부분이 있으면 Fork 후에 PR 을 날려주시기 바라며 제안은 issue 를 통해서 해주시면 됩니다.
 
 
-### 목차 
-* [운영체제](https://github.com/lesstif/security-best-practices/linux.md) - 보안을 위한 리눅스 설치와 관리
-* [보안 시스템](https://github.com/lesstif/security-best-practices/firewall-selinux.md) - iptales/firewalld 방화벽과 SELinux 등 보안 시스템
-* [웹 서버](https://github.com/lesstif/security-best-practices/web-server.md) - apache httpd/nginx 웹 서버
-* [WAS](https://github.com/lesstif/security-best-practices/web-app-server.md) - tomcat, php fpm등 application server
-* [데이타 보호](https://github.com/lesstif/security-best-practices/encryption.md) - 해시, 대칭키/공개키 기반 데이타 암복호화로 데이타 보호하기
-* [시큐어 코딩](https://github.com/lesstif/security-best-practices/secure-coding.md) - SQL Injection, CSRF, XSS 등을 방지하기 위한 secure coding 가이드.
+## 목차 
+* [운영체제](linux.md) - 보안을 위한 리눅스 설치와 관리
+* [보안 시스템](firewall-selinux.md) - iptales/firewalld 방화벽과 SELinux 등 보안 시스템
+* [웹 서버](web-server.md) - apache httpd/nginx 웹 서버
+* [WAS](web-app-server.md) - tomcat, php fpm등 application server
+* [데이타 보호](encryption.md) - 해시, 대칭키/공개키 기반 데이타 암복호화로 데이타 보호하기
+* [시큐어 코딩](secure-coding.md) - SQL Injection, CSRF, XSS 등을 방지하기 위한 secure coding 가이드.
 
