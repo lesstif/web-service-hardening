@@ -8,6 +8,44 @@ FTP나 Samba, Bind 같이 사용하지 않는 서버 프로세스를 구동하�
 
 특히 웹 서버나 메일 서버같이 DMZ 에 설치되는 서버는 최소 설치후 해당 패키지만 설치하는 것이 좋습니다.
 
+![CentOS 최소 설치](https://cloud.githubusercontent.com/assets/404534/12508730/fe394fa8-c140-11e5-914c-ffc30fa64078.png)
+
+
+
+### 같이 보기
+* [CentOS minimal 설치후 추가 패키지 설치](https://www.lesstif.com/pages/viewpage.action?pageId=6979710)
+
+## 미사용 패키지 삭제
+
+이미 설치해서 사용중인 시스템이라면 사용하지 않는 패키지를 삭제하는 것도 좋습니다.
+
+CentOS 에서는 다음 명령어로 현재 설치된 패키지의 목록을 확인할 수 있습니다.
+```sh
+yum list installed
+```
+
+특히 운영계에서는 보안을 위해서는 컴파일러등의 개발 도구를 삭제하는 것이 좋습니다.
+```sh
+yum groupremove "Development tools"
+```
+
+### X-Windows 삭제
+이미 설치되어 운영을 하고 있는 서버라면 X-Windows 가 설치되어 있는지 확인하고 설치되어 있다면 삭제하는 게 좋습니다.
+
+X-Windows 는 용량이 크고 의존성 있는 패키지가 많으므로 잦은 업데이트가 발생하게 되며 XDM 은 보안상 문제가 발생할 수 있습니다.
+
+만약 X-Windows 가 없으면 명령어를 입력하지 못하는 운영자라면 계속 같이 일하는 것을 고민해 보기 바랍니다.
+
+X-Windows 가 설치되어 있다면 먼저 *telinit 3* 명령어로 런 레벨을 3으로 변경한 후에 삭제해야 합니다.
+
+우분투 서버는 X Windows 를 포함하고 있지 않으며 CentOS 에서는 다음 명령어로 X-Windows 패키지를 삭제할 수 있습니다.
+```sh
+yum groupremove "X Window System"
+```
+ 
+### 같이 보기
+* [yum 주요 사용법 및 고급 사용법 (history 관리, plugin 사용, 트랜잭션 undo 등)](https://www.lesstif.com/pages/viewpage.action?pageId=6979667)
+
 ## 구동 프로세스 최소화
 사용하지 않는데 부팅시 자동 구동되는 데몬 프로세스가 있는지 확인하고  있다면 중지하고 자동 구동을 끄는 것이 좋습니다.
 
@@ -20,7 +58,8 @@ cgconfig        0:off   1:off   2:off   3:off   4:off   5:off   6:off
 cgred           0:off   1:off   2:off   3:off   4:off   5:off   6:off
 crond           0:off   1:off   2:on    3:on    4:on    5:on    6:off
 exim            0:off   1:off   2:on    3:on    4:on    5:on    6:off
- ````
+```
+
 *0:off   1:off   2:on    3:on    4:on    5:on    6:off* 의 의미는 run level 이 0, 1 일때는 구동되지 않고 2,3,4,5 일때는 구동된다는 의미입니다.
 
 자동 시작을 끄려면 *chkconfig* 명령어 뒤에 서비스 명을 입력하고 off 옵션을 주면 됩니다.
@@ -57,15 +96,8 @@ apt-get upgrade
 ```
 
 
-## X-Windows 삭제
-이미 설치되어 운영을 하고 있는 서버라면 X-Windows 가 설치되어 있는지 확인하고 설치되어 있다면 삭제하는 게 좋습니다.
-
-X-Windows 는 용량이 크고 의존성 있는 패키지가 많으므로 잦은 업데이트가 발생하게 되며 XDM 은 보안상 문제가 발생할 수 있습니다.
-
-만약 X-Windows 가 없으면 명령어를 입력하지 못하는 운영자라면 계속 같이 일하는 것을 고민해 보기 바랍니다.
- 
-
 ### 참고 자료
 * [20 Linux Server Hardening Security Tips](http://www.cyberciti.biz/tips/linux-security.html)
+
 
 

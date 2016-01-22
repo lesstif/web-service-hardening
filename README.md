@@ -11,7 +11,7 @@
 
 이 글에서는 리눅스를 기반으로 웹 서비스를 제공할 경우 필수적으로 챙겨야 할 보안의 핵심 사항을 정리해 보고 실무에서 활용할 수 있는 베스트 프랙티스를 제공하고자 합니다.
 
-리눅스 배포판은 RHEL(Red Hat Enterprise Linux)과 이의 파생판인 CentOS와 우분투(Ubuntu) 를 대상으로 작성하였으며 웹 서버, 애플리케이션 서버, 인프라 서비스등은 오픈 소스 제품만을 다루고 있습니다.
+리눅스 배포판은 우분투 서버(Ubuntu Server)와 RHEL(Red Hat Enterprise Linux)과 이의 파생판인 CentOS 를 대상으로 작성하였으며 웹 서버, 애플리케이션 서버, 인프라 서비스등은 오픈 소스 제품만을 다루고 있습니다.
 
 
 ## 독자
@@ -29,7 +29,9 @@
 * [운영체제](linux.md) - 보안을 위한 리눅스 설치와 관리
 * [보안 시스템](firewall-selinux.md) - iptales/firewalld 방화벽과 SELinux 등 보안 시스템
 * [웹 서버](web-server.md) - apache httpd/nginx 웹 서버
+* [HTTPS(SSL/TLS)](https.md) - HTTPS 를 사용하여 웹 컨텐츠를 안전하게 제공하는 방법
 * [WAS](web-app-server.md) - tomcat, php fpm등 application server
 * [데이타 보호](encryption.md) - 해시, 대칭키/공개키 기반 데이타 암복호화로 데이타 보호하기
 * [시큐어 코딩](secure-coding.md) - SQL Injection, CSRF, XSS 등을 방지하기 위한 secure coding 가이드.
+
 
