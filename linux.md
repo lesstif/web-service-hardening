@@ -49,6 +49,7 @@ yum groupremove "X Window System"
 ## 구동 프로세스 최소화
 사용하지 않는데 부팅시 자동 구동되는 데몬 프로세스가 있는지 확인하고  있다면 중지하고 자동 구동을 끄는 것이 좋습니다.
 
+CentOS 6 에서는 chkconfig 명령으로 서비스를 제어할 수 있습니다.
 ```sh
 # chkconfig --list
  
@@ -65,6 +66,47 @@ exim            0:off   1:off   2:on    3:on    4:on    5:on    6:off
 자동 시작을 끄려면 *chkconfig* 명령어 뒤에 서비스 명을 입력하고 off 옵션을 주면 됩니다.
 ```sh
 chkconfig mysqld off
+```
+
+CentOS 7 은 systemd 관리 명령어인 systemctl 를 사용하여 서비스 목록을 확인할 수 있습니다.
+
+```sh
+# systemctl list-unit-files
+
+UNIT FILE                                 STATE   
+proc-sys-fs-binfmt_misc.automount         static  
+dev-hugepages.mount                       static  
+dev-mqueue.mount                          static  
+proc-fs-nfsd.mount                        static  
+proc-sys-fs-binfmt_misc.mount             static  
+sys-fs-fuse-connections.mount             static  
+sys-kernel-config.mount                   static  
+sys-kernel-debug.mount                    static  
+tmp.mount                                 masked
+var-lib-nfs-rpc_pipefs.mount              static  
+brandbot.path                             disabled
+systemd-ask-password-console.path         static  
+systemd-ask-password-wall.path            static  
+session-1.scope                           static  
+session-3.scope                           static  
+arp-ethers.service                        disabled
+auditd.service                            enabled 
+```
+
+불필요한 서비스는 *systemctl disable 서비스명* 을 사용하여 자동 시작을 중지할 수 있으며 활성화할 경우 *disable* 대신 *enable* 을 사용하면 됩니다.
+
+다음 명령어는 mariadb 서비스의 자동 실행을 중지합니다.
+
+```sh
+systemctl enable mariadb
+```
+
+특정 서비스의 자동 실행 여부는 *systemctl is-enabled 서비스명* 을 사용하면 되며 다음 명령어는 nginx 웹 서버의 자동 구동 여부를 출력합니다.
+
+```sh
+> systemctl is-enabled nginx
+
+disabled
 ```
 
 우분투는 *sysv-rc-conf* 명령어로 프로세스를 확인할 수 있습니다
