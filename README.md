@@ -29,7 +29,7 @@
 * [운영체제](linux.md) - 보안을 위한 리눅스 설치와 관리
 * [보안 시스템](firewall-selinux.md) - iptales/firewalld 방화벽과 SELinux 등 보안 시스템
 * [웹 서버](web-server.md) - apache httpd/nginx 웹 서버
-* [HTTPS(SSL/TLS)](https.md) - HTTPS 를 사용하여 웹 컨텐츠를 안전하게 제공하는 방법
+* [HTTPS(SSL/TLS)](ssl-tls-https.md) - HTTPS 를 사용하여 웹 컨텐츠를 안전하게 제공하는 방법
 * [WAS](web-app-server.md) - tomcat, php fpm등 application server
 * [데이타 보호](encryption.md) - 해시, 대칭키/공개키 기반 데이타 암복호화로 데이타 보호하기
 * [시큐어 코딩](secure-coding.md) - SQL Injection, CSRF, XSS 등을 방지하기 위한 secure coding 가이드.
