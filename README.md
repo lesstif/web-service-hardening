@@ -22,7 +22,11 @@
 이 문서는 참고하기 위한 자료일뿐이며 여기에 있는 내용을 따라 했다고 하여 보안이 보장되지 않으며 잘못된 결과에 대해서는 저자는 아무 책임이 없습니다.
 
 ## 제안과 기여
-본 문서에서 틀린 부분이나 수정/추가되야 할 부분이 있으면 Fork 후에 PR 을 날려주시기 바라며 제안은 issue 를 통해서 해주시면 됩니다.
+
+이 문서는 [free-programming-books](https://github.com/vhf/free-programming-books) 의 [가이드 라인](https://github.com/vhf/free-programming-books/blob/master/CONTRIBUTING.md#formatting)에 맞게 formatting 할 예정입니다.
+
+본 문서에서 틀린 부분이나 수정/추가되어야 할 부분이 있으면 Fork 후에 위 가이드 라인에 맞게 수정 후에 PR 을 날려주시기 바라며 제안은 issue 를 통해서 해주시면 됩니다.
+
 
 
 ## 목차 
