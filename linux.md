@@ -1,11 +1,13 @@
-## 목차
-- [패키지 최소 설치](#패키지-최소-설치)
-- [미사용 패키지 삭제](#미사용-패키지-삭제)
-- [X-Windows 삭제](#X-Windows-삭제)
-- [구동 프로세스 최소화](#구동-프로세스-최소화)
-- [시스템을 최신 상태로 유지](#시스템을-최신-상태로-유지)
- 
-## 패키지 최소 설치
+### 목차 
+
+* [패키지 최소 설치](#패키지-최소-설치)
+* [미사용 패키지 삭제](#미사용-패키지-삭제)
+* [X-Windows 삭제](#X-Windows-삭제)
+* [구동 프로세스 최소화](#구동-프로세스-최소화)
+* [시스템을 최신 상태로 유지](#시스템을-최신-상태로-유지)
+
+
+### 패키지 최소 설치
 
 리눅스를 설치할 때 보안을 위해 고려해야 할 사항은 **운영 체제의 사용 용도**(웹 서버, 애플리케이션 서버, DB 서버등)에 맞게 필요한 패키지만 설치하는 것입니다.
 
@@ -17,12 +19,12 @@ FTP나 Samba, Bind 같이 사용하지 않는 서버 프로세스를 구동하�
 
 ![CentOS 최소 설치](https://cloud.githubusercontent.com/assets/404534/12508730/fe394fa8-c140-11e5-914c-ffc30fa64078.png)
 
+#### 같이 보기
 
-
-### 같이 보기
 * [CentOS minimal 설치후 추가 패키지 설치](https://www.lesstif.com/pages/viewpage.action?pageId=6979710)
 
-## 미사용 패키지 삭제
+
+### 미사용 패키지 삭제
 
 이미 설치해서 사용중인 시스템이라면 사용하지 않는 패키지를 삭제하는 것도 좋습니다.
 
@@ -36,7 +38,9 @@ yum list installed
 yum groupremove "Development tools"
 ```
 
-## X Windows 삭제
+
+### X Windows 삭제
+
 이미 설치되어 운영을 하고 있는 서버라면 X-Windows 가 설치되어 있는지 확인하고 설치되어 있다면 삭제하는 게 좋습니다.
 
 X-Windows 는 용량이 크고 의존성 있는 패키지가 많으므로 잦은 업데이트가 발생하게 되며 XDM 은 보안상 문제가 발생할 수 있습니다.
@@ -50,10 +54,13 @@ X-Windows 가 설치되어 있다면 먼저 *telinit 3* 명령어로 런 레벨�
 yum groupremove "X Window System"
 ```
  
-### 같이 보기
+#### 같이 보기
+
 * [yum 주요 사용법 및 고급 사용법 (history 관리, plugin 사용, 트랜잭션 undo 등)](https://www.lesstif.com/pages/viewpage.action?pageId=6979667)
 
-## 구동 프로세스 최소화
+
+### 구동 프로세스 최소화
+
 사용하지 않는데 부팅시 자동 구동되는 데몬 프로세스가 있는지 확인하고  있다면 중지하고 자동 구동을 끄는 것이 좋습니다.
 
 CentOS 6 에서는 chkconfig 명령으로 서비스를 제어할 수 있습니다.
@@ -129,7 +136,7 @@ cryptdisks
 cryptdisks-e 0:on       6:on    S:on
 ```
 
-## 시스템을 최신 상태로 유지
+### 시스템을 최신 상태로 유지
 
 운영중인 시스템은 패키지 관리자를 사용하여 시스템을 상시 업데이트하여 최신 상태로 유지해야 제로 데이 공격(zero-day attack) 등에 희생되지 않도록 해야 합니다.
 
@@ -146,7 +153,5 @@ apt-get upgrade
 
 
 ### 참고 자료
+
 * [20 Linux Server Hardening Security Tips](http://www.cyberciti.biz/tips/linux-security.html)
-
-
-
