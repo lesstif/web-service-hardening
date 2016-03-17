@@ -8,3 +8,5 @@ Session.vim
 .netrwhist
 *~
 
+_book/
+node_modules/
