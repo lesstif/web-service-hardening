@@ -2,8 +2,8 @@
 
 * [SSL/TLS/HTTPS 란](#SSL/TLS/HTTPS 란)
 * [HTTPS 인증서 발급 받기](#HTTPS 인증서 발급 받기)
-* [nginx 웹 서버 설정하기](#nginx 웹 서버 설정하기)
-* [apache 웹 서버 설정하기](#apache 웹 서버 설정하기)
+* [nginx 웹 서버 설정하기](###nginx 웹 서버 설정하기)
+* [apache 웹 서버 설정하기](###apache 웹 서버 설정하기)
   * [SSL/TLS 보안 강화하기](#SSL/TLS 보안 강화하기)
 
 
@@ -34,9 +34,9 @@ server {
     ssl_certificate_key  /etc/pki/tls/private/example.com.key;
     ssl_session_timeout  5m;
     # SSLv2, SSLv3는 보안에 취약하므로 사용하지 마세요
-    ssl_protocols  SSLv2 SSLv3 TLSv1;
+    ssl_protocols  TLSv1.2 TLSv1.1 TLSv1;
     # 사용하지 않을 암호 알고리즘은 !로 명시적으로 지정할 수 있습니다.(블랙리스트 방식) 	
-    ssl_ciphers  HIGH:!aNULL:!MD5;
+    ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
     ssl_prefer_server_ciphers   on;
     location ~ /\.ht {
          deny  all;
@@ -56,7 +56,8 @@ TODO
 
 #### 최신 버전의 TLS 사용하기
 
-SSL 은 보안 취약점이 있으므로 사용하지 말고 TLS 를 사용해야 하며 TLS 도 최신 버전(TLS 1.2)을 사용하는 것이 좋습니다.
+SSL 은 보안 취약점이 있으므로 사용하지 말고 TLS 를 사용해야 하며 TLS 도 최신 버전(TLS 1.2)을 사용하는 것이 좋습니다. ([TLS 1.1 이상은 openssl 1.0.1 이상이 필요합니다.](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_protocols))
+
 만약 예전 IE 를 사용하는 고객이 많아서 TLS 1.2 를 강제하기 곤란하다면 다음과 같이 v1, v1.1, v1.2 를 다 사용하도록 하면 브라우저의 지원 여부에 따라 자동으로 적절한 TLS 버전을 사용하여 세션이 구성됩니다. 
 
 nginx 는 아래와 같이 사용할 알고리즘을 지정할 수 있습니다.
