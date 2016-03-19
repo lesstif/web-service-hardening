@@ -6,6 +6,8 @@
  * [setuid](#setuid-문제)
  * [잘 알려진 포트 daemon 문제](#잘-알려진-포트-daemon-문제)
 * [강제 접근 통제](#강제-접근-통제)
+* [SELinux 사용하기](#SELinux-사용하기)
+* [참고 자료](#참고-자료)
 
 ### SELiux 란
 
@@ -85,16 +87,41 @@ find /bin /usr/bin /sbin -perm -4000 -exec ls -ldb {} \;
 높은 보안을 요구하는 정보는 낮은 보안 수준의 주체가 접근할 수 없으며 소유자라고 할 지라도 정책에 어긋나면 객체에 접근할 수 없으므로 강력한 보안을 제공합니다.
 
 MAC 정책에서는 루트로 구동한 http 서버라도 접근 가능한 파일과 포트가 제한됩니다.
-즉 httpd 는 기본적으로 /var/www/html 폴더에만 접근 가능하며 80, 443, 
+즉 취약점을 이용하여 httpd 의 권한을 획득했어도 */var/www/html*, */etc/httpd* 등의 사전에 허용한 폴더에만 접근 가능하며 80, 443, 8080 등의 포트만 접근이 허용되므로 ssh로 다른 서버로 접근을 시도하는등 이차 피해가 최소화 됩니다.
 
 단점으로는 구현이 복잡하고 어려우며 모든 주체와 객체에 대해서 보안 등급과 허용 등급을 부여하여야 하므로 설정이 복잡하고 시스템 관리자가 접근 통제 모델에 대해 잘 이해하고 있어야 합니다.
 
-### Architecture
+### SELinux 사용하기
+
+SELinux는 아래와 같이 커널의 기본 기능으로 동작하며 모든 시스템 콜이 보안 정책을 확인해 접근 허용 여부를 판단하며  빠르게 처리하기 위해 보안 정책은 AVC(Access Vector Cache)라는 이름으로 커널 내부에서 캐싱합니다.
 
 ![SELinux 아키텍처](https://cloud.githubusercontent.com/assets/404534/12506805/d187db34-c134-11e5-85e3-76a71fd3ea9a.png "SELinux 아키텍처")
 
 
+SELinux의 사용 여부는 *sestatus* 명령어를 통해 *Current mode* 에 enforcing 이 있는지 여부로 확인할 수 있습니다.
+
+```
+# sestatus
+
+ELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             targeted
+Current mode:                   enforcing
+Mode from config file:          enforcing
+Policy MLS status:              enabled
+Policy deny_unknown status:     allowed
+Max kernel policy version:      28
+
+```
+
+SELinux 는 enforce, permissive, disable 3 가지 모드가 있으며 기본 설정은 enforce 이고 *setenforce 0* 명령어로 permissive 모드로 전환할 수 있습니다.
+
+enforce 모드에서는 보안 정책에 위배되는 모든 액션이 차단되며 permissive mode 일 경우 경고 메시지만 내고 차단되지 않습니다.
+
+
+
 ### 참고 자료
 
-* [20 Linux Server Hardening Security Tips](http://www.cyberciti.biz/tips/linux-security.html)
-I
+* [SELinux 에러 메시지 및 문제 해결](https://www.lesstif.com/pages/viewpage.action?pageId=12943496)
+* 
