@@ -35,12 +35,14 @@ fail2ban은 침입 방지 시스템(IPS; Intrusion prevention system) 으로 */v
 
 ### 강화된 인증 사용
 
-ssh의 암호 인증은 암호가 유출되므로 다른 방식의 인증을 사용하는 것이 좋습니다.
+ssh의 암호 인증은 암호가 유출되면 무력화되므로 다른 방식의 인증을 사용하는 것이 좋습니다.
 암호 인증을 사용하지 않으려면 */etc/ssh/sshd_config* 에 다음 항목을 설정하고 *service sshd restart* 를 실행하면 됩니다.
 
 ```
 PasswordAuthentication no
 ```
+
+**암호 인증을 중지하기전에 공개키나 2단계 인증을 설정**해 두어야 합니다.
 
 #### 공개키 인증
 
