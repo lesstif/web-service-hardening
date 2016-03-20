@@ -27,10 +27,16 @@ ssh의 기본 포트인 22 번 포트는 모든 IP에 대해서 열지 말고 �
 
 ### fail2ban 사용
 
+Brute force Attack을 막기 위해 일정 횟수 이상 접근을 시도한 IP 는 [fail2ban](http://www.fail2ban.org/) 을 사용하여 차단할 수 있습니다.
+
+fail2ban은 침입 방지 시스템(IPS; Intrusion prevention system) 으로 */var/log/auth.log* 나 */var/log/apache/access.log* 를 모니터링하여 로그인을 시도한 IP 를 차단합니다.
+
+다른 솔루션과 차이점은 iptables 같은 커널 레벨의 방화벽을 사용하여 로우 레벨에서 차단하는 점이며 ssh외에 http 나 기타 프로토콜에도 사용할 수 있습니다.
+
 ### 강화된 인증 사용
 
 ssh의 암호 인증은 암호가 유출되므로 다른 방식의 인증을 사용하는 것이 좋습니다.
-암호 인증을 사용하지 않으려면 /etc/ssh/sshd_config 에 다음 항목을 설정하고 *service sshd restart* 를 실행하면 됩니다.
+암호 인증을 사용하지 않으려면 */etc/ssh/sshd_config* 에 다음 항목을 설정하고 *service sshd restart* 를 실행하면 됩니다.
 
 ```
 PasswordAuthentication no
@@ -38,10 +44,39 @@ PasswordAuthentication no
 
 #### 공개키 인증
 
+공개키 방식의 인증은 키 쌍을 보유하고 있어야 하므로 암호 방식보다는 안전합니다.
+*/etc/ssh/sshd_config* 에 다음과 같이 설정되어 있으면 공개키 인증이 가능합니다.(기본 설정)
+
+
+```
+PubkeyAuthentication yes
+```
+
+접근이 허용된 공개키는 원격 사이트의  *~/.ssh/authorized_keys* 에 저장되어 있습니다.
+
+*ssh-copy-id* 명령어를 사용하면 원격지에 사용할 공개키를 등록할 수 있습니다.
+
+```
+ssh-copy-id -i ~/.ssh/id_rsa.pub myloginid@myhost.com
+```
+
+myloginid 는 로그인하려는 id 이고 myhost.com은 로그인하려는 서버의 주소입니다.
+
+
+공개키 방식의 인증도 키쌍이 유출되면 다른 이가 접근 가능하며 더욱 견고하게 하려면 *~/.ssh/authorized_keys* 에 다음과 같이 *from* 키워드에 해당 공개키로 접근 가능한 client IP를 기술해 주면 됩니다.
+
+```
+from="192.168.10.2" ssh-rsa AAAAB3NzaC1yc2EA...AQWqz myemail@myhost.com
+``` 
+
 #### 2단계 인증
 
-2단계 인증(2 factor authentication)은 안전합니다.
+2단계 인증(2 factor authentication)을 사용하면 OTP(One Time Password)같이 추가 인증 수단을 통해 ssh 로 로그인할 수 있으므로 더욱 안전합니다.
+
+제일 쉽게 사용할 수 있는 OTP는 [google authenticator](https://github.com/google/google-authenticator) 이며 ssh 서버에 설치한 후에 스마트 폰에 app을 설치하여 휴대폰에서 생성된 1회용 비밀번호로 원격지에 로그인할 수 있습니다.
+
+더 자세한 내용은 [google authenticator 를 사용하여 Linux ssh 에 OTP 적용하기](https://www.lesstif.com/pages/viewpage.action?pageId=24444948) 을 참고하세요.
 
 ### 참고 자료
 * [fail2ban](http://www.fail2ban.org/wiki/index.php/Main_Page)
-* [google authenticator 를 사용하여 Linux ssh 에 OTP 적용하기](https://www.lesstif.com/pages/viewpage.action?pageId=24444948)
+* [Hardening ssh Servers](https://feeding.cloud.geek.nz/posts/hardening-ssh-servers/)
