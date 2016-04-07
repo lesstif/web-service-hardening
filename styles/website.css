@@ -1,1 +1,26 @@
-/* CSS for website */
+@import url(https://cdn.rawgit.com/openhiun/hangul/14c0f6faa2941116bb53001d6a7dcd5e82300c3f/nanumbarungothic.css);
+
+h1 {
+    font-family: 'Nanum Barun Gothic', sans-serif;
+    text-align:center;
+}
+
+h2 {
+    font-family: 'Nanum Barun Gothic', sans-serif;
+    background-color: #EEE;
+}
+
+h3 {
+    font-family: 'Nanum Barun Gothic', sans-serif;
+    border-bottom: solid 1px #d9d9d9;
+}
+
+body, html{
+    font-family: 'Nanum Barun Gothic', sans-serif;
+/*    line-height: 200%; */
+/*    font-size: 1.0em; */
+}
+
+.a {font-size: 1.0em;}
+.b {font-size: 1.2em;}
+.c {font-size: 1.4em;}
