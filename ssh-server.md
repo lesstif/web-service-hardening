@@ -5,6 +5,7 @@
 * [강화된 인증 사용](#강화된-인증-사용)
   * [공개키 인증](#공개키-인증)
   * [2단계 인증](#2단계-인증)
+* [베스천 호스트 사용](#베스천-호스트-사용)
 * [참고 자료](#참고-자료)
 
 원격지 연결에 사용하는 텔넷(telnet) 이나 rlogin 프로토콜은 오래되었고 보안상 취약한 프로토콜로 이제는 사용하면 안 됩니다.
@@ -27,7 +28,7 @@ ssh의 기본 포트인 22 번 포트는 모든 IP에 대해서 열지 말고 �
 
 ### fail2ban 사용
 
-Brute force Attack을 막기 위해 일정 횟수 이상 접근을 시도한 IP 는 [fail2ban](http://www.fail2ban.org/) 을 사용하여 차단할 수 있습니다.
+Brute force Attack을 막기 위해 일정 횟수용 이상 접근을 시도한 IP 는 [fail2ban](http://www.fail2ban.org/) 을 사용하여 차단할 수 있습니다.
 
 fail2ban은 침입 방지 시스템(IPS; Intrusion prevention system) 으로 */var/log/auth.log* 나 */var/log/apache/access.log* 를 모니터링하여 로그인을 시도한 IP 를 차단합니다.
 
@@ -79,6 +80,18 @@ from="192.168.10.2" ssh-rsa AAAAB3NzaC1yc2EA...AQWqz myemail@myhost.com
 
 더 자세한 내용은 [google authenticator 를 사용하여 Linux ssh 에 OTP 적용하기](https://www.lesstif.com/pages/viewpage.action?pageId=24444948) 을 참고하세요.
 
+### 베스천 호스트 사용
+
+Bastion 호스트는 보호된 네트워크에서 유일하게 외부에 노출되는 내외부 네트워크의 연결 호스트를 의미합니다.
+
+운영등의 이유로 외부에서 내부 서버에 ssh 로 연결해야 할 필요가 있을 경우 바로 들어갈 수 있도록 하지 말고 베스천 호스트를 구성한 후에 이 서버를 통해서만 내부에 접근할 수 있도록 구성해야 합니다. 
+
+![베스천 호스트](http://cloudacademy.com/blog/wp-content/uploads/2015/11/aws-bastion-host-1.png "베스천 호스트")
+
+특히 AWS 등의 크라우드를 사용하는 경우 베스천 호스트를 통해 private network 에 위치한 서버에 연결하는 것을 권장합니다.
+
+
 ### 참고 자료
 * [fail2ban](http://www.fail2ban.org/wiki/index.php/Main_Page)
 * [Hardening ssh Servers](https://feeding.cloud.geek.nz/posts/hardening-ssh-servers/)
+* [AWS Security: Bastion Host, NAT instances and VPC Peering](http://cloudacademy.com/blog/aws-bastion-host-nat-instances-vpc-peering-security/)

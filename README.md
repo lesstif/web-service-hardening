@@ -27,6 +27,4 @@
 
 ## 제안과 기여
 
-이 문서는 [gitbook](https://gitbook.com) 을 통해  퍼블리싱 되었고 gitbook을 사용한 전자 출판은 ["라라벨 5 에션셜"](http://l5.appkr.kr/lessons)의 저자인 [김주원님의 블로그](http://blog.appkr.kr/work-n-play/pandoc-gitbook-%EC%A0%84%EC%9E%90%EC%B6%9C%ED%8C%90/)를 참고하십시요.
-
-본 문서에서 틀린 부분이나 수정/추가되어야 할 부분이 있으면 Fork 후에 위 문서를 참고하셔서 수정 후에 [PR](https://github.com/lesstif/security-best-practices/pulls) 을 날려주시기 바라며 제안은 [issue](https://github.com/lesstif/security-best-practices/issues) 를 통해서 해주시면 됩니다.
+본 문서에서 틀린 부분이나 수정/추가되어야 할 부분이 있으면 Fork 후에 [PR](https://github.com/lesstif/security-best-practices/pulls) 을 날려주시기 바라며 제안은 [issue](https://github.com/lesstif/security-best-practices/issues) 를 통해서 해주시면 됩니다.
