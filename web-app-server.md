@@ -2,12 +2,7 @@
 
 WAS(Web Application Server) 보안 고려 사항
 
-* [일반 사용자로 구동](#일반-사용자로-구동)
-* [apache tomcat](#apache-tomcat)
-* [PHP-FPM](#PHP-FPM)
-  * [cgi.fix_pathinfo 설정 문제](#cgi.fix_pathinfo-설정-문제)
-  * [2단계 인증](#2단계-인증)
-* [참고 자료](#참고-자료)
+<!-- toc -->
 
 ## 일반 사용자로 구동
 
@@ -19,6 +14,7 @@ WAS 는 웹 서버를 겸용하지 않을 경우 보통 1024 이후의 포트를
 
 ## apache tomcat
 
+### manager 기능 접근 제어
 톰캣에는 host-manager 라는 관리자 기능이 포함되어 있고 기본 설정은 비활성화입니다.
 
 이 기능을 사용하면 웹에서 새로운 Context 를 deploy 할 수 있기 때문에 host-manager Context 를 활성화하는 경우가 있습니다.

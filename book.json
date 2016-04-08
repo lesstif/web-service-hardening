@@ -1,10 +1,17 @@
 {
-    "title": "My Awesome Book",
+    "title": "견고한 웹 서비스를 만들기 위한 실용적인 보안 가이드",
     "styles": {
         "website": "styles/website.css",
         "ebook": "styles/ebook.css",
         "pdf": "styles/pdf.css",
         "mobi": "styles/mobi.css",
         "epub": "styles/epub.css"
+    },
+    "plugins": ["toc"],
+    "pluginsConfig": {
+        "toc": {
+            "addClass": true,
+            "className": "toc"
+        }
     }
 }

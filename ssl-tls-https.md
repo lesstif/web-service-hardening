@@ -1,13 +1,6 @@
-### 목차 
+### 목차
 
-* [SSL/TLS/HTTPS 란](#SSL/TLS/HTTPS 란)
-* [HTTPS 인증서 발급 받기](#HTTPS 인증서 발급 받기)
-* [nginx 웹 서버 설정하기](#nginx 웹 서버 설정하기)
-* [apache 웹 서버 설정하기](#apache 웹 서버 설정하기)
-* [SSL/TLS 보안 강화하기](#SSL/TLS 보안 강화하기)
-  * [최신 버전의 TLS 사용하기](#최신-버전의-TLS-사용)
-  * [강력한 알고리즘 사용하기](#강력한-알고리즘-사용)
-
+<!-- toc -->
 
 ### SSL/TLS/HTTPS 란
 
@@ -25,6 +18,11 @@ SSL에서 TLS로 이름이 변경된 지 오래됐지만 아직도 사람들은 
 또한 SSL/TLS의 가장 주된 적용 대상이 HTTPS다 보니 SSL/TLS를 HTTPS와 혼용하는 경우도 많습니다. 
 
 이 문서에서는 SSL 이라고 할 경우 SSL 프로토콜, TLS 는 TLS 프로토콜을 의미하며, 보안이 적용된 HTTP는 HTTPS로 지칭하겠습니다.
+
+### 장점
+
+[중간자 공격](GLOSSARY.md)과 Packet Spoofing 을 최소화할 수 있으며 
+
 
 
 ### HTTPS 인증서 발급 받기

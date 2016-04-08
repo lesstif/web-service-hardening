@@ -1,8 +1,6 @@
 ### 목차
-* [server 정보 숨기기](#server-정보-숨기기)
-  * [Server Token Off](#Server-Token-Off)
-  * [X-Powered-By 헤더 제거](#X-Powered-By-헤더-제거)
-* qq
+
+<!-- toc -->
 
 ### server 정보 숨기기
 
