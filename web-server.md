@@ -54,17 +54,94 @@ expose_php = Off
 
 ### 중요 파일 접근 차단
 
-웹 서버의 컨텐츠 디렉터리에는 *.htaccess* 나 워드프레스의 *wp-config.php*, git이나 subversion의 형상 관리 정보(.git, .svn)등의 중요 정보가 있을 수 있습니다.
+웹 서버의 컨텐츠 디렉터리에는 URL Re-writing 을 처리하는 *.htaccess* 나 워드프레스의 *wp-config.php*, 또 git이나 subversion의 형상 관리 메타 정보(.git, .svn)등의 중요 정보가 있을 수 있습니다.
 
-공격자는 이런 파일을 요청하여 서버의 정보를 파악할 수 있습니다.
+공격자는 이런 파일을 내려 받아서 서버의 정보를 파악할 수 있으므로 다음 설정으로 중요 파일을 보호할 수 있습니다.
 
-apache httpd 는 다음 설정으로 중요 파일을 보호할 수 있습니다.
-
-```
+**httpd 2.2**
 
 ```
+<DirectoryMatch .*\.(git|svn)/.*>
+    Order deny,allow
+    Deny From All
+</DirectoryMatch>
+    
+<FilesMatch "^(htaccess|wp-config)">
+    Order deny,allow
+    Deny From All
+</FilesMatch>
 
+<FilesMatch "\.(inc|ini|conf|cfg)$">
+    Order deny,allow
+    Deny From All
+</FilesMatch>
+```
+
+**httpd 2.4**
+
+```
+<DirectoryMatch .*\.(git|svn)/.*>
+    Require all denied
+</DirectoryMatch>
+    
+<FilesMatch "^(htaccess|wp-config)">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "\.(inc|ini|conf|cfg)$">
+    Require all denied
+</FilesMatch>
+```
+
+**nginx**
+
+```
+location ~ /\.(ht|git|svn) {
+    deny all;
+}
+location ~ /wp-conf* {
+    deny all;
+}
+location ~ /.*\.(inc|ini|conf|cfg)$ {
+    deny all;
+}
+```
+
+### 관리자 서비스 접근 제한
+
+웹 애플리케이션에도 추가되어야 하지만 웹 서버는 관리자 영역등 특정 url 을 차단할 수 있습니다.
+
+다음은 아파치 톰캣의 관리자 context 인 /manager 에 접근을 차단하는 예제입니다.
+
+**httpd 2.2**
+
+```
+<Location /manager>
+    Order deny,allow
+    Deny from all
+    Allow from 127.0.0.1 192.168.0.0/24
+</Location>
+```
+
+**httpd 2.4** 는 다음과 같이 설정합니다.
+
+```
+<Location /manager>
+    Require host  127.0.0.1 192.168.0.0/24
+</Location>
+```
+
+**nginx**
+
+```
+location /manager {
+    satisfy any;
+
+    allow 192.168.0.0/24;
+    deny  all;
+}
+```
 
 ### 참고 자료
 * [apache ServerTokens Directive](https://httpd.apache.org/docs/2.4/mod/core.html#servertokens)
-* 
+* [nginx RESTRICTING ACCESS](https://www.nginx.com/resources/admin-guide/restricting-access/)

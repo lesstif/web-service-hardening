@@ -9,8 +9,8 @@
 * [웹 서버](web-server.md)
 * [HTTPS(SSL/TLS)](ssl-tls-https.md)
 * [WAS](web-app-server.md)
-* [데이타 보호](encryptionmd.md)
+* [데이타 암/복호](encryption.md)
 * [시큐어 코딩](secure-coding.md)
 * [용어 정리](GLOSSARY.md)
-* [참고 자료](ref.md)
+* [같이 읽기](seealso.md)
 
