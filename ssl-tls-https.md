@@ -1,8 +1,8 @@
-### 목차
+# SSL/TLS/HTTPS 적용
 
 <!-- toc -->
 
-### SSL/TLS/HTTPS 란
+## SSL/TLS/HTTPS 란
 
 TLS(Transport Layer Security)는 인터넷 상에서 통신할 때 주고받는 데이터를 보호하기 위한 표준화된 암호화 프로토콜입니다.
 
@@ -21,12 +21,10 @@ SSL에서 TLS로 이름이 변경된 지 오래됐지만 아직도 사람들은 
 
 이 문서에서는 SSL 이라고 할 경우 SSL 프로토콜, TLS 는 TLS 프로토콜을 의미하며, 보안이 적용된 HTTP는 HTTPS로 지칭하겠습니다.
 
-### 장점
-
-[중간자 공격](GLOSSARY.md)[^1]과 Packet Spoofing 을 통한 도감청을 막을 수 있으며 통신하는 상대방이 맞는지 인증할 수 있습니다.  [^2]
+SSL/TLS 를 사용하면 [중간자 공격](GLOSSARY.md)[^1]과 Packet Spoofing 을 통한 도감청을 막을 수 있으며 통신하는 상대방이 맞는지 인증할 수 있습니다.  [^2]
 
 
-### TLS HandShake
+## TLS HandShake
 
 SSL/TLS 세션은 다음 핸드셰이크 과정을 거친 후에 구축됩니다. 
 
@@ -48,7 +46,7 @@ SSL/TLS 세션은 다음 핸드셰이크 과정을 거친 후에 구축됩니다
 
 
 
-### 인증서 발급 받기
+## 인증서 발급 받기
 
 HTTPS 용 인증서를 발급받으려면 Verisign 이나 thawte, Comodo 같은 인증서 발급 기관을 통해서 절차에 따라 사이트 인증을 마친 후에 발급받아야 하며 이 과정에서 일정한 비용이 발생합니다.
 
@@ -61,7 +59,7 @@ AWS 를 사용한다면 [AWS Certificate Manager](https://aws.amazon.com/ko/cert
 * 현재 US East (Northern Virginia)리전에서만 사용 가능합니다.
 
 
-### nginx 웹 서버 설정하기
+## nginx 웹 서버 설정하기
 
 nginx 의 가상 호스트에 다음과 같이 ssl 설정을 추가해 주면 됩니다.
 
@@ -88,7 +86,7 @@ server {
 ```
 
 
-### apache 웹 서버 설정하기
+## apache 웹 서버 설정하기
 
 RHEL/CentOS 의 아파치 웹 서버는 /etc/httpd/conf.d/ssl.conf 에 다음과 같이 가상호스트를 설정합니다.
 
@@ -116,11 +114,11 @@ RHEL/CentOS 의 아파치 웹 서버는 /etc/httpd/conf.d/ssl.conf 에 다음과
 ```
 
 
-### SSL/TLS 보안 강화하기
+## SSL/TLS 보안 강화하기
 
 사이트에 적용한 SSL/TLS 를 더 견고하게 하기 위한 권장 설정.
 
-#### 최신 버전의 TLS 사용
+### 최신 버전의 TLS 사용
 
 SSL 은 보안 취약점이 있으므로 사용하지 말고 TLS 를 사용해야 하며 TLS 도 최신 버전(TLS 1.2)을 사용하는 것이 좋습니다. ([TLS 1.1 이상은 openssl 1.0.1 이상이 필요.](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_protocols))
 
@@ -132,7 +130,7 @@ nginx 는 아래와 같이 사용할 버전을 지정할 수 있습니다.
 ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
 ```
 
-apache httpd 는 아래와 같이 사용할 버전을 지정할 수 있습니다.
+**apache httpd** 는 아래와 같이 사용할 버전을 지정할 수 있습니다.
 
 ```
 # Dropping SSLv2, SSLv3, ref: POODLE
@@ -145,7 +143,7 @@ SSLProtocol all -SSLv2 -SSLv3
 SSLProtocol TLSv1 TLSv1.1 TLSv1.2
 ```
 
-#### 강력한 알고리즘 사용
+### 강력한 알고리즘 사용
 
 TLS 는 암호화 통신을 위해 사용할 알고리즘을 협상후 결정하는데 RC4 나 Triple DES 같은 오래된 알고리즘을 사용하면 암호화 통신을 하는 이유가 반감됩니다.
 
@@ -165,8 +163,15 @@ ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
 SSLCipherSuite HIGH:!aNULL:!MD5
 ```
 
-### 참고 자료
+## 참고 자료
+
+* [mod_ssl 로 보안 강화하기](https://www.lesstif.com/pages/viewpage.action?pageId=18219486)
 * [nginx에 HTTPS/SSL 적용하기](https://www.lesstif.com/pages/viewpage.action?pageId=27984443)
-* [^1]: ARP 스푸핑을 통한 피해 및 모범 대응 사례- http://blog.bandisoft.com/132
-* [^2]: 백신 프로그램은 HTTPS 패킷을 검사하기 위해 브라우저에 신뢰하는 인증기관을 추가하고 TLS 인증서를 발급해서 HTTPS 를 통해 오가는 데이타를 검사합니다. 이 방식은 좋은 용도지만 중간자 공격과 동일합니다.
+
+
+
+
+
+[^1]: ARP 스푸핑을 통한 피해 및 모범 대응 사례- http://blog.bandisoft.com/132
+[^2]: 백신 프로그램은 HTTPS 패킷을 검사하기 위해 백신 회사가 발급한 root 인증 기관 인증서를 브라우저에 신뢰하는 인증기관으로 추가하고 TLS 인증서를 발급해서 HTTPS 를 통해 오가는 데이타를 검사합니다. 이 방식은 좋은 용도지만 중간자 공격과 동일합니다.
 
