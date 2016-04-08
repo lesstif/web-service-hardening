@@ -3,7 +3,7 @@
 인터넷으로 서비스를 제공하기 위해 챙겨야 할 실용적인 보안 가이드.
 
 
-변환된 문서는 **[gitbook](https://lesstif.gitbooks.io/security-best-practice/content/)** 에서 읽으실 수 있습니다.
+변환된 문서는 **[gitbook](https://lesstif.gitbooks.io/web-service-hardening/content/)** 에서 읽으실 수 있습니다.
 
 
 ## 목적
