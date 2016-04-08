@@ -90,7 +90,6 @@ SSL/TLS 에서는 상대방과 키를 교환하기 위한 몇 개의 알고리�
 
 유명한 알고리즘으로는 MD5(보안 문제때문에 암호용으로는 사용 되지 않음), SHA1(현재는 안전하지 않음), SHA-2(SHA256, SHA384, SHA512) 등이 있습니다.
 
-
 ## 비밀번호 암복호
 
 * 안전한 해시 함수 사용
@@ -98,13 +97,83 @@ SSL/TLS 에서는 상대방과 키를 교환하기 위한 몇 개의 알고리�
 
 ### PBKDF
 
-PBKDF2(Password-Based Key Derivation Function 2) 는 사용자에게 문자열을 입력받아서 이를 기반으로 안전한 대칭키와 Initial Vector 를 생성하는 방법.
+PBKDF2(Password-Based Key Derivation Function 2) 는 사용자에게 문자열을 입력받아서 이를 기반으로 안전한 대칭키와 Initial Vector 를 생성하는 방법입니다.
+
+단방향 함수이므로 결과로 부터 원문을 유추할 수 없으므로 사용자 암호에 적용하기 좋은 알고리즘입니다.
+
+PHP 는 hash_pbkdf2 를 사용하면 됩니다.
+
+
+```php
+
+
+```
 
 
 
 ### bcrypt
 
+bcrypt 는 비밀번호 해시에 사용하기 위해 만들어진 알고리즘으로 OpenBSD 에 기본 탑재되어 있습니다.
+
+PHP 는 password_hash() 의 두 번째 파라미터를 PASSWORD_BCRYPT 로 지정하면 됩니다.
+
+```php
+<?php
+
+echo password_hash("strong_password", PASSWORD_BCRYPT)."\n";
+```
+
 ## 키 관리
 
+데이타를 안전하게 관리하기 위해서 가장 중요한 부분중 하나는 암호화한 키를 어떻게 안전하게 보관하는지 입니다.
+
+키를 데이타 파일로 저장할 경우 키와 데이타만 손에 넣으면 모두 해독 가능한 위험이 있습니다.
+
+신용 카드 정보등 아주 중요한 데이타를 보관해야 한다면 HSM(Hardware Security Module) 처럼 키를 장비에서 생성하고 외부에 유출되지 않는 안전한 장비 도입을 검토해 볼 필요가 있습니다.
+
+![Luna HSM](http://www.tssl.com/tsslweb/wp-content/uploads/2014/11/product_safenet_luna_sp2.png "Luna HSM")
+
+유명한 HSM 제품중 하나인 LunaHSM 은 [Amazon Web Service에 CloudHSM](https://aws.amazon.com/ko/cloudhsm/) 에 적용되어 있습니다.
 
 
+## 데이타 암호화
+
+
+### Java
+
+
+Java 는 JCE/JCA 라는 암복호를 하기 위한 표준이 있고 이를 구현한 JCE Provider 가 필요합니다.
+
+권장하는 JCE 프로바이더는 [Bouncy Castle](https://www.bouncycastle.org/java.html) 입니다.
+
+> **Tip** 기본 JDK 의 JCE 정책은 미국외에서는 강력한 키 길이(AES256, RSA2048)를 사용할 수 없어서 *"java.lang.SecurityException: Unsupported keysize or algorithm parameters"* 또는 *"java.security.InvalidKeyException: Illegal key size"* 에러가 발생합니다.
+ 
+이를 해결하려면 Oracle 에서 "Unlimited Strength Jurisdiction Policy Files" 파일을 다운로드 받아서 $JRE/lib/security/ 에 복사해야 합니다.
+
+**AES 256 암호화**
+
+```java
+String input = "Hello World";
+
+KeyGenerator gen = KeyGenerator.getInstance("AES");
+gen.init(256); 
+
+// 사용할 대칭키
+SecretKey key = gen.generateKey(); 
+
+Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding", "BC");
+				
+IvParameterSpec    spec = new IvParameterSpec(iv);
+		
+c.init(Cipher.ENCRYPT_MODE, key, spec);
+		
+// 암호화된 데이타
+byte[] encData = c.doFinal(input.getBytes());
+
+```
+
+
+
+### PHP 
+
+PHP는 mcrypt 를 사용하여 대칭키 암호를 할 수 있습니다.
