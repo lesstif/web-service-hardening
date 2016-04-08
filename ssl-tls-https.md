@@ -12,6 +12,8 @@ TLS는 전송계층(Transport Layer)의 암호화 방식이기 때문에 HTTP뿐
 응용 계층(Application Layer)프로토콜의 종류에 상관없이 사용할 수 있다는 장점이 있으며기본적
 으로 인증(Authentication), 암호화(Encryption), 무결성(Integrity)을 지원합니다.
 
+![TLS 아키텍처](https://www.lesstif.com/download/attachments/18219486/image2014-7-30%2023%3A29%3A18.png?version=1&modificationDate=1406730379000&api=v2 "TLS 아키텍처")
+
 SSL에서 TLS로 이름이 변경된 지 오래됐지만 아직도 사람들은 TLS대신 SSL이라는 표현을 더 많이 
 사용하고 있으며 실제로 SSL/TLS의 오픈소스 구현체 프로젝트의 명칭은 아직도 OpenSSL이기도 합니다. 
 
@@ -21,11 +23,32 @@ SSL에서 TLS로 이름이 변경된 지 오래됐지만 아직도 사람들은 
 
 ### 장점
 
-[중간자 공격](GLOSSARY.md)과 Packet Spoofing 을 최소화할 수 있으며 
+[중간자 공격](GLOSSARY.md)[^1]과 Packet Spoofing 을 통한 도감청을 막을 수 있으며 통신하는 상대방이 맞는지 인증할 수 있습니다.  [^2]
+
+
+### TLS HandShake
+
+SSL/TLS 세션은 다음 핸드셰이크 과정을 거친 후에 구축됩니다. 
+
+![TLS 핸드셰이크 절차](https://www.lesstif.com/download/attachments/18219486/image2014-10-24%2013%3A9%3A16.png?version=1&modificationDate=1414123436000&api=v2 "TLS 핸드셰이크 절차")
 
 
 
-### HTTPS 인증서 발급 받기
+1. 클라이언트와 서버는 헬로 메시지로 기본적인 정보를 송수신 (1, 2)
+
+1. 서버는 서버가 사용하는 SSL/TLS 인증서를 전달 (3, 4)
+
+1. 클라언트는 암호화 통신에 사용할 대칭키를 생성하고 사이를 서버에 전달(5). 이 과정을 키 교환(Key Exchange) 라고 하며 디피-헬만 키 교환(Diffie–Hellman key exchange) 또는 RSA 를 많이 사용. 
+
+1. 클라이언트는 암호화 통신에 사용 가능한 암호 알고리즘과 해시 알고리즘 목록을 서버에 전달. (6, 7)
+
+1. 서버도 알고리즘 목록을 교환후 핸드쉐이크가 종료되며 이제 클라이언트와 서버는 암호화 통신에 필요한 대칭키를 서로 보유.(8, 9)
+
+위 과정이 끝나면 SSL 세션이 구축되며 실제 암호화 통신을 시작할 수 있습니다.
+
+
+
+### 인증서 발급 받기
 
 HTTPS 용 인증서를 발급받으려면 Verisign 이나 thawte, Comodo 같은 인증서 발급 기관을 통해서 절차에 따라 사이트 인증을 마친 후에 발급받아야 하며 이 과정에서 일정한 비용이 발생합니다.
 
@@ -99,7 +122,7 @@ RHEL/CentOS 의 아파치 웹 서버는 /etc/httpd/conf.d/ssl.conf 에 다음과
 
 #### 최신 버전의 TLS 사용
 
-SSL 은 보안 취약점이 있으므로 사용하지 말고 TLS 를 사용해야 하며 TLS 도 최신 버전(TLS 1.2)을 사용하는 것이 좋습니다. ([TLS 1.1 이상은 openssl 1.0.1 이상이 필요합니다.](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_protocols))
+SSL 은 보안 취약점이 있으므로 사용하지 말고 TLS 를 사용해야 하며 TLS 도 최신 버전(TLS 1.2)을 사용하는 것이 좋습니다. ([TLS 1.1 이상은 openssl 1.0.1 이상이 필요.](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_protocols))
 
 만약 예전 IE 를 사용하는 고객이 많아서 TLS 1.2 를 강제하기 곤란하다면 다음과 같이 v1, v1.1, v1.2 를 다 사용하도록 하면 브라우저의 지원 여부에 따라 자동으로 적절한 TLS 버전을 사용하여 세션이 구성됩니다. 
 
@@ -130,13 +153,13 @@ TLS 는 암호화 통신을 위해 사용할 알고리즘을 협상후 결정하
 
 알고리즘 설정은 사용하지 않을 취약한 알고리즘을 명시적으로 지정하는 블랙리스트 방식보다는 사용할 강력한 알고리즘을 지정하는 화이트리스트 방식을 권장합니다.
 
-nginx 는 아래와 같이 설정할 경우 강력한 알고리즘을 사용하게 됩니다.
+**nginx** 는 아래와 같이 설정할 경우 강력한 알고리즘을 사용하게 됩니다.
 
 ```
 ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
 ```
 
-apache httpd 는 아래와 같이 설정하면 강력한 알고리즘을 사용하게 됩니다.
+**apache httpd** 는 아래와 같이 설정하면 강력한 알고리즘을 사용하게 됩니다.
 
 ```
 SSLCipherSuite HIGH:!aNULL:!MD5
@@ -144,4 +167,6 @@ SSLCipherSuite HIGH:!aNULL:!MD5
 
 ### 참고 자료
 * [nginx에 HTTPS/SSL 적용하기](https://www.lesstif.com/pages/viewpage.action?pageId=27984443)
+* [^1]: ARP 스푸핑을 통한 피해 및 모범 대응 사례- http://blog.bandisoft.com/132
+* [^2]: 백신 프로그램은 HTTPS 패킷을 검사하기 위해 브라우저에 신뢰하는 인증기관을 추가하고 TLS 인증서를 발급해서 HTTPS 를 통해 오가는 데이타를 검사합니다. 이 방식은 좋은 용도지만 중간자 공격과 동일합니다.
 
