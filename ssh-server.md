@@ -1,8 +1,7 @@
-### 목차 
+# 시큐어 셸(SSH;Secure SHell) 
+
 <!-- toc -->
 
-
-### 시큐어 셸(SSH;Secure Shell)
 원격지 연결에 사용하는 텔넷(telnet) 이나 rlogin 프로토콜은 오래되었고 보안상 취약한 프로토콜로 이제는 사용하면 안 됩니다.
 
 ssh 는 암호화를 사용하여 세션을 보호하고 암호, 공개키, 챌린지 응답등 다양한 인증 방식을 제공하고 있으며 포트 포워딩을 제공하므로 X-Windows가 필요해도 ssh 포트만 열어도 사용할 수 있습니다.
@@ -11,7 +10,7 @@ ssh 는 암호화를 사용하여 세션을 보호하고 암호, 공개키, 챌�
 
 그러면 sshd를 더 안전하게 사용할 수 있는 방법을 알아 봅시다.
 
-### 방화벽으로 ssh 포트 보호
+## 방화벽으로 ssh 포트 보호
 
 ssh의 기본 포트인 22 번 포트는 모든 IP에 대해서 열지 말고 허용된 곳에서만 연결을 허용하도록 해야 합니다.
 
@@ -21,7 +20,7 @@ ssh의 기본 포트인 22 번 포트는 모든 IP에 대해서 열지 말고 �
 -A INPUT -s 192.168.10.0/24 -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
 ```
 
-### fail2ban 사용
+## fail2ban 사용
 
 Brute force Attack을 막기 위해 일정 횟수용 이상 접근을 시도한 IP 는 [fail2ban](http://www.fail2ban.org/) 을 사용하여 차단할 수 있습니다.
 
@@ -29,7 +28,7 @@ fail2ban은 침입 방지 시스템(IPS; Intrusion prevention system) 으로 */v
 
 다른 솔루션과 차이점은 iptables 같은 커널 레벨의 방화벽을 사용하여 로우 레벨에서 차단하는 점이며 ssh외에 http 나 기타 프로토콜에도 사용할 수 있습니다.
 
-### 강화된 인증 사용
+## 강화된 인증 사용
 
 id와 비밀번호같은 **지식 기반의 인증**은 인증 정보가 유출되면 무력화되므로 사용자가 인증 요소를 소유하고 있어야 하는 **소유 기반의 인증**(공개키, OTP, 보안 카드등)을 사용하는 것이 좋습니다.
 
@@ -41,7 +40,7 @@ PasswordAuthentication no
 
 **암호 인증을 중지하기전에 공개키나 2단계 인증을 설정**해 두어야 합니다.
 
-#### 공개키 인증
+### 공개키 인증
 
 공개키 방식의 인증은 키 쌍을 보유하고 있어야 하므로 암호 방식보다 안전합니다.
 */etc/ssh/sshd_config* 에 다음과 같이 설정되어 있으면 공개키 인증이 가능합니다.(기본 설정)
@@ -68,7 +67,7 @@ myloginid 는 로그인하려는 id 이고 myhost.com은 로그인하려는 서�
 from="192.168.10.2" ssh-rsa AAAAB3NzaC1yc2EA...AQWqz myemail@myhost.com
 ``` 
 
-#### 2단계 인증
+### 2단계 인증
 
 2단계 인증(2 factor authentication)을 사용하면 OTP(One Time Password)같이 추가 인증 수단을 통해 ssh 로 로그인할 수 있으므로 더욱 안전합니다.
 
@@ -76,7 +75,7 @@ from="192.168.10.2" ssh-rsa AAAAB3NzaC1yc2EA...AQWqz myemail@myhost.com
 
 더 자세한 내용은 [google authenticator 를 사용하여 Linux ssh 에 OTP 적용하기](https://www.lesstif.com/pages/viewpage.action?pageId=24444948) 을 참고하세요.
 
-### 베스천 호스트 사용
+## 베스천 호스트 사용
 
 Bastion 호스트는 보호된 네트워크에서 유일하게 외부에 노출되는 내외부 네트워크의 연결 호스트를 의미합니다.
 
@@ -87,7 +86,7 @@ Bastion 호스트는 보호된 네트워크에서 유일하게 외부에 노출�
 특히 AWS 등의 크라우드를 사용하는 경우 베스천 호스트를 통해 private network 에 위치한 서버에 연결하는 것을 권장합니다.
 
 
-### 참고 자료
+## 참고 자료
 * [fail2ban](http://www.fail2ban.org/wiki/index.php/Main_Page)
 * [Hardening ssh Servers](https://feeding.cloud.geek.nz/posts/hardening-ssh-servers/)
 * [AWS Security: Bastion Host, NAT instances and VPC Peering](http://cloudacademy.com/blog/aws-bastion-host-nat-instances-vpc-peering-security/)

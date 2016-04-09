@@ -1,4 +1,4 @@
-## 목차
+# Web Application Server
 
 WAS(Web Application Server) 보안 고려 사항
 
