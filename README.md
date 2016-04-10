@@ -2,8 +2,7 @@
 
 인터넷으로 서비스를 제공하기 위해 챙겨야 할 실용적인 보안 가이드.
 
-
-변환된 문서는 **[gitbook](https://lesstif.gitbooks.io/web-service-hardening/content/)** 에서 읽으실 수 있습니다.
+[**github**](https://github.com/lesstif/web-service-hardening)에 공개되어 있으며 EBook은 **[gitbook](https://lesstif.gitbooks.io/web-service-hardening/content/)** 에서 읽으실 수 있습니다.
 
 
 ## 목적
@@ -22,8 +21,8 @@
 개발자와 운영자, 아키텍트등 서비스를 개발하고 운영하는 기술자들을 대상으로 합니다.
 
 
-## Disclaimer
-이 문서는 참고하기 위한 자료일뿐이며 여기에 있는 내용을 따라 했다고 하여 보안이 보장되지 않으며 잘못된 결과에 대해서는 저자는 아무 책임이 없습니다.
+## 면책 조항
+이 문서는 보안을 점검하기 위한 체크 리스트 목적으로 만들어진 자료며 여기에 있는 내용을 모두 적용 했다고 완벽한 보안이 보장되지 않으며 잘못된 결과에 대해서는 저자는 아무 책임이 없습니다.
 
 ## 제안과 기여
 

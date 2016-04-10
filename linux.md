@@ -23,19 +23,57 @@ FTP나 Samba, Bind 같이 사용하지 않는 서버 프로세스를 구동하�
 
 * [CentOS minimal 설치후 추가 패키지 설치](https://www.lesstif.com/pages/viewpage.action?pageId=6979710)
 
+## 패키지 매니저 사용
+
+패키지를 설치할 때 source 를 다운 받아서 컴파일 해서 설치하는 것은 리눅스의 빌드 환경을 이해할 수 있고 최신 버전의 패키지를 사용할 수 있다는 장점이 있지만 버그나 보안 패치를 적용하기 어렵고 특히 서버의 대수가 늘어나면 많은 시간이 소요되는 단점이 있습니다.
+
+새로운 패키지가 필요하거나 높은 버전의 패키지가 필요하다면 외부 저장소에서 먼저 찾아보는 것을 권장합니다.
+
+저장소를 찾을 때는 제조사에서 직접 제공하는 저장소가 있는지 확인한 후에 없을 경우 3rd party 저장소를 찾는 것을 권장합니다.
+
+예로 nginx 나  [MySQL](https://dev.mysql.com/downloads/mysql/) 은 RHEL/CentOS 와 Ubuntu용 저장소를 제공합니다.
+
+RHEL/CentOS 는 다음 저장소가 유명합니다.
+
+* [ELEL - Extra Packages for Enterprise Linux](http://fedoraproject.org/wiki/EPEL)
+* [REMI](http://rpms.remirepo.net/)
+* [Web Tatic](http://www.webtatic.com/)
+
+Ubuntu는 [PPA - Personal Package Archives](https://launchpad.net/ubuntu/+ppas) 에서 패키지를 설치하면 됩니다. 
+
+
+#### 같이 보기
+* [RHEL에 EPEL 과 Remi/WebTatic Repository 설치하기](https://www.lesstif.com/pages/viewpage.action?pageId=6979743)
+* [nginx 패키지로 설치](https://www.lesstif.com/pages/viewpage.action?pageId=25100304#RHEL/CentOS에nginx설치-NginxRepo에서설치(추천))
 
 ## 미사용 패키지 삭제
 
 이미 설치해서 사용중인 시스템이라면 사용하지 않는 패키지를 삭제하는 것도 좋습니다.
 
-CentOS 에서는 다음 명령어로 현재 설치된 패키지의 목록을 확인할 수 있습니다.
+다음 명령어로 현재 설치된 패키지의 목록을 확인할 수 있습니다.
+
+**RHEL**
+
 ```sh
 yum list installed
 ```
 
-특히 운영계에서는 보안을 위해서는 컴파일러등의 개발 도구를 삭제하는 것이 좋습니다.
+**Ubuntu**
+
+```sh
+apt --installed list
+```
+
+특히 운영 시스템은 보안을 위해서 컴파일러등의 개발 도구를 삭제하는 것이 좋습니다.
+
+**RHEL**
 ```sh
 yum groupremove "Development tools"
+```
+
+** Ubuntu**
+```bash
+sudo apt-get purge gcc g++ gdb
 ```
 
 
@@ -65,7 +103,7 @@ yum groupremove "X Window System"
 
 CentOS 6 에서는 chkconfig 명령으로 서비스를 제어할 수 있습니다.
 
-```sh
+```bash
 # chkconfig --list
  
 auditd          0:off   1:off   2:on    3:on    4:on    5:on    6:off
@@ -79,13 +117,14 @@ exim            0:off   1:off   2:on    3:on    4:on    5:on    6:off
 *0:off   1:off   2:on    3:on    4:on    5:on    6:off* 의 의미는 run level 이 0, 1 일때는 구동되지 않고 2,3,4,5 일때는 구동된다는 의미입니다.
 
 자동 시작을 끄려면 *chkconfig* 명령어 뒤에 서비스 명을 입력하고 off 옵션을 주면 됩니다.
+
 ```sh
 chkconfig mysqld off
 ```
 
 CentOS 7 은 systemd 관리 명령어인 systemctl 를 사용하여 서비스 목록을 확인할 수 있습니다.
 
-```sh
+```bash
 # systemctl list-unit-files
 
 UNIT FILE                                 STATE   
@@ -112,13 +151,13 @@ auditd.service                            enabled
 
 다음 명령어는 mariadb 서비스의 자동 실행을 중지합니다.
 
-```sh
+```bash
 systemctl enable mariadb
 ```
 
 특정 서비스의 자동 실행 여부는 *systemctl is-enabled 서비스명* 을 사용하면 되며 다음 명령어는 nginx 웹 서버의 자동 구동 여부를 출력합니다.
 
-```sh
+```bash
 > systemctl is-enabled nginx
 
 disabled
@@ -126,7 +165,7 @@ disabled
 
 우분투는 *sysv-rc-conf* 명령어로 프로세스를 확인할 수 있습니다
 
-```sh
+```bash
 $ sudo sysv-rc-conf --list             
 apparmor     S:on
 beanstalkd   0:off      1:off   2:on    3:on    4:on    5:on    6:off
@@ -139,15 +178,17 @@ cryptdisks-e 0:on       6:on    S:on
 
 ## 시스템을 최신 상태로 유지
 
-운영중인 시스템은 패키지 관리자를 사용하여 시스템을 상시 업데이트하여 최신 상태로 유지해야 제로 데이 공격(zero-day attack) 등에 희생되지 않도록 해야 합니다.
+패키지 관리자를 사용하여 시스템을 상시 업데이트하여 최신 상태로 유지해야 보안 취약점을 통한 공격에 대응할 수 있습니다.
 
 RHEL은 yum 으로 시스템을 최신 상태로 유지할 수 있습니다. 
-```sh
+
+```bash
 yum update
 ```
 
 우분투는 아래 명령으로 패키지를 업데이트 할 수 있습니다.
-```sh
+
+```bash
 apt-get update
 apt-get upgrade
 ```
