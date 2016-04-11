@@ -1,11 +1,5 @@
 # 리눅스 설치와 패키지 관리 
-
-* [패키지 최소 설치](#패키지-최소-설치)
-* [미사용 패키지 삭제](#미사용-패키지-삭제)
-* [X-Windows 삭제](#X-Windows-삭제)
-* [구동 프로세스 최소화](#구동-프로세스-최소화)
-* [시스템을 최신 상태로 유지](#시스템을-최신-상태로-유지)
-
+<!-- toc -->
 
 ## 패키지 최소 설치
 
@@ -19,7 +13,7 @@ FTP나 Samba, Bind 같이 사용하지 않는 서버 프로세스를 구동하�
 
 ![CentOS 최소 설치](https://cloud.githubusercontent.com/assets/404534/12508730/fe394fa8-c140-11e5-914c-ffc30fa64078.png)
 
-### 같이 보기
+**같이 보기**
 
 * [CentOS minimal 설치후 추가 패키지 설치](https://www.lesstif.com/pages/viewpage.action?pageId=6979710)
 
@@ -42,7 +36,8 @@ RHEL/CentOS 는 다음 저장소가 유명합니다.
 Ubuntu는 [PPA - Personal Package Archives](https://launchpad.net/ubuntu/+ppas) 에서 패키지를 설치하면 됩니다. 
 
 
-#### 같이 보기
+**같이 보기**
+
 * [RHEL에 EPEL 과 Remi/WebTatic Repository 설치하기](https://www.lesstif.com/pages/viewpage.action?pageId=6979743)
 * [nginx 패키지로 설치](https://www.lesstif.com/pages/viewpage.action?pageId=25100304#RHEL/CentOS에nginx설치-NginxRepo에서설치(추천))
 
@@ -92,7 +87,7 @@ X-Windows 가 설치되어 있다면 먼저 *telinit 3* 명령어로 런 레벨�
 yum groupremove "X Window System"
 ```
  
-### 같이 보기
+**같이 보기**
 
 * [yum 주요 사용법 및 고급 사용법 (history 관리, plugin 사용, 트랜잭션 undo 등)](https://www.lesstif.com/pages/viewpage.action?pageId=6979667)
 
