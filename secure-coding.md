@@ -22,9 +22,9 @@ $sql="SELECT * FROM users WHERE userid='$userid' and password='$password'";
 String sql = "SELECT * FROM users WHERE userid='" + request.getParameter("id") + "'" + " and password='" + request.getParameter("password") + "'";;
 ```
 
-위와 같은 코드는 클라이언트가 보낸 문자열을 검증없이 사용하므로 공격자가 password 에 aaa' or '1' = '1 라는 문자열을 넣으면 or 뒤의 문장이 참이므로 id와 암호를 몰라도 관리자로 로그인이 가능해져 버립니다.
+위와 같은 코드는 클라이언트가 보낸 문자열을 검증없이 사용하므로 공격자가 password 에 **' or '1' = '1** 라는 문자열을 넣으면 or 뒤의 문장이 참이므로 id와 암호를 몰라도 관리자로 로그인이 가능해져 버립니다.
 
-![SQL Injection](https://www.lesstif.com/download/attachments/24445746/image2015-6-6%2016%3A47%3A40.png?version=1&modificationDate=1433576063000&api=v2 "SQL Injection")
+![SQL Injection](https://www.lesstif.com/download/attachments/24445746/image2016-4-10%2011%3A47%3A0.png?version=1&modificationDate=1460255964000&api=v2 "SQL Injection")
 
 
 이 공격을 막으려면 위와 같이 동적 쿼리를 사용하지 말고 준비된 문장(Prepared Statement)와 매개변수 바인딩(Bound Parameter) 을 사용해야 합니다.
