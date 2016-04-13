@@ -2,39 +2,30 @@
 
 <!-- toc -->
 
-
 **한 줄 요약**
 
 >**Tip** 
 SELinux 는 여러분을 불편하게 하지만 여러분의 시스템을 장악해서 악의적인 용도로 사용하려는 크래커들에게는 큰 좌절을 맛보게 하니 꼭 사용하세요.
 
-## SELiux 란
 
-SELinux 는 레드햇 계열의 배포판의 사용자들이 가장 증오하는 기능일 겁니다.
-검색 엔진에서 SElinux 를 치면 끄기가 자동 완성되니까요.
+SELinux 는 RHEL/CentOS 사용자들이 가장 증오하는 기능일 겁니다.
+설치후 제일 먼저 하는 일이 SELinux 를 끄는 것이고 검색 엔진에서도 SElinux 를 치면 끄기가 자동 완성되니까요.
+
+심지어 "리눅스에서 서비스를 운영하려면 SELinux를 꺼야 한다" 는 잘못된 지식이 널리 퍼져있습니다.
 
 이것은 우리나라만이 아니라 외국도 마찬가지이며 SELinux 의 장점과 중단했을 때의  문제점을 널리 알리기 위한 [stop disabling SELinux](http://stopdisablingselinux.com/) 사이트도 생겨났습니다.
 
-그러면 SELinux는 대체 무엇이며 왜 이리 사용자들의 증오를 받는 것일까요.
+이 글은 SELinux 에 대한 잘못된 지식을 바로 잡고 사용을 장려하기 위해서 작성했습니다.
 
-SELinux는 미국의 국가 안보국(NSA; National Security Agency; 또는 농담으로 No Such Agency 라고도 합니다.)에서 개발한 플라스크(Flask)라는 보안 커널을 리눅스에 이식한 커널 레벨의 보안 모듈입니다.
-
-NSA는 다양한 운영체제에 강제 접근 통제를 구현했고 이를 리눅스 커널에도 포팅해서 결과물을 리눅스 커뮤니티에 기증해서 2.6 버전의 커널에 공식 포함되었습니다. [^1]
-
-RHEL 기반의 배포판에는 4 버전부터 공식적으로 포함되었으며 다양한 제품들이 현재는 SELinux를 지원합니다.
-
-> **Note** Android의 보안 문제가 대두되자 최신 버전부터는 SELinux 를 포팅한 SE Android 가 기본 탑재되어 있습니다.
-
-
-그러면 SELinux 를 이해하기 위해 필수적인 지식인 강제 접근 통제와 임의 접근 통제에 대해서 알아 봅시다.
+그러면 먼저 SELinux 를 이해하기 위해 필수적인 지식인 접근 통제에 대해서 알아 봅시다.
 
 ## 접근 통제
 
-운영체제에서 접근 통제(Access Control)은 디렉터니라 파일, 네트워크 소켓 같은 시스템 자원을 적절한 권한을 가진 사용자나 그룹이 접근하고 사용할 수 있게 통제하는 것을 의미합니다.
+운영체제에서 접근 통제(Access Control)은 디렉터리나 파일, 네트워크 소켓 같은 시스템 자원을 적절한 권한을 가진 사용자나 그룹이 접근하고 사용할 수 있게 통제하는 것을 의미합니다.
 
-접근 통제애서는 시스템 자원을 객체(Object)라고 하며 자원에 접근하는 사용자나 프로세스는 주체(Subject)라고 합니다.
+접근 통제에서는 시스템 자원을 객체(Object)라고 하며 자원에 접근하는 사용자나 프로세스는 주체(Subject)라고 합니다.
 
-즉 /etc/passwd 파일은 객체이고 이 파일에 접근해서 암호를 수정할 수 있게 해주는 passwd 라는 명령어는 주체입니다.
+즉 */etc/passwd* 파일은 객체이고 이 파일에 접근해서 암호를 변경하는 *passwd* 라는 명령어는 주체입니다.
 
 ### 임의 접근 통제
 
@@ -46,15 +37,17 @@ RHEL 기반의 배포판에는 4 버전부터 공식적으로 포함되었으며
 
 임의적 접근 통제는 사용자가 임의로 접근 권한을 지정하므로 사용자의 권한을 탈취당하면 사용자가 소유하고 있는 모든 객체의 접근 권한을 가질 수 있게 되는 치명적인 문제가 있습니다.
 
-임의적 접근 통제 방식의 보안 취약점에 대해 설명하기 위해 유닉스의 두 가지 주요 보안상 취약점에 대해서 알아 봅시다.
+임의적 접근 통제 방식의 보안 취약점에 대해 알아보기 위해 유닉스의 구조적인 2가지 보안 취약점에 대해서 알아 봅시다.
 
 #### setuid 문제
 
-사용자들은 자신의 암호를 passwd 명령어를 실행하여 변경할 수 있는데 사용자의 암호는 /etc/shadow 에 저장되며 이 파일은 루트만 접근 가능하지만 일반 사용자도 passwd 명령어로 자신의 암호를 변경할 수 있습니다.
+사용자들의 암호는 /etc/shadow 에 저장되어 있으며 루트만 읽고 쓸수 있습니다.
 
-또 상대방 호스트가 동작하는지 확인하기 위해 ping 명령어를 입력할 경우 ping 은 ICMP(Internet Control Message Protocol) 패킷을 사용하므로 루트 권한이 필요하지만 일반 사용자도 ping 명령어를 사용하여 상대 호스트의 이상 여부를 확인할 수 있습니다.
+하지만 사용자들은 *passwd* 명령어를 실행하여 자신의 암호를 변경할 수 있고 이때 */etc/shadow* 파일이 수정됩니다.
 
-이는 passwd 나 ping 같이 실행시 루트 권한이 필요한 프로그램에는 setuid 비트라는 것을 설정하여 실행한 사용자가 누구든지 setuid 비트가 설정된 프로그램은 루트로 동작하도록 설계하였으므로 가능한 일입니다.
+상대방 호스트가 동작하는지 확인하기 위해 사용하는 *ping* 은 ICMP(Internet Control Message Protocol) 패킷을 사용하므로 루트 권한이 필요하지만 일반 사용자도 ping 명령어를 사용하여 상대 호스트의 이상 여부를 확인할 수 있습니다.
+
+이는 passwd 나 ping 같이 실행시 루트 권한이 필요한 프로그램에는 setuid 비트라는 것을 설정하여 실행한 사용자가 누구든지 루트 권한으로 동작하도록 설계하였으므로 가능한 일입니다.
  
  ```
  ls -l /bin/ping/ /usr/bin/passwd
@@ -95,14 +88,28 @@ MAC 정책에서는 루트로 구동한 http 서버라도 접근 가능한 파�
 
 단점으로는 구현이 복잡하고 어려우며 모든 주체와 객체에 대해서 보안 등급과 허용 등급을 부여하여야 하므로 설정이 복잡하고 시스템 관리자가 접근 통제 모델에 대해 잘 이해하고 있어야 합니다.
 
-### SELinux 의 장점
+## SELiux 란
 
-SELinux 는 NSA 가 강제 접근 통제를 Linux 커널에 구현한 커널 모듈로 다음과 같은 장점이 있습니다.
+SELinux는 미국 국가 안보국(NSA; National Security Agency; 또는 농담으로 No Such Agency 라고도 합니다.)에서 개발한 플라스크(Flask)라는 MAC 기반의 보안 커널을 리눅스에 이식한 커널 레벨의 보안 모듈입니다.
+
+NSA는 구현한 소스를 리눅스 커뮤니티에 기증해서 2.6 버전부터 커널에 공식 포함되었습니다. [^1]
+
+RHEL 기반의 배포판에는 4 버전부터 공식적으로 포함되었으며 다양한 제품들이 SELinux를 지원하고 있으므로 기본적인 SELinux 개념만 알고 있다면 사용하는게 크게 어렵지는 않습니다.
+
+> **Note** Android도 보안 문제가 대두되자 최신 버전부터는 SELinux 를 포팅한 SE Android 가 기본 탑재되어 있습니다.
+> 
+> 
+
+### 장점
+
+SELinux 를 사용할 경우 다음과 같은 장점이 있습니다.
 
 
 1. **사전 정의된 접근 통제 정책 탑재**
 
-  사용자, 역할, 타입, 레벨등의 다양한 정보를 조합하여 어떤 프로세스가 어떤 파일, 디렉터리, 포트등에 접근 가능한지에 대해 잘 정의된 접근 통제가 제공되므로 강제 접근 통제 적용을 위해 시스템 관리자가 할 일이 대폭 줄었습니다.
+SELinux를 사용하면 사용자, 역할, 타입, 레벨등의 다양한 정보를 조합하여 어떤 프로세스가 어떤 파일, 디렉터리, 포트등에 접근 가능한지에 대해 사전에 잘 정의된 접근 통제 정책이 제공됩니다.
+
+그래서 MAC 적용을 위해 시스템 관리자가 할 일이 대폭 줄었고 애플리케이션의 변경없이 setuid와 1024 이하 포트를 사용하는 데몬을 안전하게 사용할 수 있습니다.
 
 1. **"Deny All, Permit Some" 정책으로 잘못된 설정 최소화**
 
@@ -114,11 +121,9 @@ SELinux 는 NSA 가 강제 접근 통제를 Linux 커널에 구현한 커널 모
 
   예로 아파치 httpd 서버의 보안 취약점을 통해 권한을 획득했어도 아파치같은 서버 데몬은 낮은 등급의 권한을 부여 받으므로 공격자는 일반 사용자의 홈 디렉터리를 읽을 수 없고 /tmp 임시 디렉터리에 파일을 쓸 수가 없습니다.
 
-  또 다른 예로 파일 공유 서비스인 삼바와 mysql DBMS 가 같이 구동되는 서버에서 삼바를 공격하여 권한을 탈취한 후에 삼바를 통해 mysql 데이타베이스 파일을 가져가려고 시도할 수 있습니다. SELinux 하에서는 삼바와 mysql 은 별도의 도메인으로 격리되어 동작하므로 공격자가 삼바 프로세스의 권한을 획득했더라도 mysql 의 데이타 파일에는 접근할 수 없습니다.
-
 1. **잘못된 설정과 버그로부터 시스템 보호**
 
-  데이타와 기밀성과 무결성을 적용할 수 있으며 신뢰할 수 없는 입력에서 프로세스를 보호할 수 있습니다. 
+ 잘못된 설정이나 신뢰할 수 없는 입력을 악용한 공격에서 프로세스를 보호할 수 있습니다. 
 
   예로 버퍼의 입력 길이등을 제대로 체크하지 않아서 발생하는 버퍼 오버 플로 공격(buffer overflow attack)의 경우 SELinux 는 어플리케이션이 메모리에 있는 코드를 실행할 수 없게 통제하므로 데몬 프로그램에 버퍼 오버 플로 버그가 있어도 쉘을 얻을 수가 없습니다.
 
@@ -222,23 +227,106 @@ httpd 프로세스는 httpd_t 라는 컨텍스트를 갖고 실행되는 것을 
 
 TE(Type Enforcement)는 SELinux 의 기본적인 접근 통제를 처리하는 매커니즘으로 주체가 객체에 접근하려고 할 때 주체에 부여된 보안 컨텍스트가 객체에 접근할 권한이 있는지 판단하는 역할을 수행합니다. 
 
-위의 예에서 아파치 웹 서버(httpd)가 /var/www/html/ 에 접근하려고 할 때 아파치 웹 서버는 주체가 되며 /var/www/html/ 는 객체가 되며 아파치 웹 서버에 부여된 보안 컨텍스트는 httpd_t 가 됩니다.
+위의 예에서 아파치 웹 서버(httpd)가 /var/www/html/ 에 접근하려고 할 때 아파치 웹 서버는 주체가 되며 /var/www/html/ 는 객체가 되며 아파치 웹 서버에 부여된 보안 컨텍스트는 *httpd\_t* 가 됩니다.
 
-객체에 부여된 보안 컨텍스트는 위에서 *ls -Z* 로 보았듯이 httpd_sys_content_t 이며 httpd_t 는 httpd_sys_content_t 보안 컨텍스트가 부여된 객체에 접근이 허용되므로 아파치 웹 서버는 /var/www/html/ 디렉터리에 있는 컨텐츠를 읽을 수 있습니다.
+객체에 부여된 보안 컨텍스트는 위에서 *ls -Z* 로 보았듯이 *httpd\_sys\_content\_t* 이며 httpd_t 는 httpd_sys_content_t 보안 컨텍스트가 부여된 객체에 접근이 허용되므로 아파치 웹 서버는 /var/www/html/ 디렉터리에 있는 컨텐츠를 읽을 수 있습니다.
 
 SELinux 에 대한 오해는 바로 위의 Security Context 와 Type Enforcement 때문에 일어납니다.
 
-즉 사전에 탑재된 httpd 에 대한 정책에 의하면 httpd_sys_content_t 가 붙은 컨텐츠만 읽을 수 있고 /var/www 아래에 파일을 생성하면 자동으로 httpd_sys_content_t 가 붙게 됩니다.
+즉 사전에 탑재된 httpd 에 대한 정책에 의하면 *httpd\_sys\_content\_t* 가 붙은 컨텐츠만 읽을 수 있고 /var/www 아래에 파일을 생성하면 자동으로 *httpd\_sys\_content\_t* 가 붙게 됩니다.
 
 그러므로 /data/myweb-app 폴더를 만들고 이 안에 웹 서비스할 파일을 넣고 httpd 에 DocumentRoot 를 설정해도 SELinux 는 미리 허용된 경로가 아니므로 차단시켜서 *permission denied* 에러만 만나게 됩니다.
 
-마찬가지로 httpd 가 접근할 수 있게 사전에 허용된 포트는 80,443, 8000, 9000, 8009 입니다.
+마찬가지로 httpd 가 접근할 수 있게 사전에 허용된 context 는 http_port_t 이며 *semanage* 명령어로 해당 포트 목록을 조회할 수 있습니다.
 
-이 정책으로 인해 공격자가 "제로 데이 취약점"을 사용하여 httpd 의 권한을 획득해도 다른 서버로 ssh 연결을 할 수 없습니다. 22번 포트는 허용되지 않았기 때문이며 이로 인해 2차 피해를 최소화할 수 있습니다.
+```sh
+semanage port -l|grep http_port_t
+```
 
-단 위 정책으로 인해 웹 서버와 php-fpm 을 연동하는데 포트를 기본 fpm 포트(9000)가 아닌 9001을 사용했거나 톰캣과 연동하는데 8009, 8000이  아닌 포트를 사용햇다면 SELinux 가 차단해서 서비스가 되지 않습니다.
+기본적으로 허용된 포트는 아래와 같이 80, 443, 9000, 8000 등입니다.
+```
+http_port_t                    tcp      9004, 8000, 8080, 10080, 8001, 80, 81, 443, 488, 8008, 8009, 8443, 9000 
+```
 
-이런 문제를 해결하려면 원래 허용된 포트를 사용하거나 정책을 수정하는 [semanage](https://www.lesstif.com/pages/viewpage.action?pageId=18219476#SELinux사용하기-semange패키지) 명령어로 변경된 정보를 SELinux 에게 알려주면 됩니다.
+Type Enforcement로 인해 공격자가 "제로 데이 취약점"을 사용하여 httpd 의 권한을 획득해도 다른 서버로 ssh 연결을 할 수 없습니다. 22번 포트는 허용되지 않았기 때문이며 이로 인해 2차 피해를 최소화할 수 있습니다.
+
+ 또 다른 예로 파일 공유 서비스인 삼바와 mysql DBMS 가 같이 구동되는 서버에서 삼바를 공격하여 권한을 탈취했다고 가정해 봅시다.
+ 
+ 이제 공격자는 삼바를 통해 mysql 데이타베이스 파일을 가져가려고 시도할 수 있습니다.
+ 
+ ```sh
+ ls -lZ /var/lib/mysql/
+ 
+-rw-rw----. mysql mysql system_u:object_r:mysqld_db_t:s0 ib_logfile0
+-rw-rw----. mysql mysql system_u:object_r:mysqld_db_t:s0 ib_logfile1
+-rw-rw----. mysql mysql system_u:object_r:mysqld_db_t:s0 ibdata1
+ ```
+ 
+  SELinux 하에서는 삼바와 mysql 은 별도의 도메인으로 격리되어 동작하며 mysql 데이타는 *mysqld_db_t* context 가 설정되어 있고 삼바는 해당 객체에 접근할 수 없습니다
+
+하지만 위 정책으로 인해 웹 서버와 php-fpm 을 연동하는데 포트를 기본 fpm 포트(9000)가 아닌 9001을 사용했거나 톰캣과 연동하는데 8009, 8000이  아닌 포트를 사용했다면 SELinux 가 차단해서 서비스가 되지 않습니다.
+
+### context 정보 얻기
+
+SELinux의 문제를 해결하기 위해서는 context 정보를 확인하고 이를 맞춰주는게 매우 중요합니다.
+이 작업을 용이하게 하기 위해 context 정보를 확인할 수 있는 유틸리티 사용법을 알아 봅시다.
+
+먼저 다음 패키지를 설치합니다. 
+
+```
+yum install setools-console
+```
+
+#### seinfo
+
+seinfo 는 policy를 조회하고 출력해주는 유틸리티입니다.
+
+다음 명령어로 현재 정책을 요약해서 볼 수 있습니다.
+
+```
+seinfo
+```
+
+-a 옵션으로 조회할 속성을 지정할 수 있으며 다음 예제는 전체 도메인을 출력합니다. 
+
+```
+seinfo -adomain -x
+```
+
+#### sesearch
+
+*sesearch* 는 정책에서 지정한 룰을 조회할 수 있는 유틸리티입니다.
+
+다음 명령어는 httpd_sys_content_t 객체에 접근할 수 있는 롤 그룹을 표시합니다.
+
+```
+sesearch --role_allow -t httpd_sys_content_t 
+```
+
+--allow 옵션을 사용하면 특정 context에 허용된 액션을 알 수 있습니다.
+
+```
+sesearch --allow -s httpd_t
+```
+
+첫 번째 라인의 출력의 의미는 다음과 같습니다. 
+ httpd_t 는 httpd_sys_content_t 가 설정된 파일에 대해 *ioctl, read, getattr, lock, open* system call 이 가능합니다. 
+ 즉 httpd_t 는 httpd_sys_content_t 컨텐츠를 읽을 수가 있습니다. 
+ 
+```
+ allow httpd_t httpd_sys_content_t : file { ioctl read getattr lock open } ; 
+   allow httpd_t zoneminder_log_t : file { ioctl getattr lock append open } ; 
+   allow httpd_t httpd_sys_content_t : dir { ioctl read getattr lock search open } ; 
+   allow httpd_t zoneminder_log_t : dir { getattr search open } ; 
+```
+
+SELinux 는 위와 같이 잘 정의된 사전 정책을 탑재하고 있으므로 꼭 사용하는 것이 좋습니다.
+
+### semanage
+
+SELinux 에서 서비스가 안 도는 것은 보안 정책에 어긋나서이고 위에서 설명한 *seinfo, sesearch* 로 정책을 조회한 후에 조치해야 합니다.
+
+예로 mysql을 3307 로 구동했다면 허용된 포트가 아니므로 web 서버가 mysql에 연결할 수 없으므로 허용된 포트를 사용하거나 정책을 수정하는 [semanage](https://www.lesstif.com/pages/viewpage.action?pageId=18219476#SELinux사용하기-semange패키지) 명령어로 변경된 정보를 SELinux 에게 알려주면 됩니다.
 
 
 ## 같이 읽기

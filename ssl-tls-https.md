@@ -44,6 +44,45 @@ SSL/TLS 세션은 다음 핸드셰이크 과정을 거친 후에 구축됩니다
 
 위 과정이 끝나면 SSL 세션이 구축되며 실제 암호화 통신을 시작할 수 있습니다.
 
+**openssl 로 TLS 정보 엿보기**
+
+다음 openssl 명령어를 사용하면 현재 tls 의 자세한 정보를 볼 수 있습니다.
+
+```bash
+openssl s_client -connect google.com:443 
+```
+
+출력 결과를 보면 프로토콜 버전, 암호 알고리즘, 세션 정보등 상세한 정보를 확인할 수 있습니다.
+```
+subject=/C=US/ST=California/L=Mountain View/O=Google Inc/CN=*.google.com
+issuer=/C=US/O=Google Inc/CN=Google Internet Authority G2
+---
+No client certificate CA names sent
+Peer signing digest: SHA256
+Server Temp Key: ECDH, P-256, 256 bits
+---
+SSL handshake has read 4548 bytes and written 443 bytes
+---
+New, TLSv1/SSLv3, Cipher is ECDHE-RSA-AES128-GCM-SHA256
+Server public key is 2048 bit
+Secure Renegotiation IS supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+SSL-Session:
+    Protocol  : TLSv1.2
+    Cipher    : ECDHE-RSA-AES128-GCM-SHA256
+    Session-ID: 43AF49BE4F199E128046F88C1A591732E45AB2B87898F4D80FD232D1F52B46E2
+    Session-ID-ctx: 
+    Master-Key: 4A20442D07BB216DE4A61E7BD78350B5D1B92AEEDECE5E07229B267BA555D68543BF1EAC08D19F47E98AB3DB270D5438
+    Key-Arg   : None
+    PSK identity: None
+    PSK identity hint: None
+    SRP username: None
+    TLS session ticket lifetime hint: 100800 (seconds)
+    TLS session ticket:
+```
+
 
 
 ## 인증서 발급 받기
@@ -56,7 +95,8 @@ HTTPS 용 인증서를 발급받으려면 Verisign 이나 thawte, Comodo 같은 
 
 AWS 를 사용한다면 [AWS Certificate Manager](https://aws.amazon.com/ko/certificate-manager/) 를 사용하여 무료로 인증서를 발급받을 수 있습니다.
 
-* 현재 US East (Northern Virginia)리전에서만 사용 가능합니다.
+>**Info** 
+현재 US East (Northern Virginia)리전에서만 사용 가능합니다.
 
 
 ## nginx 웹 서버 설정하기
@@ -165,11 +205,9 @@ SSLCipherSuite HIGH:!aNULL:!MD5
 
 ## 참고 자료
 
+* [The First Few Milliseconds of an HTTPS Connection](http://www.moserware.com/2009/06/first-few-milliseconds-of-https.html)
 * [mod_ssl 로 보안 강화하기](https://www.lesstif.com/pages/viewpage.action?pageId=18219486)
 * [nginx에 HTTPS/SSL 적용하기](https://www.lesstif.com/pages/viewpage.action?pageId=27984443)
-
-
-
 
 
 [^1]: ARP 스푸핑을 통한 피해 및 모범 대응 사례- http://blog.bandisoft.com/132
