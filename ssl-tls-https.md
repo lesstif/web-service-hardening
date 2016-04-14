@@ -200,11 +200,44 @@ ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
 **apache httpd** 는 아래와 같이 설정하면 강력한 알고리즘을 사용하게 됩니다.
 
 ```
-SSLCipherSuite HIGH:!aNULL:!MD5
+SSLHonorCipherOrder On
+SSLInsecureRenegotiation off
+SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
 ```
+
+### HSTS(HTTP Strict Transport Security)
+
+사이트 전체에 HTTPS 를 적용할 경우 HTTP 로 들어오는 고객은 301 Redirect 를 보내서 HTTPS 로 전환하도록 설정하는 경우가 많습니다.
+
+HSTS 는 301 redirect 를 하지 않고도 브라우저가 HTTPS 를 사용하도록 강제할 수 있습니다.
+
+다음은 apache httpd 의 HSTS 설정으로 의미는 다음과 같습니다.
+
+ - **max-age:63072000** : 브라우저에게 지정된 시간(단위 초- 여기서는 2년)만큼 HTTP 를 사용하지 말라는 의미입니다. 개발 단계에서는 값을 아주 작게 설정하는 게 좋습니다.
+ - **includeSubdomains** : 서브 도메인도 적용합니다.
+ - **preload** : 브라우저가 해당 사이트를 HSTS 적용 preload list 에 추가합니다.
+
+```
+Header always set Strict-Transport-Security "max-age=63072000; includeSubdomains; preload"
+Header always set X-Frame-Options DENY
+Header always set X-Content-Type-Options nosniff
+```
+
+nginx 는 아래 설정을 추가하면 됩니다.
+
+```
+add_header Strict-Transport-Security "max-age=63072000; includeSubdomains; preload";
+add_header X-Frame-Options DENY;
+add_header X-Content-Type-Options nosniff;
+```
+
+
 
 ## 참고 자료
 
+* [Strong Ciphers for Apache, nginx and Lighttpd](https://cipherli.st/)
+* [HTTP Strict Transport Security - OWASP](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security)
+* [STS(Strict Transport Security) 및 보안 쿠키 설정](https://developers.google.com/web/fundamentals/security/encrypt-in-transit/turn-on-strict-transport-security-and-secure-cookies?hl=ko)
 * [The First Few Milliseconds of an HTTPS Connection](http://www.moserware.com/2009/06/first-few-milliseconds-of-https.html)
 * [mod_ssl 로 보안 강화하기](https://www.lesstif.com/pages/viewpage.action?pageId=18219486)
 * [nginx에 HTTPS/SSL 적용하기](https://www.lesstif.com/pages/viewpage.action?pageId=27984443)

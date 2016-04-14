@@ -67,13 +67,23 @@ http {
 
 ### X Powered By 헤더 제거
 
-apache httpd 의 경우 Header 지시자를 사용하면 브라우저로 전송하기 전에 모든 X-Powered-By 헤더를 삭제할 수 있습니다. (추천 방법)
+*X-Powered-By* 헤더는 서버 사이드에서 사용하는 기술(ASP.NET, PHP, JBoss 등)을 표시하는 비표준 헤더로 공격자에게 유용한 정보를 제공하므로 숨기는게 좋습니다.
+
+
+apache httpd 의 경우 Header 지시자를 사용하면 브라우저로 전송하기 전에 모든 X-Powered-By 헤더를 삭제할 수 있습니다.
 
 ```
 Header unset X-Powered-By
 ```
 
-PHP 는 php.ini 의 다음 항목을 off 로 설정하면 됩니다.
+nginx 는 *fastcgi_hide_header* 모듈을 사용하여 숨길 헤더를 지정하면 됩니다.
+
+```
+http {
+	fastcgi_hide_header X-Powered-By;
+```
+
+PHP 를 사용한다면 php.ini 의 다음 항목을 off 로 설정하면 됩니다.
 
 ```
 expose_php = Off
