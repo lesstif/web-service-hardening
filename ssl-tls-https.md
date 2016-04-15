@@ -217,6 +217,11 @@ HSTS 는 301 redirect 를 하지 않고도 브라우저가 HTTPS 를 사용하�
  - **includeSubdomains** : 서브 도메인도 적용합니다.
  - **preload** : 브라우저가 해당 사이트를 HSTS 적용 preload list 에 추가합니다.
 
+ >**Tip**
+preload 에 추가한 사이트는 max-age 기간동안 자동으로 https 로 연결하므로 크롬의 경우 해제하려면 *chrome://net-internals/#hsts* 를 입력하고 *Delete Domain* 에서 삭제해야 합니다.
+
+![HSTS 해제](https://cloud.githubusercontent.com/assets/404534/14557345/e5c43990-0337-11e6-8cb3-4097d2817270.png "HSTS 해제")
+
 ```
 Header always set Strict-Transport-Security "max-age=63072000; includeSubdomains; preload"
 Header always set X-Frame-Options DENY
@@ -232,10 +237,11 @@ add_header X-Content-Type-Options nosniff;
 ```
 
 
+위에서 설명한 내용과 추가 설정을 웹 서버별로 상세히 정리해서 제공하는 **[Strong Ciphers for Apache, nginx and Lighttpd](https://cipherli.st/)** 사이트를 참고하세요.
+
 
 ## 참고 자료
 
-* [Strong Ciphers for Apache, nginx and Lighttpd](https://cipherli.st/)
 * [HTTP Strict Transport Security - OWASP](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security)
 * [STS(Strict Transport Security) 및 보안 쿠키 설정](https://developers.google.com/web/fundamentals/security/encrypt-in-transit/turn-on-strict-transport-security-and-secure-cookies?hl=ko)
 * [The First Few Milliseconds of an HTTPS Connection](http://www.moserware.com/2009/06/first-few-milliseconds-of-https.html)
