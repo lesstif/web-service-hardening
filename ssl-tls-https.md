@@ -111,7 +111,7 @@ server {
  
  
     ssl                  on;
-    ssl_certificate      /etc/pki/tls/certs/example.com.chained.crt;
+    ssl_certificate      /etc/pki/tls/certs/example.com.crt;
     ssl_certificate_key  /etc/pki/tls/private/example.com.key;
     ssl_session_timeout  5m;
     # SSLv2, SSLv3는 보안에 취약하므로 사용하지 마세요
@@ -153,6 +153,35 @@ RHEL/CentOS 의 아파치 웹 서버는 /etc/httpd/conf.d/ssl.conf 에 다음과
 
 ```
 
+## SSL/TLS chain 구성
+
+인증서 발급 기관이 브라우저에 기본 포함되지 않아서 인증서 경로를 찾지 못해서 브라우저가 경로를 내는 경우가 있습니다.
+
+이런 문제를 해결하기 위해 아파치 httpd 에는 [SSLCACertificateFile](http://httpd.apache.org/docs/2.4/mod/mod_ssl.html#sslcacertificatefile) 라는 지시자가 있으며 여기에 PEM 형식으로 인코딩된 SSL 인증서 발급 기관의 인증서 체인 파일을 설정하면 됩니다.
+
+```
+SSLCACertificateFile /etc/pki/tls/certs/ca-bundle.crt
+```
+
+ nginx 는 해당 지시자가 없으므로 다음과 같이 SSL 인증서와 CA 인증서를 하나의 파일로 만들어 주면 됩니다.
+ 
+ ```sh
+cat example.com.crt example-ca.crt example-rootca.crt > /etc/pki/tls/certs/example.com.chained.crt
+ ```
+ 
+ 합쳐진 인증서 파일을 nginx 의 ssl_certificate 에 지정해 주면 SSL chain 을 구성할 수 있습니다.
+ 
+ ```
+ ssl_certificate      /etc/pki/tls/certs/example.com.chained.crt;
+ ```
+ 
+ > **Danger** nginx 는 chain 파일의 첫 번째 인증서를 개인키와 일치한다고 가정하므로 체인의 첫 번째 인증서가 사이트의 SSL 인증서가 아닐 경우 다음과 같이 "*key values mismatch*" 에러가 발생하며 구동이 안 됩니다.
+ 
+    ```
+    SSL_CTX_use_PrivateKey_file(" ... /example.com.key") failed
+       (SSL: error:0B080074:x509 certificate routines:
+       X509_check_private_key:key values mismatch)
+    ``` 
 
 ## SSL/TLS 보안 강화하기
 
@@ -242,6 +271,7 @@ add_header X-Content-Type-Options nosniff;
 
 ## 참고 자료
 
+* [온라인 SSL 사이트 분석 서비스](https://www.ssllabs.com/ssltest/analyze.html)
 * [HTTP Strict Transport Security - OWASP](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security)
 * [STS(Strict Transport Security) 및 보안 쿠키 설정](https://developers.google.com/web/fundamentals/security/encrypt-in-transit/turn-on-strict-transport-security-and-secure-cookies?hl=ko)
 * [The First Few Milliseconds of an HTTPS Connection](http://www.moserware.com/2009/06/first-few-milliseconds-of-https.html)
