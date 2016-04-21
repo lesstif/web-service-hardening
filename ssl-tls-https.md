@@ -1,8 +1,8 @@
-# SSL/TLS/HTTPS 적용
+# SSL-TLS HTTPS 적용
 
 <!-- toc -->
 
-## SSL/TLS/HTTPS 란
+## SSL-TLS 와 HTTPS
 
 TLS(Transport Layer Security)는 인터넷 상에서 통신할 때 주고받는 데이터를 보호하기 위한 표준화된 암호화 프로토콜입니다.
 
@@ -234,7 +234,7 @@ SSLInsecureRenegotiation off
 SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
 ```
 
-### HSTS(HTTP Strict Transport Security)
+## HSTS(HTTP Strict Transport Security)
 
 사이트 전체에 HTTPS 를 적용할 경우 HTTP 로 들어오는 고객은 301 Redirect 를 보내서 HTTPS 로 전환하도록 설정하는 경우가 많습니다.
 
@@ -242,17 +242,13 @@ HSTS 는 301 redirect 를 하지 않고도 브라우저가 HTTPS 를 사용하�
 
 다음은 apache httpd 의 HSTS 설정으로 의미는 다음과 같습니다.
 
- - **max-age:63072000** : 브라우저에게 지정된 시간(단위 초- 여기서는 2년)만큼 HTTP 를 사용하지 말라는 의미입니다. 개발 단계에서는 값을 아주 작게 설정하는 게 좋습니다.
- - **includeSubdomains** : 서브 도메인도 적용합니다.
+ - **max-age:86400** : 브라우저에게 지정된 시간(단위 초- 여기서는 하루)만큼 HTTPS 를 사용하라는 의미입니다. 개발 단계에서는 값을 아주 작게 설정하고 안정화되면 크게 주는게 좋습니다.
+ - **includeSubdomains** : HSTS 를 서브 도메인도 적용합니다.
  - **preload** : 브라우저가 해당 사이트를 HSTS 적용 preload list 에 추가합니다.
 
- >**Tip**
-preload 에 추가한 사이트는 max-age 기간동안 자동으로 https 로 연결하므로 크롬의 경우 해제하려면 *chrome://net-internals/#hsts* 를 입력하고 *Delete Domain* 에서 삭제해야 합니다.
-
-![HSTS 해제](https://cloud.githubusercontent.com/assets/404534/14557345/e5c43990-0337-11e6-8cb3-4097d2817270.png "HSTS 해제")
 
 ```
-Header always set Strict-Transport-Security "max-age=63072000; includeSubdomains; preload"
+Header always set Strict-Transport-Security "max-age=86400; includeSubdomains; preload"
 Header always set X-Frame-Options DENY
 Header always set X-Content-Type-Options nosniff
 ```
@@ -260,18 +256,39 @@ Header always set X-Content-Type-Options nosniff
 nginx 는 아래 설정을 추가하면 됩니다.
 
 ```
-add_header Strict-Transport-Security "max-age=63072000; includeSubdomains; preload";
+add_header Strict-Transport-Security "max-age=86400; includeSubdomains; preload";
 add_header X-Frame-Options DENY;
 add_header X-Content-Type-Options nosniff;
 ```
 
 
-위에서 설명한 내용과 추가 설정을 웹 서버별로 상세히 정리해서 제공하는 **[Strong Ciphers for Apache, nginx and Lighttpd](https://cipherli.st/)** 사이트를 참고하세요.
+### HSTS 설정 해제
+
+preload 에 추가한 사이트는  max-age 기간동안 자동으로 https 로 연결하며 웹 서버의 HSTS 헤더를 삭제해도 사용자의 브라우저에는 설정이 유지됩니다.
+
+여러 가지 이유로 해제가 필요하다면 사용자가 직접 브라우저의 설정을 수정해야 합니다.
+
+
+**Chrome**
+
+ 크롬의 경우 해제하려면 다음 절차를 따르면 됩니다.
+
+1. 주소창에 *chrome://net-internals/#hsts* 를 입력하여 설정에 들어갑니다.
+1. **Delete Domain** 에 삭제할 주소를 입력하고 **Delete** 를 클릭합니다.
+1. **Query Domain** 에 주소를 입력하고 **Query** 를 클릭해서 **Not Found** 가 나오는지 확인합니다.
+
+![크롬 HSTS 해제](https://cloud.githubusercontent.com/assets/404534/14701735/bbf5749a-07e1-11e6-88ec-b172338c2d24.png "크롬 HSTS 해제")
+
+
+## 결론
+
+- 위에서 설명한 내용과 추가 설정을 웹 서버별로 상세히 정리해서 제공하는 **[Strong Ciphers for Apache, nginx and Lighttpd](https://cipherli.st/)** 사이트를 참고해서 실제 서버에 적용하세요.
+- HSTS 는 일단 적용되면 **max-age 기간동안 자동 적용**되므로 테스트 환경에서 충분히 테스트를 거친 후에 운영 환경에 적용하세요.
+- 적용이 완료되었다면 [온라인 SSL-TLS 사이트 분석 서비스](https://www.ssllabs.com/ssltest/analyze.html) 를 통해 견고하게 설정되었는지 확인해 보세요.
 
 
 ## 참고 자료
 
-* [온라인 SSL 사이트 분석 서비스](https://www.ssllabs.com/ssltest/analyze.html)
 * [HTTP Strict Transport Security - OWASP](https://www.owasp.org/index.php/HTTP_Strict_Transport_Security)
 * [STS(Strict Transport Security) 및 보안 쿠키 설정](https://developers.google.com/web/fundamentals/security/encrypt-in-transit/turn-on-strict-transport-security-and-secure-cookies?hl=ko)
 * [The First Few Milliseconds of an HTTPS Connection](http://www.moserware.com/2009/06/first-few-milliseconds-of-https.html)
