@@ -105,10 +105,13 @@ nginx 의 가상 호스트에 다음과 같이 ssl 설정을 추가해 주면 �
 
 ```
 server {
-    listen       443;
+    listen 80;
+    listen 443 ssl;
     server_name  example.com
     root         html;
- 
+    index index.html index.htm index.php;
+
+    charset utf-8;
  
     ssl                  on;
     ssl_certificate      /etc/pki/tls/certs/example.com.crt;
@@ -125,6 +128,14 @@ server {
 }
 ```
 
+**중요 키워드**
+
+-  *listen 443 ssl* : SSL-TLS 서비스를 제공할 포트를 지정합니다.
+-  *ssl on* : SSL-TLS 를 켭니다.
+-  *ssl_protocols* : 사용할 SSL-TLS 버전을 지정합니다.
+-  *ssl_ciphers* : 사용할 암호 알고리즘을 지정합니다.
+-  *ssl_prefer_server_ciphers* : SSL-TLS 협상 과정에서 서버에 설정한 암호 알고리즘을 우선하며 off 일 경우 알고리즘을 약화시켜서 공격할 수가 있으므로 on 으로 설정합니다.
+
 
 ## apache 웹 서버 설정하기
 
@@ -140,6 +151,7 @@ RHEL/CentOS 의 아파치 웹 서버는 /etc/httpd/conf.d/ssl.conf 에 다음과
 
     SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
     #SSLCipherSuite HIGH:!aNULL:!MD5
+    SSLHonorCipherOrder on
 
     SSLCertificateFile /etc/pki/tls/certs/example.com.crt
     SSLCertificateKeyFile /etc/pki/tls/private/example.com.key
@@ -153,17 +165,34 @@ RHEL/CentOS 의 아파치 웹 서버는 /etc/httpd/conf.d/ssl.conf 에 다음과
 
 ```
 
-## SSL/TLS chain 구성
+**중요 키워드**
 
-인증서 발급 기관이 브라우저에 기본 포함되지 않아서 인증서 경로를 찾지 못해서 브라우저가 경로를 내는 경우가 있습니다.
+-  *VirtualHost *:443* : SSL-TLS 서비스를 제공할 포트를 지정합니다.
+-  *SSLEngine on* : SSL-TLS 를 켭니다.
+-  *SSLProtocol* : 사용할 SSL-TLS 버전을 지정합니다.
+-  *SSLCipherSuite* : 사용할 암호 알고리즘을 지정합니다.
+-  *SSLHonorCipherOrder on* : nginx 의 ssl_prefer_server_ciphers 와 동일한 의미입니다.
 
-이런 문제를 해결하기 위해 아파치 httpd 에는 [SSLCACertificateFile](http://httpd.apache.org/docs/2.4/mod/mod_ssl.html#sslcacertificatefile) 라는 지시자가 있으며 여기에 PEM 형식으로 인코딩된 SSL 인증서 발급 기관의 인증서 체인 파일을 설정하면 됩니다.
+## 인증서 경로 구성
+
+모든 인증서는 상위 발급 기관과 최상위 인증 기관(CA)이 있으며 verisign 같은 유명 CA 들의 인증서는 브라우저에 내장되어 있으므로 브라우저는 SSL-TLS 통신시 사이트의 인증서가 신뢰하는 CA에서 발급받았고 위변조 되지 않았는지 확인할 수 있습니다.
+
+![인증 경로](https://cloud.githubusercontent.com/assets/404534/14711049/d5ddcc28-0812-11e6-975b-1c998d94320a.png "인증 경로")
+
+
+만약 인증서 발급 기관의 인증서가 브라우저에 기본 포함되지 않아서 인증서 경로를 찾지 못해서 브라우저가 SSL-TLS 연결을 하지 못하는 경우가 있습니다. 
+예로 [AlphaSSL](https://www.alphassl.com/support/install-root-certificate.html) 인증서는 모바일 chrome 에서 문제가 발생할 수 있습니다.
+
+
+이런 문제를 해결하기 위해서는 Intermediate CA certificate 라고 하는 인증 기관 인증서 체인 파일을 웹 서버에 설정해 주어야 합니다.
+
+ 아파치 httpd 에는 [SSLCACertificateFile](http://httpd.apache.org/docs/2.4/mod/mod_ssl.html#sslcacertificatefile) 라는 지시자가 있으며 여기에 PEM 형식으로 인코딩된 SSL 인증서 발급 기관의 인증서 체인 파일을 설정하면 됩니다.
 
 ```
 SSLCACertificateFile /etc/pki/tls/certs/ca-bundle.crt
 ```
 
- nginx 는 해당 지시자가 없으므로 다음과 같이 SSL 인증서와 CA 인증서를 하나의 파일로 만들어 주면 됩니다.
+ nginx 는 해당 지시자가 없으므로 다음과 같이 사이트의 SSL 인증서와 CA 인증서를 하나의 파일로 만들어 주면 됩니다.
  
  ```sh
 cat example.com.crt example-ca.crt example-rootca.crt > /etc/pki/tls/certs/example.com.chained.crt
@@ -217,6 +246,8 @@ SSLProtocol TLSv1 TLSv1.1 TLSv1.2
 TLS 는 암호화 통신을 위해 사용할 알고리즘을 협상후 결정하는데 RC4 나 Triple DES 같은 오래된 알고리즘을 사용하면 암호화 통신을 하는 이유가 반감됩니다.
 
 크롬의 경우 TLS V1.2 를 사용하더라도 예전 알고리즘이 사용 가능하면 사이트 정보 보기에서 아래와 같은 메시지를 출력하게 됩니다.
+
+![약한 알고리즘 사용 경고](https://cloud.githubusercontent.com/assets/404534/12735884/cd7c5eae-c98e-11e5-84d5-315927f8147b.png "약한 알고리즘 사용 경고")
 
 알고리즘 설정은 사용하지 않을 취약한 알고리즘을 명시적으로 지정하는 블랙리스트 방식보다는 사용할 강력한 알고리즘을 지정하는 화이트리스트 방식을 권장합니다.
 
