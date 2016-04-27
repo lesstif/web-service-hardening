@@ -98,8 +98,67 @@ AWS 를 사용한다면 [AWS Certificate Manager](https://aws.amazon.com/ko/cert
 >**Info** 
 현재 US East (Northern Virginia)리전에서만 사용 가능합니다.
 
+### CSR 생성과 발급 
 
-## nginx 웹 서버 설정하기
+공개키 기반(PKI) 은 공개키와 개인키 두 개의 키 쌍을 사용하며 개인키는 절대 유출되지 말고 사용자만 소유하고 있어야 합니다.
+
+인증서 발급 기관에 HTTPS 용 인증서를 신청하는 프로세스와 명령어(openssl 사용)는 일반적으로 다음과 같습니다. 
+
+1. HTTPS 를 적용하려는 서버 또는 신청자의 PC 에서 키쌍을 생성
+```
+openssl genrsa -aes256 -out /etc/pki/tls/private/example.com.key 2048
+```
+
+1. 생성한 공개키를 넣어서 인증서 발급 요청(CSR; Certificate Signing Request) 파일을 만들고 개인키로 전자서명
+```
+openssl req -new -key /etc/pki/tls/private/example.com.key -out /etc/pki/tls/certs/example.com.csr
+```
+
+1. CSR 을 인증서 발급기관에 전송
+
+1. 인증서 발급기관은 CSR 에 있는 사용자가 보낸 전자서명을 CSR 에 포함된 공개키로 서명 검증
+
+1. 사용자 공개키 검증이 끝났으면 사용자의 공개키와 추가 정보(도메인, 이메일 주소등)를 추가하여 SSL 인증서 발급(정확히는 발급기관의 개인키로 전자서명)
+
+1. 생성된 인증서를 웹 서버에 적용
+
+PKI 에 익숙하지 않은 경우 국내의 HTTPS 인증서 대행 기관들이 키 쌍 생성도 대행해서 인증서를 발급해 주지만 개인키 유출 우려가 있으므로 직접 키 쌍을 생성하고 CSR 을 만들어서 발급 받는 것을 권장합니다.
+
+
+### 서버에 인증서 올리기
+
+인증서 발급이 완료되면 인증서 파일(확장자: .crt, .cert 등)을 서버에 전송하고 웹 서버 설정을 수정하면 됩니다.
+
+RHEL/CentOS 는 인증서와 개인키를 저장하는 폴더가 다음으로 정해져 있습니다.
+
+* 인증서 : */etc/pki/tls/certs/*
+* 개인키 : */etc/pki/tls/private/*
+
+특히 SELinux 를 사용한다면 cert_t 라는 context 가 부여되어 있어야 웹 서버가 읽을 수 있습니다.
+만약 인증서와 개인키가 있는데 웹 서버가 못 읽는다면 *chcon* 명령어로 context 를 변경하면 됩니다.
+
+```
+chcon -t cert_t /etc/pki/tls/certs/*
+chcon -t cert_t /etc/pki/tls/private/*
+```
+
+### 개인키 passphrase 제거
+
+일반적으로 개인키는 유출되어도 안전하도록 [PBKDF2](/encryption.html#pbkdf) 기반으로 암호화되어 저장합니다.
+그래서 웹 서버를 구동하려면 개인키의 암호를 입력해야 하는데 서비스를 운영할 때 문제가 될 수 있습니다.
+
+암호화된 개인키는 *openssl rsa in* 명령어를 사용하여 해독할 수 있으며 해독된 개인키는 보안을 위해 *chmod 600* 으로 모드를 변경하는 게 좋습니다. 
+
+```
+cp  /etc/pki/tls/private/example.com.key  /etc/pki/tls/private/example.com.key.enc
+openssl rsa -in  /etc/pki/tls/private/example.com.key.enc -out  /etc/pki/tls/private/example.com.key
+```
+
+## 웹 서버 설정하기
+
+인증서 발급이 끝났다면 이제 웹 서버에 적용할 순서입니다. 
+
+### nginx 웹 서버
 
 nginx 의 가상 호스트에 다음과 같이 ssl 설정을 추가해 주면 됩니다.
 
@@ -137,7 +196,7 @@ server {
 -  *ssl_prefer_server_ciphers* : SSL-TLS 협상 과정에서 서버에 설정한 암호 알고리즘을 우선하며 off 일 경우 알고리즘을 약화시켜서 공격할 수가 있으므로 on 으로 설정합니다.
 
 
-## apache 웹 서버 설정하기
+### apache 웹 서버
 
 RHEL/CentOS 의 아파치 웹 서버는 /etc/httpd/conf.d/ssl.conf 에 다음과 같이 가상호스트를 설정합니다.
 
@@ -173,7 +232,7 @@ RHEL/CentOS 의 아파치 웹 서버는 /etc/httpd/conf.d/ssl.conf 에 다음과
 -  *SSLCipherSuite* : 사용할 암호 알고리즘을 지정합니다.
 -  *SSLHonorCipherOrder on* : nginx 의 ssl_prefer_server_ciphers 와 동일한 의미입니다.
 
-## 인증서 경로 구성
+### 인증서 경로 구성
 
 모든 인증서는 상위 발급 기관과 최상위 인증 기관(CA)이 있으며 verisign 같은 유명 CA 들의 인증서는 브라우저에 내장되어 있으므로 브라우저는 SSL-TLS 통신시 사이트의 인증서가 신뢰하는 CA에서 발급받았고 위변조 되지 않았는지 확인할 수 있습니다.
 
@@ -211,6 +270,37 @@ cat example.com.crt example-ca.crt example-rootca.crt > /etc/pki/tls/certs/examp
        (SSL: error:0B080074:x509 certificate routines:
        X509_check_private_key:key values mismatch)
     ``` 
+
+### https 전환
+
+로그인이나 개인 정보 변경등의 일부 기능에만 https 를 적용하는 것 보다는 사이트 전체에 적용하는 것이 관리도 용이하고 보안도 강화됩니다.
+
+일반 사용자는 사이트에 연결시에 주소창에 https 를 명시하지 않고 연결하는 경우가 많으므로 http 서비스도 제공하고 http 로 연결했을 경우 https 로 redirect 하도록 설정하는 게 필요합니다.
+
+애플리케이션 프레임워크에서 필터나 미들웨어 방식으로 이런 기능을 제공하지만 웹 서버의 redirection 기능을 사용하는 것이 쉽습니다.
+
+*apache http* 는 다음과 같이 설정합니다.
+
+```
+<VirtualHost *:80>
+	ServerName example.com
+
+	RewriteEngine on
+	RewriteCond %{HTTPS}  !on
+	RewriteRule ^(.*)$ https://%{HTTP_HOST}$1 [R,L]
+</VirtualHost>
+```
+
+*nginx* 는 다음과 같이 설정합니다.
+
+```
+server {
+	listen       80;
+	server_name	example.com;
+	return 301 https://example.com$request_uri;	
+}
+```
+
 
 ## SSL/TLS 보안 강화하기
 
