@@ -43,11 +43,9 @@ Ubuntu는 [PPA - Personal Package Archives](https://launchpad.net/ubuntu/+ppas) 
 
 ## 미사용 패키지 삭제
 
-이미 설치해서 사용중인 시스템이라면 사용하지 않는 패키지를 삭제하는 것도 좋습니다.
+이미 설치해서 사용중인 시스템이라면 사용하지 않는 패키지를 삭제하는 것이 좋으며 다음 명령어로 현재 설치된 패키지의 목록을 확인할 수 있습니다.
 
-다음 명령어로 현재 설치된 패키지의 목록을 확인할 수 있습니다.
-
-**RHEL**
+**RHEL/CentOS**
 
 ```sh
 yum list installed
@@ -61,12 +59,12 @@ apt --installed list
 
 특히 운영 시스템은 보안을 위해서 컴파일러등의 개발 도구를 삭제하는 것이 좋습니다.
 
-**RHEL**
+**RHEL/CentOS**
 ```sh
 yum groupremove "Development tools"
 ```
 
-** Ubuntu**
+**Ubuntu**
 ```bash
 sudo apt-get purge gcc g++ gdb
 ```
@@ -83,6 +81,7 @@ X-Windows 는 용량이 크고 의존성 있는 패키지가 많으므로 잦은
 X-Windows 가 설치되어 있다면 먼저 *telinit 3* 명령어로 런 레벨을 3으로 변경한 후에 삭제해야 합니다.
 
 우분투 서버는 X Windows 를 포함하고 있지 않으며 CentOS 에서는 다음 명령어로 X-Windows 패키지를 삭제할 수 있습니다.
+
 ```sh
 yum groupremove "X Window System"
 ```
@@ -94,9 +93,13 @@ yum groupremove "X Window System"
 
 ## 구동 프로세스 최소화
 
-사용하지 않는데 부팅시 자동 구동되는 데몬 프로세스가 있는지 확인하고  있다면 중지하고 자동 구동을 끄는 것이 좋습니다.
+부팅시 자동 구동되는 데몬 프로세스중 사용하지 않는 프로세스는 자동 구동을 끄는 것이 좋습니다.
 
-CentOS 6 에서는 chkconfig 명령으로 서비스를 제어할 수 있습니다.
+배포판 및 버전마다 자동 구동 프로세스 관리 방법이 다르므로 아래 내용을 참고해서 사용하는 배포판에 맞게 적용하십시요.
+
+### RHEL/CentOS 6
+
+RHEL/CentOS 6 에서는 chkconfig 명령으로 서비스를 제어할 수 있습니다.
 
 ```bash
 # chkconfig --list
@@ -117,7 +120,9 @@ exim            0:off   1:off   2:on    3:on    4:on    5:on    6:off
 chkconfig mysqld off
 ```
 
-CentOS 7 은 systemd 관리 명령어인 systemctl 를 사용하여 서비스 목록을 확인할 수 있습니다.
+### RHEL/CentOS 7, Ubutun 15+
+
+RHEL/CentOS 7 과 ubunt 15, 16 은 systemd 관리 명령어인 *systemctl* 를 사용하여 서비스 목록을 확인할 수 있습니다.
 
 ```bash
 # systemctl list-unit-files
@@ -150,7 +155,7 @@ auditd.service                            enabled
 systemctl enable mariadb
 ```
 
-특정 서비스의 자동 실행 여부는 *systemctl is-enabled 서비스명* 을 사용하면 되며 다음 명령어는 nginx 웹 서버의 자동 구동 여부를 출력합니다.
+특정 서비스의 자동 실행 여부는 *systemctl is-enabled 서비스명* 을 사용하면 되며 다음 명령어는 nginx 웹 서버의 자동 실행 여부를 출력합니다.
 
 ```bash
 > systemctl is-enabled nginx
@@ -158,7 +163,9 @@ systemctl enable mariadb
 disabled
 ```
 
-우분투는 *sysv-rc-conf* 명령어로 프로세스를 확인할 수 있습니다
+### Ubutun 14
+
+우분투 14.04 는 *sysv-rc-conf* 명령어로 프로세스를 확인할 수 있습니다
 
 ```bash
 $ sudo sysv-rc-conf --list             
@@ -169,6 +176,36 @@ console-setu
 cron        
 cryptdisks  
 cryptdisks-e 0:on       6:on    S:on
+```
+
+자동 실행 여부는 *sudo update-rc.d SERVICENAME defaults* 를 사용하면 되며 다음은 nginx 를 부팅시 자동 실행하도록 설정합니다.  
+
+```bash
+sudo update-rc.d nginx defaults 
+
+ Adding system startup for /etc/init.d/nginx ...
+   /etc/rc0.d/K20nginx -> ../init.d/nginx
+   /etc/rc1.d/K20nginx -> ../init.d/nginx
+   /etc/rc6.d/K20nginx -> ../init.d/nginx
+   /etc/rc2.d/S20nginx -> ../init.d/nginx
+   /etc/rc3.d/S20nginx -> ../init.d/nginx
+   /etc/rc4.d/S20nginx -> ../init.d/nginx
+   /etc/rc5.d/S20nginx -> ../init.d/nginx
+```
+
+자동 실행 제외는 *sudo update-rc.d -f SERVICENAME remove* 를 사용하면 되며 다음은 nginx 를 자동 실행에서 제외합니다.
+
+```bash
+sudo update-rc.d -f nginx remove 
+
+ Removing any system startup links for /etc/init.d/nginx ...
+   /etc/rc0.d/K20nginx
+   /etc/rc1.d/K20nginx
+   /etc/rc2.d/S20nginx
+   /etc/rc3.d/S20nginx
+   /etc/rc4.d/S20nginx
+   /etc/rc5.d/S20nginx
+   /etc/rc6.d/K20nginx
 ```
 
 ## 시스템을 최신 상태로 유지
