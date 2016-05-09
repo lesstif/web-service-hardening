@@ -29,6 +29,42 @@ PHP를 처리하는 mod_php, Perl 스크립트를 처리하는 mod_perl, python 
 
 그러면 웹 서버를 견고하게 하기 위한 설정 방법을 알아 봅시다.
 
+## 웹서버 디렉터리 목록 비활성화
+
+특정 배포판에 포함된 웹 서버의 기본 설정은 브라우저가 웹 서버에 요청한 리소스가 디렉터리이고 해당 디렉터에 인덱스 파일이 없을 경우 모든 파일과 디렉터리 목록을 보여 주게 됩니다.
+
+이렇게 서버의 모든 자원을 보여주는 것은 보안상 취약할 수 있으므로 웹 서버에 디렉터리의 인덱스를 처리할 확장자를 명시적으로 지정하고 없을 경우 목록을 보여주지 않도록 설정하는게 좋습니다.
+
+apache httpd 의 경우 **DirectoryIndex** 에 인덱스 파일을 지정할 수 있습니다.
+
+**Directory** 지시자에 아래와 같이 Indexes 설정이 있을 경우 목록 출력이 가능하므로 삭제하는 게 좋습니다.
+
+```
+DirectoryIndex index index.php index.html index.html.var
+
+<Directory /path/to/directory>
+   Options  Indexes
+</Directory>
+```
+
+nginx 는 **location** 지시자에 autoindex 가 on 일 경우 요청 리소스가 목록을 출력하며 기본 설정은 off 이므로 명시적으로 설정할 필요가 없습니다.
+
+```
+index index.php index.html index.htm;
+
+location / {
+    autoindex off;
+}
+```
+
+## 민감한 데이타 웹 서버에 올리지 않기
+
+각종 설정 파일이나 민감한 파일(sql, shell script) 등은 웹 서버의 Document Root 에 올리지 않아야 합니다.
+
+디렉터리 목록이 활성화되어 있고 Document
+
+특히 PHP 를 mod_php 방식으로 로 사용할 경우 디렉터리 목록 출력과 Document Root 프레임워크를 사용한
+
 ## server 정보 숨기기
 
 운영하는 서버의 자세한 정보는 공격자에게 유용한 정보를 제공합니다. 다음과 같이 curl 명령어로 서버가 보내오는 HTTP 응답 헤더를 살펴 봅시다.
