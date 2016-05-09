@@ -2,6 +2,8 @@
 
 <!-- toc -->
 
+## 3 Tier 아키텍처 
+
 웹 서버는 인터넷에서 가장 중요한 인프라 SW중 하나로 HTTP 를 기반으로 컨텐츠를 사용자에게 전달하고 사용자의 입력을 받아서 처리합니다.
 
 과거의 정적 컨텐츠에서 동적 컨텐츠로 변화되면서 다양한 웹용 언어와 프레임워크가 탄생하였고 이런 도구들은 웹 서버 위에서 바로 동작하는 경우가 많았습니다.
@@ -16,18 +18,28 @@ PHP를 처리하는 mod_php, Perl 스크립트를 처리하는 mod_perl, python 
  
 1. 보안 문제
 
- 웹 서버는 DMZ에 위치하므로 해킹에 대비하여 권한을 낮추고 내부 네트워크 접근을 최소화 해야 합니다. 
+ 웹 서버는 [DMZ](firewall.html#비무장지대dmz)에 위치하므로 해킹에 대비하여 권한을 낮추고 내부 네트워크 접근을 최소화 해야 합니다. 
  
  웹 서버를 해킹하고 이를 통해 내부 네트워크에 침입해서 2차 피해를 입거나 또는 웹 서버를 경유지로 하여 스팸 메일을 보내거나 외부 서버에 연결하는 등의 공격이 많아 졌습니다.
  
- 이런 이유로 SELinux 에서는 DMZ에 위치하는 서비스들(Web, FTP, Mail)를 엄격하게 통제하며 미리 허가되지 않은 작업은 모두 차단합니다.
+ 이런 이유로 SELinux 같은 보안 시스템은 DMZ에 위치하는 서비스들(Web, FTP, Mail)를 엄격하게 통제하며 미리 허가되지 않은 작업은 모두 차단합니다.
  
- 그러므로 웹 서버는 정적 컨텐츠를 전송하거나 또는 내부 네트워크에 있는 Application Server 의 Reverse Proxy 로 사용하는 게 안정성과 보안 측면에서 좋습니다.
+ ![DMZ](https://cloud.githubusercontent.com/assets/404534/14389496/db118380-fded-11e5-8af7-9c2e0b2baec4.png "DMZ")
+ 
+ 그러므로 웹 서버는 [DMZ](firewall.html#비무장지대dmz)에 위치시키고 정적 컨텐츠를 전송하거나 또는 내부 네트워크에 있는 Application Server 에 대해 Reverse Proxy 로 사용하도록 하는게 안정성과 보안 측면에서 좋습니다.
  
  ![Reverse Proxy](
  https://www.lesstif.com/download/attachments/20776817/image2014-7-19%2022%3A39%3A39.png?version=1&modificationDate=1405777029000&api=v2 "Reverse Proxy")
 
+위와 같이 Web - WAS - DBMS 를 물리적(논리적)으로 분리한 것을 3 tier 아키텍처라고 합니다.
+ 
 그러면 웹 서버를 견고하게 하기 위한 설정 방법을 알아 봅시다.
+
+## 민감한 데이타 웹 서버에 올리지 않기
+
+각종 설정 파일이나 민감한 파일(sql, shell script) 등은 웹 서버의 Document Root 에 올리지 않아야 합니다.
+
+특히 디렉터리 목록이 활성화되어 있고 index 파일이 없을 경우 폴더의 전체 구조가 노출되므로 주의해야 합니다.
 
 ## 웹서버 디렉터리 목록 비활성화
 
@@ -56,14 +68,6 @@ location / {
     autoindex off;
 }
 ```
-
-## 민감한 데이타 웹 서버에 올리지 않기
-
-각종 설정 파일이나 민감한 파일(sql, shell script) 등은 웹 서버의 Document Root 에 올리지 않아야 합니다.
-
-디렉터리 목록이 활성화되어 있고 Document
-
-특히 PHP 를 mod_php 방식으로 로 사용할 경우 디렉터리 목록 출력과 Document Root 프레임워크를 사용한
 
 ## server 정보 숨기기
 
@@ -123,6 +127,70 @@ PHP 를 사용한다면 php.ini 의 다음 항목을 off 로 설정하면 됩니
 
 ```
 expose_php = Off
+```
+
+## UTF-8 charset 사용
+
+특별한 문제가 없다면 charset은 utf-8로 선언하고 사용하는 것이 서비스의 확장성 측면과 보안성 측면(*"UTF-7 XSS"* 같은 취약점 방지)에 좋습니다.
+
+웹 서버에 기본 인코딩을 설정하면 HTTP의 *Content-Type* 헤더에 *charset=UTF-8* 을 자동으로 추가하므로 개별 컨텐츠마다 다음과 같이 *meta* 태그로 인코딩을 지정하지 않아도 되는 장점이 있습니다.
+
+```html
+<meta charset="utf-8">
+```
+
+웹 서버에 기본 인코딩을 설정하려면 **apache httpd**는 다음과 같이  *AddDefaultCharset* 지시자를 사용하여 설정하면 됩니다.
+
+```
+AddDefaultCharset utf-8
+```
+
+**nginx** 는 *charset* 키워드로 기본 인코딩을 설정할 수 있습니다.
+
+```
+http {
+    charset utf-8;
+```
+
+> **Danger** 
+웹 서버에 인코딩을 설정한 경우 브라우저는 개별 컨텐츠에 *meta* 키워드로 설정한 인코딩은 무시하므로 다른 인코딩(예: EUC-KR)을 사용하는 컨텐츠가 있을 경우 오작동할 수 있습니다.
+자세한 내용은 아래의 블로그를 참고하세요.
+
+* [Web Browser 가 Web Content 의 character set encoding 을 처리하는 순서 (HTTP Header charset과 meta charset)](https://www.lesstif.com/pages/viewpage.action?pageId=20775179)
+
+## 폴더와 파일에 적절한 권한 부여
+
+웹 컨텐츠 폴더와 파일은 적절한 권한이 부여해야 하며 폴더는 755(또는 775), 파일은 644(또는 664) 권한이 적절합니다.
+
+```
+chmod -R 755 /var/www/mycontents
+```
+
+특히 파일에 실행 권한을 주는 경우 웹 서버를 통해 실행할 경우 문제가 될 수 있으므로 주의깊게 설정해야 합니다.
+
+> **Info** [SELinux](selinux.html)가 켜져 있을 경우 실행 속성을 주어도 *httpd_sys_script_exec_t* 컨텍스트가 설정되어 있지 않으면 웹 서버가 실행할 수 없습니다.
+
+웹 서버는 루트로 구동해야 하므로 보안을 위해 구동후 별도의 계정으로 전환하며 배포판마다 전환하는 계정이 다릅니다.
+그러므로 웹 서버가 쓰기 권한과 실행 권한을 가져야 하는 폴더와 파일은 웹 서버 구동후 전환 계정으로 설정하는 게 권한 문제를 방지할 수 있습니다.
+
+예를 들어 ubuntu 에서 *PHP-FPM*을 도메인 소켓 방식으로 사용할 경우 nginx 구동 계정(www-data)의 소유이고 쓰기 권한이 있어야 정상적으로 서비스를 할 수 있습니다.
+
+```sh
+$ ls -l /var/run/php/php7.0-fpm.sock 
+srw-rw---- 1 www-data www-data 0 May  9 06:18 /var/run/php/php7.0-fpm.sock
+```
+
+RHEL/CentOS 의 apache의 경우 */etc/httpd/conf/httpd.conf*에 구동 계정이 정의되어 있습니다.
+ 
+```
+User apache
+Group apache
+```
+
+nginx 는 */etc/nginx/nginx.conf* 에 *user* 키워드로 구동 계정이 정의되어 있으며 ubuntu는 *www-data*를 RHEL/CentOS는 *nginx* 계정을 사용합니다.
+
+```
+user  nginx;
 ```
 
 ## 중요 파일 접근 차단
