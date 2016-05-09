@@ -31,3 +31,9 @@
 ## 제안과 기여
 
 본 문서에서 틀린 부분이나 수정/추가되어야 할 부분이 있으면 Fork 후에 [PR](https://github.com/lesstif/security-best-practices/pulls) 을 날려주시기 바라며 제안은 [issue](https://github.com/lesstif/security-best-practices/issues) 를 통해서 해주시면 됩니다.
+
+## 기여자
+
+본 문서에 기여하신 분들입니다.
+
+* [roupkk](https://github.com/roupkk)
