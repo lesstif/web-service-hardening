@@ -69,6 +69,30 @@ semanage port -a -p tcp -t http_port_t 9876
 
 특히 디렉터리 목록이 활성화되어 있고 index 파일이 없을 경우 폴더의 전체 구조가 노출되므로 주의해야 합니다.
 
+## 보안 강화 HTTP 헤더 사용
+
+HTTP 헤더에는 [보안을 강화하기 위한  여러 헤더(https://www.owasp.org/index.php/List_of_useful_HTTP_headers)가 있습니다.
+
+* **X-Frame-Options** : [클릭 하이재킹](http://blog.ahnlab.com/ahnlab/tag/1058)을 방지하기 위한 헤더로 *deny*로 설정하면 iframe 에서 렌더링을 하지 않습니다. *sameorigin* 은 origin이 일치하지 않을 경우 렌더링을 하지 않습니다. 
+* **X-Content-Type-Options**: *"nosniff"* 만 설정할 수 있으며 [잘못된 MIME 형식이 포함된 응답을 거부](https://msdn.microsoft.com/ko-kr/library/gg622941(v=vs.85).aspx)합니다.
+
+apache httpd 는 Header 지시자로 보안 관련 헤더를 설정하면 됩니다. 
+
+```
+Header always set X-Frame-Options DENY
+Header always set X-Content-Type-Options nosniff
+```
+
+nginx 는 add_header 지시자로 설정합니다.
+
+```
+add_header X-Frame-Options DENY;
+add_header X-Content-Type-Options nosniff;
+```
+
+>**Warning**
+iframe 을 사용하여 서비스하는 페이지가 있을 경우 "*X-Frame-Option: Deny*" 헤더가 설정되면 제대로 동작하지 않습니다.
+
 ## 웹서버 디렉터리 목록 비활성화
 
 특정 배포판에 포함된 웹 서버의 기본 설정은 브라우저가 웹 서버에 요청한 리소스가 디렉터리이고 해당 디렉터에 인덱스 파일이 없을 경우 모든 파일과 디렉터리 목록을 보여 주게 됩니다.
@@ -105,6 +129,7 @@ location / {
 curl -I myhost.com
 ```
 
+
 ```
 HTTP/1.1 200 OK
 Date: Thu, 17 Mar 2016 05:54:33 GMT
@@ -114,7 +139,11 @@ Content-Length: 1861
 Content-Type: text/html
 ```
 
-현재 사용하는 서버 제품(Apache)과 버전(2.2.24), 모듈(mod_ssl, PHP, mod_jk ..)과 버전등 굉장히 상세한 정보를 보여주고 있으며 공격자는 해당 제품과 버전의 취약점을 찾아서 공격할 수 있습니다.
+**Server** 헤더를 보면 현재 사용하는 서버 제품(Apache)과 버전(2.2.24), 모듈(mod_ssl, PHP, mod_jk ..)과 버전등 굉장히 상세한 정보를 보여주고 있으며 공격자는 해당 제품과 버전의 취약점을 찾아서 공격할 수 있습니다.
+
+>**Tip** 
+[wappalyzer](https://wappalyzer.com/) 를 사용하면 크롬이나 파이어 폭스에서 서버에서 사용하는 기술을 확인할 수 있습니다.
+ ![wappalyzer](https://cloud.githubusercontent.com/assets/404534/15269913/c64ac174-1a48-11e6-8dfd-0496bb2d3ec0.png "wappalyzer")
 
 ### Server Token Off
 
@@ -310,6 +339,12 @@ location /manager {
     deny  all;
 }
 ```
+
+## 같이 읽기
+* [Ubuntu Server의 보안을 위해서 해야 할 것들]
+  * [Part 1](https://davidhyk.github.io/blog/things-you-should-do-to-secure-ubuntu-part1)
+  * [Part 2](https://davidhyk.github.io/blog/things-you-should-do-to-secure-ubuntu-part2)
+* [ㅁㅁ]](http://www.shako.net/blog/ubuntu-server-14-04-initial-setup-guide/)
 
 ## 참고 자료
 * [apache ServerTokens Directive](https://httpd.apache.org/docs/2.4/mod/core.html#servertokens)
