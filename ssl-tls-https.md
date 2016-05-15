@@ -357,29 +357,31 @@ SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
 
 ## HSTS(HTTP Strict Transport Security)
 
-사이트 전체에 HTTPS 를 적용했어도 중간에 공격자가 끼어 들어 프락시로 동작하며 공격자는 서버와 HTTPS 를 구축하고 클라이언트와는 HTTP 로 연결하여 모든 데이타를 훔쳐 볼수 있습니다.
+사이트에 최신 버전의 TLS와 강력한 알고리즘을 사용하여 HTTPS 를 적용하면 중간에서 통신을 가로채도 감청이 거의 불가능합니다.
 
-![SSL strip 공격](http://codesanctum.net/wp-content/uploads/2015/04/ssl_strip2.png "SSL strip 공격 - http://codesanctum.net/%EC%A0%95%EB%B3%B4-%EB%B3%B4%EC%95%88-ssl-tls%EB%8A%94-%EC%95%88%EC%A0%84%ED%95%9C%EA%B0%80/")
+하지만 [중간에 공격자가 끼어 들어 클라이언트의 HTTPS 요청을 HTTP 로 전환](http://noplanlife.com/?p=1418)할 수 있다면 감청이 가능해 집니다.
+
+![SSL strip 공격](http://noplanlife.com/wp/wp-content/uploads/2016/03/FG0LEHk-640x387.png "SSL strip 공격 - http://noplanlife.com/wp/wp-content/uploads/2016/03/FG0LEHk-640x387.png")
 
 이는 중간자 공격(Man in the middle attack)의 일종으로 **"SSL strip 공격"** 이라고 부릅니다.
 
-HSTS 는 이런 문제를 해결하기 위해  HTTP 헤더에 **"Strict-Transport-Security"** 가 있으면 브라우저는 무조건 HTTPS 로만 연결하여 "SSL strip 공격"을 방지하는 나온 표준입니다.
+HSTS 는 이런 문제를 해결하기 위해 HTTP 헤더에 **"Strict-Transport-Security"** 가 있으면 브라우저는 무조건 HTTPS 로만 연결하도록 하여 "SSL strip 공격"을 방지하는 표준입니다.
 
 >**Warning**
 사이트에 HSTS 를 적용하면 브라우저가 더 엄격하게 동작하므로 서버 설정에 주의를 기울여야 합니다. 예로 HSTS 사이트의 SSL 인증서가 잘못되었을 경우 "위험을 감수하고 연결" 옵션이 없어집니다.
 ![image](https://cloud.githubusercontent.com/assets/404534/15269802/dca102ec-1a45-11e6-9b46-685bf60b7098.png "잘못된 인증서가 설정된 HSTS 사이트")
 
-다음은 apache httpd 의 HSTS 설정입니다.
+HSTS 를 사용하려면 **"Strict-Transport-Security"** HTTP 헤더를 설정하면 되며 지시자로 세부적인 동작을 지정할 수 있습니다. 
+
+ - **max-age = delta-seconds** : 브라우저에게 delta-seconds 로 지정된 시간(단위 초)만큼 HTTPS 를 사용하라는 의미입니다. 개발 단계에서는 값을 아주 작게 설정하고 안정화되면 크게 주는게 좋습니다.
+ - **includeSubdomains** : HSTS 를 서브 도메인도 적용합니다. 예로 www.example.com에서 *includeSubdomains* 설정이 포함된 HSTS 헤더를 전송했다면 사용자가 http://mail.exampl.com 같이 서브 도메인에 연결할 때도 브라우저는 자동으로 https 연결로 전환합니다.
+ - **preload** : 브라우저가 해당 사이트를 HSTS 적용 preload list 에 추가합니다.
+ 
+다음은 apache httpd 의 HSTS 설정으로 하루(86400)동안 HSTS를 유지하며 서브 도메인에도 HSTS를 적용합니다.
 
 ```
 Header always set Strict-Transport-Security "max-age=86400; includeSubdomains; preload"
 ```
-
-각 설정의 의미는 다음과 같습니다.
-
- - **max-age:86400** : 브라우저에게 지정된 시간(단위 초- 여기서는 하루)만큼 HTTPS 를 사용하라는 의미입니다. 개발 단계에서는 값을 아주 작게 설정하고 안정화되면 크게 주는게 좋습니다.
- - **includeSubdomains** : HSTS 를 서브 도메인도 적용합니다.
- - **preload** : 브라우저가 해당 사이트를 HSTS 적용 preload list 에 추가합니다.
 
 nginx 는 add_header 지시자로 HSTS 를 설정하면 됩니다.
 
@@ -392,7 +394,6 @@ add_header Strict-Transport-Security "max-age=86400; includeSubdomains; preload"
 preload 에 추가한 사이트는  max-age 기간동안 자동으로 https 로 연결하며 웹 서버의 HSTS 헤더를 삭제해도 사용자의 브라우저에는 설정이 유지됩니다.
 
 여러 가지 이유로 해제가 필요하다면 사용자가 직접 브라우저의 설정을 수정해야 합니다.
-
 
 **Chrome**
 
