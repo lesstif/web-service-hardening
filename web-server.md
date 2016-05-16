@@ -252,7 +252,7 @@ user  nginx;
 
 ## 중요 파일 접근 차단
 
-웹 서버의 컨텐츠 디렉터리에는 URL Re-writing 을 처리하는 *.htaccess* 나 워드프레스의 *wp-config.php*, 또 git이나 subversion의 형상 관리 메타 정보(.git, .svn)등의 중요 정보가 있을 수 있습니다.
+웹 서버의 컨텐츠 디렉터리에는 URL Re-writing 을 처리하는 *.htaccess* 나 워드프레스의 *wp-config.php*, git이나 subversion의 형상 관리 메타 정보(.git, .svn), 설정 파일(*.inc, *.ini, *.cfg, *.conf)등의 중요 정보가 있을 수 있습니다.
 
 공격자는 이런 파일을 내려 받아서 서버의 정보를 파악할 수 있으므로 다음 설정으로 중요 파일을 보호할 수 있습니다.
 
@@ -307,9 +307,9 @@ location ~ /.*\.(inc|ini|conf|cfg)$ {
 
 ## 관리자 서비스 접근 제한
 
-웹 애플리케이션에도 추가되어야 하지만 웹 서버는 관리자 영역등 특정 url 을 차단할 수 있습니다.
+웹 애플리케이션에서 설정할수도  있지만 웹 서버에서도 관리자 영역등 특정 패턴의 url 을 차단할 수 있습니다.
 
-다음은 아파치 톰캣의 관리자 context 인 /manager 에 접근을 차단하는 예제입니다.
+다음은 아파치 톰캣의 관리자 context 인 /manager 에 127.0.0.1과 192.168.0.0 대역을 제외하고는 접근을 차단하는 예제입니다.
 
 **httpd 2.2**
 
@@ -344,7 +344,7 @@ location /manager {
 * [Ubuntu Server의 보안을 위해서 해야 할 것들]
   * [Part 1](https://davidhyk.github.io/blog/things-you-should-do-to-secure-ubuntu-part1)
   * [Part 2](https://davidhyk.github.io/blog/things-you-should-do-to-secure-ubuntu-part2)
-* [ㅁㅁ]](http://www.shako.net/blog/ubuntu-server-14-04-initial-setup-guide/)
+* [Ubuntu 서버 14.04 초기설정 가이드](http://www.shako.net/blog/ubuntu-server-14-04-initial-setup-guide/)
 
 ## 참고 자료
 * [apache ServerTokens Directive](https://httpd.apache.org/docs/2.4/mod/core.html#servertokens)
