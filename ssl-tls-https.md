@@ -301,6 +301,35 @@ server {
 }
 ```
 
+### SSL 가상호스트와 SNI
+
+웹 서버의 멋진 기능중에 하나는 가상 호스트(Virtual Host)로 이 기능을 사용하여 추가 장비없이 새로운 웹 서비스를 시작할 수 있습니다.
+
+웹 서버는 브라우저의 HTTP Request Header 에서 Host 헤더를 통해 어떤 가상 호스트의 컨텐츠를 서비스할지 결정합니다.
+
+즉 다음과 같이 curl을 수행했을 경우
+
+```sh
+$ curl -v google.com
+```
+
+아래와 같이 **Host: google.com** 을 보내므로 웹 서버는 정확한 가상 호스트를 결정할 수 있습니다.
+
+```sh
+GET / HTTP/1.1
+Host: google.com
+User-Agent: curl/7.43.0
+Accept: */*
+```
+   
+하지만 SSL/TLS의 경우 HTTP보다 먼저 수행되므로 브라우저가 Host Header 를 보내기 전에 SSL handshaking이 이루어 지고 웹 서버는 첫 번째 SSL 가상 호스트에 설정된 서버 인증서를 전송합니다.
+그래서 SSL/TLS 기반으로 여러 개의 가상 호스트를 설정했을 경우 브라우저에서 SSL 인증서 검증시 인증서와 HostName 이 다르다는 에러가 발생할 수 있습니다.
+
+이런 문제를 해결하기 위해 "서버 이름 표시([SNI;Server Name Indication - RFC 4366](http://tools.ietf.org/html/rfc4366#page-9))" 규격이 있으며 대부분의 브라우저, 웹 서버, HTTPS 구현 라이브러리가 SNI 를 지원하므로 SSL/TLS에서도 가상 호스트를 사용할 수 있습니다.
+
+>**Info** 
+Windows XP 와 JDK 6 은 SNI 를 지원하지 않으며 전체 목록은 [위키피디아의 SNI](https://en.wikipedia.org/wiki/Server_Name_Indication#Support)에서 확인할 수 있습니다.
+
 
 ## SSL/TLS 보안 강화하기
 
@@ -405,13 +434,11 @@ preload 에 추가한 사이트는  max-age 기간동안 자동으로 https 로 
 
 ![크롬 HSTS 해제](https://cloud.githubusercontent.com/assets/404534/14701735/bbf5749a-07e1-11e6-88ec-b172338c2d24.png "크롬 HSTS 해제")
 
-
 ## 요약
 
 - 위에서 설명한 내용과 추가 설정을 웹 서버별로 상세히 정리해서 제공하는 **[Strong Ciphers for Apache, nginx and Lighttpd](https://cipherli.st/)** 사이트를 참고해서 실제 서버에 적용하세요.
 - HSTS 는 일단 적용되면 **max-age 기간동안 자동 적용**되므로 테스트 환경에서 충분히 테스트를 거친 후에 운영 환경에 적용하세요.
 - 적용이 완료되었다면 [온라인 SSL-TLS 사이트 분석 서비스](https://www.ssllabs.com/ssltest/analyze.html) 를 통해 견고하게 설정되었는지 확인해 보세요.
-
 
 ## 참고 자료
 
