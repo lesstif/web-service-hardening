@@ -4,7 +4,7 @@
 
 **한 줄 요약**
 
->**Tip** 
+>**Hint** 
 SELinux 는 여러분을 불편하게 하지만 여러분의 시스템을 장악해서 악의적인 용도로 사용하려는 크래커들에게는 큰 좌절을 맛보게 하니 꼭 사용하세요.
 
 
@@ -15,7 +15,7 @@ SELinux 는 RHEL/CentOS 사용자들이 가장 증오하는 기능일 겁니다.
 
 이것은 우리나라만이 아니라 외국도 마찬가지이며 SELinux 의 장점과 중단했을 때의  문제점을 널리 알리기 위한 [stop disabling SELinux](http://stopdisablingselinux.com/) 사이트도 생겨났습니다.
 
-이 글은 SELinux 에 대한 잘못된 지식을 바로 잡고 사용을 장려하기 위해서 작성했습니다.
+이 글은 널리 퍼져있는 SELinux 에 대한 잘못된 정보를 바로 잡고 사용을 장려하기 위해서 작성했습니다.
 
 그러면 먼저 SELinux 를 이해하기 위해 필수적인 지식인 접근 통제에 대해서 알아 봅시다.
 
@@ -29,7 +29,7 @@ SELinux 는 RHEL/CentOS 사용자들이 가장 증오하는 기능일 겁니다.
 
 ### 임의 접근 통제
 
-임의 접근 통제(DAC;Discretionary Access Control)는 시스템 객체에 대한 접근을 사용자나 또는 그룹의 신분을 기준으로 제한하는 방법입니다.
+**임의 접근 통제**(DAC;Discretionary Access Control)는 시스템 객체에 대한 접근을 사용자나 또는 그룹의 신분을 기준으로 제한하는 방법입니다.
 
 사용자나 그룹이 객체의 소유자라면 다른 주체에 대해 이 객체에 대한 접근 권한을 설정할 수 있습니다.
 
@@ -37,9 +37,10 @@ SELinux 는 RHEL/CentOS 사용자들이 가장 증오하는 기능일 겁니다.
 
 임의적 접근 통제는 사용자가 임의로 접근 권한을 지정하므로 사용자의 권한을 탈취당하면 사용자가 소유하고 있는 모든 객체의 접근 권한을 가질 수 있게 되는 치명적인 문제가 있습니다.
 
-임의적 접근 통제 방식의 보안 취약점에 대해 알아보기 위해 유닉스의 구조적인 2가지 보안 취약점에 대해서 알아 봅시다.
+특히 **root** 계정은 모든 권한을 갖고 있으므로 root 권한을 탈취하면 시스템을 완벽하게 장악할 수 있으며 권한 탈취시 많이 사용되는 것은 아래에서 설명할 유닉스의 구조적인 2가지 보안 취약점입니다.
 
-#### setuid 문제
+
+#### setuid/setgid 문제
 
 사용자들의 암호는 /etc/shadow 에 저장되어 있으며 루트만 읽고 쓸수 있습니다.
 
@@ -47,19 +48,22 @@ SELinux 는 RHEL/CentOS 사용자들이 가장 증오하는 기능일 겁니다.
 
 상대방 호스트가 동작하는지 확인하기 위해 사용하는 *ping* 은 ICMP(Internet Control Message Protocol) 패킷을 사용하므로 루트 권한이 필요하지만 일반 사용자도 ping 명령어를 사용하여 상대 호스트의 이상 여부를 확인할 수 있습니다.
 
-이는 passwd 나 ping 같이 실행시 루트 권한이 필요한 프로그램에는 setuid 비트라는 것을 설정하여 실행한 사용자가 누구든지 루트 권한으로 동작하도록 설계하였으므로 가능한 일입니다.
+유닉스 계열의 운영 체제는 실행 파일의 속성에 setuid(**set** **u**ser **ID** upon execution)또는 setgid(**set** **g**roup **ID** upon execution) 비트라는 것을 설정할 수 있으며 이 비트가 설정되어 있을 경우 해당 프로그램을 실행하면 실행 시점에 설정된 사용자(setuid), 또는 그룹(setgid) 권한으로 동작합니다.
+
+즉 passwd 나 ping 같이 실행시 루트 권한이 필요한 프로그램은 소유자를 root 로 하고 setuid를 설정하면 실행 시점에 root 사용자로 전환되므로 root 만 가능한 동작을 수행할 수 있습니다.
  
  ```
  ls -l /bin/ping/ /usr/bin/passwd
  ```
 
-위 명령어를 실행하면 파일의 퍼미션 부분에 's' 표시가 있는 프로그램들은 setuid 비트가 켜졌다고 하며 이런 프로그램들은 실행시 루트 권한을 갖고 구동됩니다.
-
 ![setuid 비트](https://www.lesstif.com/download/attachments/18219472/image2014-10-22%2023%3A28%3A26.png?version=1&modificationDate=1413987928000&api=v2 "setuid 비트")
 
-그러므로 일반 사용자들도 자신의 암호를 변경할 수 있지만 만약 setuid 비트가 붙은 프로그램에 보안 취약점이 있을 경우 공격자는 손쉽게 루트 권한을 획득할 수 있는 문제가 있습니다. 
+파일의 사용자 퍼미션 부분의 's' 표시는 setuid 비트이며 그룹 퍼미션 부분에 's' 표시가 있을 경우 setgid 비트로 *passwd* 와 *ping* 은 setuid 비트만 설정되어 있는 것을 알수 있습니다.
 
-이때문에 setuid 비트는 필요하지만 유닉스 시스템의 주요 보안 취약점이었으며 시스템 관리자의 골칫 덩어리이었습니다.
+
+하지만 setuid 비트가 붙은 프로그램에 보안 취약점이 있을 경우 공격자는 손쉽게 루트 권한을 획득할 수 있는 문제가 있습니다.
+
+이 때문에 setuid 비트는 필요하지만 유닉스 시스템의 주요 보안 취약점이었으며 시스템 관리자의 골칫 덩어리이었습니다.
 
 시스템에 있는 setuid 비트가 붙은 프로그램은 다음 명령어로 찾을 수 있습니다.
 
@@ -94,11 +98,20 @@ SELinux는 미국 국가 안보국(NSA; National Security Agency; 또는 농담�
 
 NSA는 구현한 소스를 리눅스 커뮤니티에 기증해서 2.6 버전부터 커널에 공식 포함되었습니다. [^1]
 
-RHEL 기반의 배포판에는 4 버전부터 공식적으로 포함되었으며 다양한 제품들이 SELinux를 지원하고 있으므로 기본적인 SELinux 개념만 알고 있다면 사용하는게 크게 어렵지는 않습니다.
+RHEL 기반의 배포판에는 4 버전부터 공식적으로 포함되었으며 이제는 다양한 제품들이 SELinux를 지원하고 있으므로 기본적인 SELinux 개념과 설정을 알고 있다면 사용하는게 크게 어렵지는 않습니다.
 
 > **Note** Android도 보안 문제가 대두되자 최신 버전부터는 SELinux 를 포팅한 SE Android 가 기본 탑재되어 있습니다.
 > 
 > 
+
+**SELinux 는 기존 접근 통제 규칙보다 먼저 동작**하므로 SELinux 의 보안 정책에 맞지 않을 경우 차단해 버리게 됩니다.
+
+이런 사실을 모를 경우 분명 파일의 소유자가 맞는데 *Permission Denied* 가 나거나 파일이 존재하는데 *File not Found* 등의 에러가 나는 원인을 찾지 못하고 SELinux 를 끄게 되고 정상 동작하는 것을 확인하고 SELinux 를 쓰면 안 된다는 생각을 갖게 됩니다.
+
+이는 자동차 주행중에 경고등에 불이 들어왔다고 전구를 빼는 것과 비슷한 행동입니다.
+실제 자동차에 문제가 생겼을 수도 있고 또는 경고등 자체가 고장났을수 있지만 가장 좋은 해결책은 원인을 찾고 적절한 조치를 취하는 것입니다. 
+
+그동안 SELinux 에 대한 정보와 자료 부족때문에 그런 오해가 있었다면 이 글을 읽고 SELinux 에 대한 인식을 재고하고 왜 서비스가 SELinux 에 차단당했는지 원인을 찾고 적절한 조치를 취할 수 있는 계기가 되었으면 합니다.
 
 ### 장점
 
@@ -326,15 +339,192 @@ SELinux 는 위와 같이 잘 정의된 사전 정책을 탑재하고 있으므�
 
 SELinux 에서 서비스가 안 도는 것은 보안 정책에 어긋나서이고 위에서 설명한 *seinfo, sesearch* 로 정책을 조회한 후에 조치해야 합니다.
 
-예로 mysql을 3307 로 구동했다면 허용된 포트가 아니므로 web 서버가 mysql에 연결할 수 없으므로 허용된 포트를 사용하거나 정책을 수정하는 [semanage](https://www.lesstif.com/pages/viewpage.action?pageId=18219476#SELinux사용하기-semange패키지) 명령어로 변경된 정보를 SELinux 에게 알려주면 됩니다.
+예로 mysql을 3307 로 구동했다면 허용된 포트가 아니므로 web 서버가 mysql에 연결할 수 없으며 허용된 포트를 사용하거나 정책을 수정하는 [semanage](https://www.lesstif.com/pages/viewpage.action?pageId=18219476#SELinux사용하기-semange패키지) 명령어로 변경된 정보를 SELinux 에게 알려주면 됩니다.
+
+*semanage*는 SELinux 의 보안 정책을 조회하고 추가/변경/삭제할 수 있는 명령행 기반의 유틸리티입니다.
+
+ 보안 컨텍스트는 파일이나 네트워크 포트, 네트워크 인터페이스등이며 이중에서 서비스 데몬이 SELinux 에서문제없이 동작하려면 꼭 알아 두어야 할 것이 파일과 네트워크 포트 컨텍스트입니다. 
+
+semanage 는 아래 패키지를 설치해야 사용할 수 있습니다.
+
+```
+yum install -y policycoreutils-python
+```
+
+**포트 컨텍스트**
+
+먼저 포트 컨텍스트 사용법을 익히기 위해 httpd 가 연결할 수 있는 포트 정보를  알아 보겠습니다. 
+
+*semanage* 명령어의 첫 번째는 컨텍스트 이름이 와야 하며 이 경우 port 가 되며 오브젝트 리스트를 보는 -l 옵션을 추가하면 됩니다.
+
+```
+# semanage port -l|grep http_port_t
+
+http_port_t                    tcp      8081, 8080, 8090, 80, 81, 443, 488, 8008, 8009, 8443, 9000
+```
+
+http_port_t 라는 컨텍스트는 tcp 프로토콜로 8080, 80 등의 포트에 연결이 허용된 것을 알수 있습니다.
+
+만약 WAS 가 9876 포트를 사용할 경우 등록되지 않았으므로 SELinux 는 웹 서버가 9876 포트에 연결하지 못 하도록 차단하므로 정상적으로 서비스를 할 수 없습니다.
+
+이 때 SELinux 를 끄지 말고 semanage 명령어로 포트를 추가해 주면 웹 서버가 9876 포트에 연결할 수 있습니다.
+
+```
+semanage port -a -p tcp -t http_port_t 9876
+```
+
+시스템에 따라 다음과 같은 에러가 발생하는 경우가 있습니다.
+
+```
+/usr/sbin/semanage: tcp/9876에 대한 포트가 이미 지정되었습니다
+```
+
+이는 9876 에 이미 할당된 context 가 있는 것이므로 포트를 추가하는 *-a* 대신 변경하는 *-m* 옵션을 사용해야 합니다.
+
+```
+semanage port -m -p tcp -t http_port_t 9876
+```
+
+포트를 삭제할 경우 *-d* 옵션을 사용하여 삭제할 프로토콜과 컨텍스트, 포트 번호를 명시해 주면 됩니다.
+
+```
+semanage port -d -p tcp -t http_port_t 9876
+```
+
+**파일 컨텍스트**
+
+파일 컨텍스트는 fcontext 아규먼트를 추가하면 되며 웹 서버의 컨텐츠에 지정하는 httpd_sys_content_t가 할당된 파일 경로를 찾아 봅시다.
+
+```
+# semanage fcontext -l|grep httpd_sys_content_t
+
+/var/lib/htdig(/.*)?                               all files          system_u:object_r:httpd_sys_content_t:s0 
+/var/lib/trac(/.*)?                                all files          system_u:object_r:httpd_sys_content_t:s0 
+/var/www(/.*)?                                     all files          system_u:object_r:httpd_sys_content_t:s0 
+/var/www/icons(/.*)?                               all files          system_u:object_r:httpd_sys_content_t:s0 
+/var/www/svn/conf(/.*)?                            all files          system_u:object_r:httpd_sys_content_t:s0 
+
+```
+
+
+아래에서 3번째 줄을 보면 */var/www(/.*)?* 로 지정되어 있는데 의미는 /var/www 하단에 생성되는 모든 파일과 폴더는 *httpd_sys_content_t* 를 붙이라는 의미입니다.
+
+그러므로 웹 서버 컨텐츠가 /opt/mycontent 에 있다면 이후에 이 폴더에 생성한 모든 파일과 폴더에 *httpd_sys_content_t*  를 붙여야 정상적으로 서비스가 가능하므로 다음 semanage 로 fcontext 를 지정하면 됩니다.
+
+```
+semanage fcontext -a -t httpd_sys_content_t "/opt/mycontent(/.*)?"
+
+```
+
+## 문제 해결
+
+SELinux 를 사용하려고 할 때 가장 큰 어려움중 하나는 왜 문제가 발생하는지 로그는 어디에 쌓이는지 잘 모르고 로그 메시지 해석이 어려운 점입니다.
+
+SELinux 관련 로그는 */var/log/audit/audit.log* 에 저장되며 root 만 볼수 있습니다.
+
+![SELinux 문제해결 절차](https://cloud.githubusercontent.com/assets/404534/15462125/69f01cee-20fb-11e6-993e-ff5e2047116e.png "SELinux 문제해결 절차")
+
+이번 장에서는 로그를 검색하고 원인을 찾도록 도와주는 유틸리티에 대해서 알아 보겠습니다.
+
+
+### audit2why
+
+SELinux 의 audit 로그를 왜 차단되었는지 설명과 함께 출력하는 유틸리티입니다. 
+
+사용은 다음과 같이 옵션으로 audit 파일의 경로를 입력해 주면 됩니다.
+
+```
+audit2why < /var/log/audit/audit.log 
+```
+
+결과는 아래와 같이 차단된 process 와 원인, 간단한 해결책을 같이 표시합니다.
+
+```
+type=AVC msg=audit(1463625135.602:32366): avc:  denied  { name_connect } for  pid=25862 comm="nginx" dest=9001 scontext=unconfined_u:system_r:httpd_t:s0 tcontext=system_u:object_r:tor_port_t:s0 tclass=tcp_socket
+
+        Was caused by:
+        The boolean httpd_can_network_connect was set incorrectly. 
+        Description:
+        Allow HTTPD scripts and modules to connect to the network using TCP.
+
+        Allow access by executing:
+        # setsebool -P httpd_can_network_connect 1
+```
+
+### ausearch
+
+audit2why 는 모든 로그를 보여주므로 로그가 많이 쌓 여있을 경우 보기가 어렵습니다.
+커널 로그를 검색할 수 있는 ausearch 명령어를 사용하면 기간별, 타입별로 로그를 조회할 수 있습니다.
+
+>**Hint** 
+ausearch 를 사용하려면 아래 패키지를 설치해야 합니다.
+```
+yum install audit
+```
+
+*-m* 옵션으로 메시지 타입을 지정할 수 있으며 콤마를 구분자로 여러 개를 지정할 수도 있습니다.
+*-ts, --start* 옵션으로 날자를 지정하면 해당 일 이후에 발생한 이벤트를 출력합니다.
+
+다음 명령어는 2016년 5월 13일 이후에 발생한 이벤트만 표시합니다.
+
+```
+ausearch -m AVC,USER_AVC -ts 05/13/2016
+```
+
+>**Hint** 
+날자 지정 포맷은 locale 설정에 따라 달라지며 위와 같이 Month/Day/Year 형식으로 지정하려면 en_US 로 설정되어 있어야 합니다.
+```
+export LANG=en_US.utf8
+```
+
+또는 날자대신 now, recent, today, this-week, this-month, this-year 같은 문자열을 지정할 수 있습니다.
+
+다음 명령어는 이번 달에 발생한 이벤트 로그를 출력합니다.
+
+```
+ausearch -m AVC,USER_AVC  -ts this-month
+```
+
+### sealert
+
+audit2why 나 ausearch 가 출력하는 이벤트 로그는 익숙하지 않으면 해석과 조치가 어렵습니다. *sealert* 는 이를 쉽게 번역해 주는 유틸리티로 아래 패키지를 설치해야 사용할 수 있습니다.
+
+```
+yum install setroubleshoot-server
+```
+
+먼저 *-a* 옵션으로 현재 이벤트 로그를 분석할 수 있습니다.
+
+```
+sealert -a /var/log/audit/audit.log
+```
+
+분석이 끝나면 아래와 같이 차단 원인과 조치를 위한 명령어를 이해하기 쉽게 출력해 줍니다.
+
+```
+SELinux is preventing /usr/sbin/nginx from name_connect access on the tcp_socket .
+
+*****  Plugin catchall_boolean (89.3 confidence) suggests  *******************
+
+If you want to allow HTTPD scripts and modules to connect to the network using TCP.
+Then you must tell SELinux about this by enabling the 'httpd_can_network_connect'boolean.
+Do
+setsebool -P httpd_can_network_connect 1
+```
+
+## 요약
+
+- 웹 서버같이 [DMZ](firewall.html#비무장지대dmz)에 위치하는 서버는 꼭 SELinux 를 사용하는게 좋습니다.
+- SELinux 보안 정책의 복잡도를 줄이기 위해 웹 서버는 static content 전송이나 Reverse Proxy 로만 사용하는 것을 권장하며 이럴 경우 SELinux 정책 수정이 거의 없이(필요시 port 컨텍스트 추가 정도) 사용할 수 있습니다.
+- 서비스에 문제가 있고 SELinux 가 원인으로 짐작될 경우 끄는 것보다는 *setenforce 0* 로 잠시 허용 모드로 돌려 놓고 *audit2why, ausearch, sealert* 등을 활용하여 원인을 찾는 것이 좋습니다.
 
 
 ## 같이 읽기
 
 * [SELinux 로 리눅스를 견고하게 하기](https://www.lesstif.com/pages/viewpage.action?pageId=18219470)
-* [SELinux 에러 메시지 및 문제 해결](https://www.lesstif.com/pages/viewpage.action?pageId=12943496)
-
-
+* [SELinux 에러 메시지 및 문제 해결](https://www.lesstif.com/pages/viewpage.action?pageId=12943496) - 자주 발생하는 에러와 해결책 모음
+* [Basic SELinux Troubleshooting in CLI](https://access.redhat.com/articles/2191331)  - Redhat Customer Portal
+* [cp/mv 와 SELinux security context](https://www.lesstif.com/pages/viewpage.action?pageId=14090283) - cp 와 mv 명령어가 SELinux 에서 어떻게 동작하는지 설명
 
 [^1] NSA 는 전 세계적인 감청망을 운용하고 있는 것으로 드러나서 SELinux 에 어떤 백도어가 있는 것 아니냐는 우려가 있을수 있지만 다행히 소스를 기증했기 때고 레드햇사와 리눅스 커뮤니티에서 오랫 기간 검증을 거쳐서 백도어 우려는 안 해도 됩니다.
 
