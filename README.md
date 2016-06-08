@@ -36,4 +36,5 @@
 
 본 문서에 기여하신 분들입니다.
 
-* [roupkk](https://github.com/roupkk)
+* [roupkk](https://github.com/roupkk) 님
+* [haruair](https://github.com/haruair) 님
