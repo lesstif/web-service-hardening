@@ -226,7 +226,7 @@ ls -ldZ /var/www
 
 *-Z* 를 붙이면 위에서 설명한 컨텍스트를 확인할 수 있으며 특히 타입(httpd_sys_content_t) 항목을 눈여겨 봅시다.
 
-이제 *ps -Z|grep httpd*(또는 httpd 대신 nginx) 명령어를 실행해서 프로세스의 컨텍스트를 확인합시다
+이제 *ps -Z|grep httpd*(또는 httpd 대신 nginx) 명령어를 실행해서 프로세스의 컨텍스트를 확인합시다.
 
 ```
 ps -Z|grep httpd
