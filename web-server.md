@@ -349,3 +349,6 @@ location /manager {
 ## 참고 자료
 * [apache ServerTokens Directive](https://httpd.apache.org/docs/2.4/mod/core.html#servertokens)
 * [nginx RESTRICTING ACCESS](https://www.nginx.com/resources/admin-guide/restricting-access/)
+* [Nginx Server Configs](https://github.com/h5bp/server-configs-nginx) - nginx 설정 모음
+* [Apache Server Configs](https://github.com/h5bp/server-configs-apache) - apache httpd 설정 모음
+* [htaccess](https://github.com/phanan/htaccess) - apache .htaccess Snippets
