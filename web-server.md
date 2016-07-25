@@ -74,13 +74,15 @@ semanage port -a -p tcp -t http_port_t 9876
 HTTP 헤더에는 [보안을 강화하기 위한  여러 헤더](https://www.owasp.org/index.php/List_of_useful_HTTP_headers)가 있습니다.
 
 * **X-Frame-Options** : [클릭 하이재킹](http://blog.ahnlab.com/ahnlab/tag/1058)을 방지하기 위한 헤더로 *deny*로 설정하면 iframe 에서 렌더링을 하지 않습니다. *sameorigin* 은 origin이 일치하지 않을 경우 렌더링을 하지 않습니다. 
-* **X-Content-Type-Options**: *"nosniff"* 만 설정할 수 있으며 [잘못된 MIME 형식이 포함된 응답을 거부](https://msdn.microsoft.com/ko-kr/library/gg622941(v=vs.85).aspx)합니다.
+* **X-Content-Type-Options**: *"nosniff"* 만 설정할 수 있으며 [잘못된 MIME 형식이 포함된 응답을 거부](https://msdn.microsoft.com/ko-kr/library/gg622941\(v=vs.85\).aspx)합니다.
+* **X-XSS-Protection**: IE와 Chrome 브라우저가 지원하며 [특정 유형의 XSS(cross site script)공격](https://msdn.microsoft.com/ko-kr/library/dd565647\(v=vs.85\).aspx)을 차단해 줍니다.
 
 apache httpd 는 Header 지시자로 보안 관련 헤더를 설정하면 됩니다. 
 
 ```
 Header always set X-Frame-Options DENY
 Header always set X-Content-Type-Options nosniff
+Header set X-XSS-Protection "1; mode=block"
 ```
 
 nginx 는 add_header 지시자로 설정합니다.
@@ -88,6 +90,7 @@ nginx 는 add_header 지시자로 설정합니다.
 ```
 add_header X-Frame-Options DENY;
 add_header X-Content-Type-Options nosniff;
+add_header X-XSS-Protection "1; mode=block";
 ```
 
 >**Warning**
