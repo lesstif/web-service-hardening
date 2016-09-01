@@ -8,6 +8,15 @@
 - [EPub](https://www.gitbook.com/download/epub/book/lesstif/web-service-hardening)
 - [Mobi](https://www.gitbook.com/download/mobi/book/lesstif/web-service-hardening)
 
+로컬에서 gitbook 을 설치하고 볼 경우는 다음 명령어로 gitbook-cli 를 설치(node 와 npm 필요)합니다.
+
+```sh
+npm install gitbook-cli -g
+gitbook install
+gitbook serve
+```
+
+설치가 완료되면 브라우저로 http://localhost:4000/ 에 연결하면 됩니다.
 
 ## 목적
 최근 P 사이트의 개인 정보 유출 사태에서 보듯이 보안은 하면 좋고 안해도 그만인 요소가 아니라 고객과 비즈니스를 보호하기 위해서는 우선적으로 챙겨야 할 핵심 요소입니다.
