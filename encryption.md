@@ -60,10 +60,13 @@ CBC 는 ECB 의 단점을 해결하기 위한 방법으로 각 블록은 암호�
 ![CBC 방식](https://upload.wikimedia.org/wikipedia/commons/d/d3/Cbc_encryption.png)
 
 
-아래의 펭귄 그림이 원본 데이타일 경우 ECB와 cBC 방식으로 암호화한 결과는 아래 그림을 보면 쉽게 이해할 수 있으며 왜 ECB 를 사용하면 취약해지는지 알 수 있습니다.
-![원본 데이타](https://upload.wikimedia.org/wikipedia/commons/5/56/Tux.jpg)
-![ECB 암호화](https://upload.wikimedia.org/wikipedia/commons/f/f0/Tux_ecb.jpg)
-![CBC 암호화](https://upload.wikimedia.org/wikipedia/commons/a/a0/Tux_secure.jpg)
+아래의 펭귄 그림이 암호화할 원본 데이타라고 생각해 봅시다.
+![원본 데이타](https://upload.wikimedia.org/wikipedia/commons/5/56/Tux.jpg "원본 데이타")
+
+좌측은 **ECB**, 우측은 **CBC** 방식으로 암호화한 결과이며 그림처럼 ECB 는 원문의 흔적이 남기 때문에 원문을 유추할 수 있으며 특히 원문에 같은 내용의 블록이 있을 경우 키를 알아내고 원문을 손쉽게 해독할 수 있는 취약점이 존재합니다.
+
+![ECB 암호화](https://upload.wikimedia.org/wikipedia/commons/f/f0/Tux_ecb.jpg "ECB 암호화")
+![CBC 암호화](https://upload.wikimedia.org/wikipedia/commons/a/a0/Tux_secure.jpg "CBC 암호화")
 
 ### 암호화 해시 함수
 
