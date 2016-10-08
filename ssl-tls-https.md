@@ -9,7 +9,7 @@ TLS(Transport Layer Security)는 인터넷 상에서 통신할 때 주고받는 
 TLS는 넷스케이프사에 의해 개발된 SSL(Secure Socket Layer) 3.0 버전을 기반으로 하며, 현재는 2008년 발표된 TLS버전 1.2가 최종 버전입니다.
 
 TLS는 전송계층(Transport Layer)의 암호화 방식이기 때문에 HTTP뿐만 아니라 FTP, XMPP등 
-응용 계층(Application Layer)프로토콜의 종류에 상관없이 사용할 수 있다는 장점이 있으며기본적
+응용 계층(Application Layer)프로토콜의 종류에 상관없이 사용할 수 있다는 장점이 있으며 기본적
 으로 인증(Authentication), 암호화(Encryption), 무결성(Integrity)을 지원합니다.
 
 ![TLS 아키텍처](https://www.lesstif.com/download/attachments/18219486/image2014-7-30%2023%3A29%3A18.png?version=1&modificationDate=1406730379000&api=v2 "TLS 아키텍처")
@@ -297,7 +297,7 @@ cat example.com.crt example-ca.crt example-rootca.crt > /etc/pki/tls/certs/examp
 server {
 	listen       80;
 	server_name	example.com;
-	return 301 https://example.com$request_uri;	
+	return 301 https://$http_host$request_uri;	
 }
 ```
 
