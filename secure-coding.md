@@ -97,7 +97,7 @@ PHP 는 htmlentities() 함수를 사용하여 입력 값을 소독할 수 있으
 
 ## 취약한 직접 객체 참조 
 
-얼마전 모 서점에서 주문 번호만 입력하면 다른 이의 배송 정보와 결재 정보를 그대로 볼 수 있는 취약점이 있었습니다. [^1]
+얼마전 모 서점에서 주문 번호만 입력하면 다른 이의 배송 정보와 결재 정보를 그대로 볼 수 있는 취약점이 있었습니다. <sup id="fnref1">[1](#footnote1)</sup>
 
 이런 문제를 해결하려면 사용자가 직접 입력한 객체의 소유자를 검증하고 인증 여부를 확인해야 합니다.
 
@@ -177,4 +177,4 @@ Linux 는 yum 이나 apt-get 같은 패키지 관리자 기능을 제공하므�
 
 
 
-[^1] http://www.insight.co.kr/newsRead.php?ArtNo=56987
+<a name="footnote1" href="#fnref1">[1]</a> http://www.insight.co.kr/newsRead.php?ArtNo=56987

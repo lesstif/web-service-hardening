@@ -69,4 +69,4 @@ security.limit_extensions =
 
 ## 참고 자료
 * [Is the PHP option 'cgi.fix_pathinfo' really dangerous with Nginx + PHP-FPM?](http://serverfault.com/questions/627903/is-the-php-option-cgi-fix-pathinfo-really-dangerous-with-nginx-php-fpm)
-* 
+

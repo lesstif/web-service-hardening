@@ -96,7 +96,7 @@ MAC 정책에서는 루트로 구동한 http 서버라도 접근 가능한 파�
 
 SELinux는 미국 국가 안보국(NSA; National Security Agency; 또는 농담으로 No Such Agency 라고도 합니다.)에서 개발한 플라스크(Flask)라는 MAC 기반의 보안 커널을 리눅스에 이식한 커널 레벨의 보안 모듈입니다.
 
-NSA는 구현한 소스를 리눅스 커뮤니티에 기증해서 2.6 버전부터 커널에 공식 포함되었습니다. [^1]
+NSA는 구현한 소스를 리눅스 커뮤니티에 기증해서 2.6 버전부터 커널에 공식 포함되었습니다. <sup id="fnref1">[1](#footnote1)</sup>
 
 RHEL 기반의 배포판에는 4 버전부터 공식적으로 포함되었으며 이제는 다양한 제품들이 SELinux를 지원하고 있으므로 기본적인 SELinux 개념과 설정을 알고 있다면 사용하는게 크게 어렵지는 않습니다.
 
@@ -201,7 +201,7 @@ SELINUX=disabled
 
 ### Security Context 
 
-SELinux 는 모든 프로세스와 객체마다 보안 컨텍스트(Security Context)[^2]이라고 부르는 정보를 부여하여 관리하고 있습니다. 
+SELinux 는 모든 프로세스와 객체마다 보안 컨텍스트(Security Context)<sup id="fnref2">[2](#footnote2)</sup>이라고 부르는 정보를 부여하여 관리하고 있습니다. 
 
 이 정보는 접근 권한을 확인하는데 사용되고 있으며 SELinux 를 이해하기 위한 핵심 요소이며 다음 4가지 구성 요소로 이루어져 있습니다.
 
@@ -526,6 +526,6 @@ setsebool -P httpd_can_network_connect 1
 * [Basic SELinux Troubleshooting in CLI](https://access.redhat.com/articles/2191331)  - Redhat Customer Portal
 * [cp/mv 와 SELinux security context](https://www.lesstif.com/pages/viewpage.action?pageId=14090283) - cp 와 mv 명령어가 SELinux 에서 어떻게 동작하는지 설명
 
-[^1] NSA 는 전 세계적인 감청망을 운용하고 있는 것으로 드러나서 SELinux 에 어떤 백도어가 있는 것 아니냐는 우려가 있을수 있지만 다행히 소스를 기증했기 때고 레드햇사와 리눅스 커뮤니티에서 오랫 기간 검증을 거쳐서 백도어 우려는 안 해도 됩니다.
+<a name="footnote1" href="#fnref1">[1]</a> NSA 는 전 세계적인 감청망을 운용하고 있는 것으로 드러나서 SELinux 에 어떤 백도어가 있는 것 아니냐는 우려가 있을수 있지만 다행히 소스를 기증했기 때고 레드햇사와 리눅스 커뮤니티에서 오랫 기간 검증을 거쳐서 백도어 우려는 안 해도 됩니다.
 
-[^2] 보안 레이블(Security label) 이라고도 합니다.
+<a name="footnote2" href="#fnref2">[2]</a> 보안 레이블(Security label) 이라고도 합니다.
