@@ -21,7 +21,7 @@ SSL에서 TLS로 이름이 변경된 지 오래됐지만 아직도 사람들은 
 
 이 문서에서는 SSL 이라고 할 경우 SSL 프로토콜, TLS 는 TLS 프로토콜을 의미하며, 보안이 적용된 HTTP는 HTTPS로 지칭하겠습니다.
 
-SSL/TLS 를 사용하면 [중간자 공격](GLOSSARY.md)[^1]과 Packet Spoofing 을 통한 도감청을 막을 수 있으며 통신하는 상대방이 맞는지 인증할 수 있습니다.  [^2]
+SSL/TLS 를 사용하면 [중간자 공격](GLOSSARY.md)<sup id="fnref1">[1](#footnote1)</sup>과 Packet Spoofing 을 통한 도감청을 막을 수 있으며 통신하는 상대방이 맞는지 인증할 수 있습니다. <sup id="fnref2">[2](#footnote2)</sup>
 
 
 ## TLS HandShake
@@ -449,6 +449,6 @@ preload 에 추가한 사이트는  max-age 기간동안 자동으로 https 로 
 * [nginx에 HTTPS/SSL 적용하기](https://www.lesstif.com/pages/viewpage.action?pageId=27984443)
 
 
-[^1]: ARP 스푸핑을 통한 피해 및 모범 대응 사례- http://blog.bandisoft.com/132
-[^2]: 백신 프로그램은 HTTPS 패킷을 검사하기 위해 백신 회사가 발급한 root 인증 기관 인증서를 브라우저에 신뢰하는 인증기관으로 추가하고 TLS 인증서를 발급해서 HTTPS 를 통해 오가는 데이타를 검사합니다. 이 방식은 좋은 용도지만 중간자 공격과 동일합니다.
+<a name="footnote1" href="#fnref1">[1]</a>: ARP 스푸핑을 통한 피해 및 모범 대응 사례- http://blog.bandisoft.com/132
+<a name="footnote2" href="#fnref2">[2]</a>: 백신 프로그램은 HTTPS 패킷을 검사하기 위해 백신 회사가 발급한 root 인증 기관 인증서를 브라우저에 신뢰하는 인증기관으로 추가하고 TLS 인증서를 발급해서 HTTPS 를 통해 오가는 데이타를 검사합니다. 이 방식은 좋은 용도지만 중간자 공격과 동일합니다.
 
