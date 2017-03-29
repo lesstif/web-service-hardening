@@ -13,6 +13,7 @@
 * [대칭키 암호화](encryption.md)
 * [공개키 암호화](public-key-encryption.md)
 * [시큐어 코딩](secure-coding.md)
+* [PHP 보안강화 하기](php-security-checklist.md)
 * [용어 정리](GLOSSARY.md)
 * [같이 읽기](seealso.md)
 

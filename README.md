@@ -18,6 +18,10 @@ gitbook serve
 
 설치가 완료되면 브라우저로 http://localhost:4000/ 에 연결하면 됩니다.
 
+>**Hint** 
+Windows 에서 gitbook serve 시 'EPERM: operation not permitted, mkdir' 에러가 날 경우 [여기](http://stackoverflow.com/questions/34600932/npm-eperm-operation-not-permitted-on-windows)를 참고하세요.
+
+
 ## 목적
 최근 P 사이트의 개인 정보 유출 사태에서 보듯이 보안은 하면 좋고 안해도 그만인 요소가 아니라 고객과 비즈니스를 보호하기 위해서는 우선적으로 챙겨야 할 핵심 요소입니다.
  
