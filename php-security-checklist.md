@@ -84,6 +84,7 @@ PHP 에서 DBMS 를 다루기 위한 범용 인터페이스인 PDO 를 사용하
 이미 개발된 서비스는 어렵겠지만 신규로 개발시 프레임워크를 도입하는 것을 고려하는 것이 좋습니다. 
 Laravel 등 PHP 프레임워크는 SQL Injection, XSS, CSRF 등 잘 알려진 보안 취약점에 대응하여 설계되었으므로 사용하는 것이 좋습니다.
 
-## 참고 자료
+## 같이 읽기
 
 * [OWASP's PHP Security Cheat Sheet](https://www.owasp.org/index.php/PHP_Security_Cheat_Sheet)
+* [Survive The Deep End: PHP Security](https://github.com/padraic/phpsecurity)
