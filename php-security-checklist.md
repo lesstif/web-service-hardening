@@ -2,9 +2,9 @@
 
 <!-- toc -->
 
-> **Info**  많은 웹 서비스들이 PHP 로 개발되었지만 보안을 고려하지 않은 경우가 많아서 취약점을 갖고 있으며 이는 비즈니스에 중대한 위협이 됩니다.
->
-> PHP 로 웹 서비스를 만들고 운영할 때 알아두어야 할 보안 고려 사항을 정리해 봅니다.
+> **Info**  많은 웹 서비스들이 PHP 로 개발되었지만 긴급한 비즈니스의 요구사항에 밀려서 보안을 고려하지 못한 경우가 많고 이로 인해 여러 취약점을 갖고 있을수 있습니다.
+> 이제 보안은 **"하면 좋고 안해도 그만"**인 선택 기능이 아니라 고객과 비즈니스를 보호하기 위해서 우선적으로 고려해야 할 핵심 구성 요소입니다.
+> 이를 위해 PHP 로 웹 서비스를 만들고 운영할 때 알아두어야 할 보안 요구 사항을 정리해 봅니다.
 
 
 ## PHP version update & patch
@@ -61,6 +61,8 @@ mod_php 를 계속 사용해야 한다면 *AddHandler* 지시자를 삭제하고
 * [RHEL/CentOS 5,6,7 에 EPEL 과 Remi/WebTatic Repository 설치하기](https://www.lesstif.com/pages/viewpage.action?pageId=6979743#RHEL/CentOS5,6,7에EPEL과Remi/WebTaticRepository설치하기-Remirepository설치) 참고
 
 ## Database
+
+웹 서비스의 많은 기능들이 DBMS 와 상호 작용을 통해 이루어 집니다. PHP 로 DBMS 를 다룰 경우 보안을 위해 고려해야 할 사항을 정리합니다.
 
 ### Prepared Statements 와 Bound Parameters 사용
 
