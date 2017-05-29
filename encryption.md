@@ -100,7 +100,7 @@ PBKDF(Password-Based Key Derivation Function) 는 사용자에게 문자열을 �
 
 단방향 함수이므로 결과로 부터 원문을 유추할 수 없으므로 사용자 암호에 적용하기 좋은 알고리즘입니다.
 
-PHP 는 *[hash_pbkdf2]*(http://php.net/manual/en/function.hash-pbkdf2.php) 를 사용하면 됩니다.
+PHP 는 [hash_pbkdf2](http://php.net/manual/en/function.hash-pbkdf2.php) 를 사용하면 됩니다.
 
 
 ```php
@@ -122,7 +122,7 @@ echo $hash . "\n";
 
 bcrypt 는 비밀번호 해시에 사용하기 위해 만들어진 알고리즘으로 OpenBSD 에 기본 탑재되어 있습니다.
 
-PHP 는 *[password_hash]*(http://php.net/manual/en/function.password-hash.php) 의 두 번째 파라미터를 *PASSWORD_BCRYPT* 로 지정하면 됩니다.
+PHP 는 [password_hash](http://php.net/manual/en/function.password-hash.php) 의 두 번째 파라미터를 *PASSWORD_BCRYPT* 로 지정하면 됩니다.
 
 >**Hint**
 PHP 5.5 이상은 기본 값이 bcrypt 이므로 *PASSWORD_DEFAULT* 로 설정해도 됩니다.
