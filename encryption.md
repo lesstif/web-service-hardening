@@ -87,11 +87,9 @@ CBC 는 ECB 의 단점을 해결하기 위한 방법으로 각 블록은 암호�
 
 비밀 번호 암호화는 일반적인 암호화와는 달리 **복호화를 할 필요가 없습**니다.
 
-비밀 번호 암호화는 PBKDF 같은 함수를 사용하거나 또는 bcrypt 메서드를 사용하면 됩니다,
+비밀 번호 암호화는 PBKDF 같은 함수를 사용하거나 또는 bcrypt 알고리즘을 구현한 메서드를 사용하면 됩니다,
 
-직접 비밀번호 암호화하는 기능을 구현할 수 있겠지만 검증된 라이브러리를 사용하는 것을 권장합니다.
-
-직접 만들어 쓸 경우 다음 사항을 꼭 지키십시요.
+직접 비밀번호 암호화하는 기능을 구현할 수 있겠지만 검증된 라이브러리를 사용하는 것을 권장하며 직접 만들어 쓸 경우 다음 사항을 꼭 지키십시요.
 
 * 안전한 해시 함수(SHA2 이상) 사용
 * Random 값을 생성한 후에 Salt 첨가.
@@ -102,11 +100,21 @@ PBKDF(Password-Based Key Derivation Function) 는 사용자에게 문자열을 �
 
 단방향 함수이므로 결과로 부터 원문을 유추할 수 없으므로 사용자 암호에 적용하기 좋은 알고리즘입니다.
 
-PHP 는 hash_pbkdf2 를 사용하면 됩니다.
+PHP 는 *[hash_pbkdf2]*(http://php.net/manual/en/function.hash-pbkdf2.php) 를 사용하면 됩니다.
 
 
 ```php
+<?php
+$password = "mypasswd";
 
+$iterations = 1000;
+
+// $salt = null; 이면 동일한 hash 출력
+$salt = openssl_random_pseudo_bytes(16);
+
+$hash = hash_pbkdf2("sha256", $password, $salt, $iterations, $length = 20);
+
+echo $hash . "\n";
 
 ```
 
@@ -114,12 +122,36 @@ PHP 는 hash_pbkdf2 를 사용하면 됩니다.
 
 bcrypt 는 비밀번호 해시에 사용하기 위해 만들어진 알고리즘으로 OpenBSD 에 기본 탑재되어 있습니다.
 
-PHP 는 password_hash() 의 두 번째 파라미터를 PASSWORD_BCRYPT 로 지정하면 됩니다.
+PHP 는 *[password_hash]*(http://php.net/manual/en/function.password-hash.php) 의 두 번째 파라미터를 *PASSWORD_BCRYPT* 로 지정하면 됩니다.
+
+>**Hint**
+PHP 5.5 이상은 기본 값이 bcrypt 이므로 *PASSWORD_DEFAULT* 로 설정해도 됩니다.
 
 ```php
 <?php
 
-echo password_hash("strong_password", PASSWORD_BCRYPT)."\n";
+echo password_hash("strong_password", PASSWORD_DEFAULT )."\n";
+```
+
+Java 는 [spring security 에 BCrypt](https://docs.spring.io/spring-security/site/docs/current/apidocs/org/springframework/security/crypto/bcrypt/BCrypt.html) 에 구현되어 있으므로 이것을 사용하면 됩니다.
+
+```java
+import import org.springframework.security.crypto.bcrypt.BCrypt;
+
+// 사용자 입력 암호
+String plain_password = "password_1234";
+
+// pw_hash 는 bcrypt 로 암호화된 비밀번호가 저장되며 이 값을 DB 에 저장하면 됩니다.
+String pw_hash = BCrypt.hashpw(plain_password, BCrypt.gensalt(10));
+
+// 사용자가 입력한 암호 검증
+String candidate_password = "password_123";
+String stored_hash = pw_hash;
+
+if (BCrypt.checkpw(candidate_password, stored_hash))
+    System.out.println("It matches");
+else
+    System.out.println("It does not match");
 ```
 
 ## 키 관리
@@ -166,7 +198,6 @@ echo password_hash("strong_password", PASSWORD_BCRYPT)."\n";
 
 ### Java
 
-
 Java 는 JCE/JCA 라는 암복호를 하기 위한 표준이 있고 이를 구현한 JCE Provider 가 필요합니다.
 
 권장하는 JCE 프로바이더는 [Bouncy Castle](https://www.bouncycastle.org/java.html) 입니다.
@@ -181,7 +212,7 @@ Java 는 JCE/JCA 라는 암복호를 하기 위한 표준이 있고 이를 구�
 String input = "Hello World";
 
 KeyGenerator gen = KeyGenerator.getInstance("AES");
-gen.init(128);
+gen.init(256);  // 256 key length
 
 // 대칭키 생성
 SecretKey key = gen.generateKey(); 
@@ -207,10 +238,8 @@ Cipher d = Cipher.getInstance("AES/CBC/PKCS5Padding");
 d.init(Cipher.DECRYPT_MODE, key, spec);
 byte[] decData = d.doFinal(encData);
 
-if (input.equals(new String(decData))) 
-{
-    System.out.println("복호화 결과가 다릅니다");
-}
+System.out.println("ORG: " + input);
+System.out.println("DEC: " + new String(decData));
 
 ```
 
@@ -218,6 +247,26 @@ if (input.equals(new String(decData)))
 
 ### PHP 
 
-PHP는 mcrypt 를 사용하여 대칭키 암호를 할 수 있습니다.
+PHP는 openssl extension 을 사용하여 대칭키 암호를 할 수 있습니다. (mcrypt 는 오래됐고 버그가 많아서 PHP 7 부터 지원이 중지됩니다.)
+
+```php
+<?php
+
+$key = openssl_random_pseudo_bytes(32);
+
+$iv = openssl_random_pseudo_bytes(16);
+
+$data = 'Hello World';
+
+$enc = openssl_encrypt($data, 'AES-256-CBC', $key, 0, $iv);
+
+echo base64_encode($enc) . "\n";
+
+$dec =  openssl_decrypt($enc, 'aes-256-cbc', $key, 0, $iv);
+
+echo $dec . "\n";
+```
+
+# 참고 자료
 
 * [KISA 암호 키 관리 안내서](http://seed.kisa.or.kr/iwt/ko/guide/EgovGuideDetail.do?bbsId=BBSMSTR_000000000011&nttId=83&pageIndex=1&searchCnd=&searchWrd=)
