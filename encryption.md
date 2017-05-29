@@ -133,7 +133,7 @@ PHP 5.5 이상은 기본 값이 bcrypt 이므로 *PASSWORD_DEFAULT* 로 설정�
 echo password_hash("strong_password", PASSWORD_DEFAULT )."\n";
 ```
 
-Java 는 [spring security 에 BCrypt](https://docs.spring.io/spring-security/site/docs/current/apidocs/org/springframework/security/crypto/bcrypt/BCrypt.html) 에 구현되어 있으므로 이것을 사용하면 됩니다.
+Java 는 [spring security 에 BCrypt](https://docs.spring.io/spring-security/site/docs/current/apidocs/org/springframework/security/crypto/bcrypt/BCrypt.html) 가 구현되어 있으므로 이것을 사용하면 됩니다.
 
 ```java
 import import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -164,7 +164,7 @@ else
 
 ![Luna HSM](http://www.tssl.com/tsslweb/wp-content/uploads/2014/11/product_safenet_luna_sp2.png "Luna HSM")
 
-유명한 HSM 제품중 하나인 LunaHSM 은 [Amazon Web Service에 CloudHSM](https://aws.amazon.com/ko/cloudhsm/) 에 적용되어 있습니다.
+유명한 HSM 제품인 LunaHSM 은 [Amazon Web Service의 CloudHSM](https://aws.amazon.com/ko/cloudhsm/) 에 적용되어 있고 또 다른 제품인 Thales nShield 는 [MS Azure의 Key Vault](https://docs.microsoft.com/ko-kr/azure/key-vault/key-vault-hsm-protected-keys) 에 적용되어 있습니다.
 
 
 ## 데이타 암호화 프로세스
