@@ -259,38 +259,24 @@ user  nginx;
 
 공격자는 이런 파일을 내려 받아서 서버의 정보를 파악할 수 있으므로 다음 설정으로 중요 파일을 보호할 수 있습니다.
 
-**httpd 2.2**
+
+**httpd 2.2, 2.4**
 
 ```
 <DirectoryMatch .*\.(git|svn)/.*>
-    Order deny,allow
-    Deny From All
+    Redirect 404 /
 </DirectoryMatch>
     
 <FilesMatch "^(htaccess|wp-config)">
-    Order deny,allow
-    Deny From All
+    Redirect 404 /
 </FilesMatch>
 
 <FilesMatch "\.(inc|ini|conf|cfg)$">
-    Order deny,allow
-    Deny From All
-</FilesMatch>
-```
-
-**httpd 2.4**
-
-```
-<DirectoryMatch .*\.(git|svn)/.*>
-    Require all denied
-</DirectoryMatch>
-    
-<FilesMatch "^(htaccess|wp-config)">
-    Require all denied
+    Redirect 404 /
 </FilesMatch>
 
-<FilesMatch "\.(inc|ini|conf|cfg)$">
-    Require all denied
+<FilesMatch "\.(xml|properties)$">
+    Redirect 404 /
 </FilesMatch>
 ```
 
@@ -298,15 +284,20 @@ user  nginx;
 
 ```
 location ~ /\.(ht|git|svn) {
-    deny all;
+    return 404;
 }
 location ~ /wp-conf* {
-    deny all;
+    return 404;
 }
 location ~ /.*\.(inc|ini|conf|cfg)$ {
-    deny all;
+    return 404;
+}
+location ~ /.*\.(xml|properties)$ {
+    return 404;
 }
 ```
+
+> **Info** *Require all denied*(apache) 나 *deny all*(nginx) 를 사용할 경우 HTTP 403 Forbidden 응답이 가게되며 공격자는 이 경우 해당 컨텐츠가 있으므로 적절한 권한을 얻기위해 추가 공격을 실행할 수 있습니다. 그러나 HTTP 404 Not Found 응답을 받으면 컨텐츠가 없다고 생각할 것이므로 더 적절한 설정입니다.
 
 ## 관리자 서비스 접근 제한
 
