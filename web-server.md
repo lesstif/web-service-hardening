@@ -275,7 +275,13 @@ user  nginx;
     Redirect 404 /
 </FilesMatch>
 
+## java property
 <FilesMatch "\.(xml|properties)$">
+    Redirect 404 /
+</FilesMatch>
+
+## laravel .env*
+<FilesMatch "^(.env)">
     Redirect 404 /
 </FilesMatch>
 ```
@@ -292,7 +298,14 @@ location ~ /wp-conf* {
 location ~ /.*\.(inc|ini|conf|cfg)$ {
     return 404;
 }
+
+## java property
 location ~ /.*\.(xml|properties)$ {
+    return 404;
+}
+
+## laravel .env*
+location ~ /\.(env)* {
     return 404;
 }
 ```
