@@ -316,7 +316,7 @@ location ~ /\.(env)* {
 
 웹 애플리케이션에서 설정할수도  있지만 웹 서버에서도 관리자 영역등 특정 패턴의 url 을 차단할 수 있습니다.
 
-다음은 아파치 톰캣의 관리자 context 인 /manager 에 127.0.0.1과 192.168.0.0 대역을 제외하고는 접근을 차단하는 예제입니다.
+다음은 아파치 톰캣의 관리자 context 인 /manager 에 127.0.0.1과 192.168.10.0 대역을 제외하고는 접근을 차단하는 예제입니다.
 
 **httpd 2.2**
 
@@ -324,7 +324,7 @@ location ~ /\.(env)* {
 <Location /manager>
     Order deny,allow
     Deny from all
-    Allow from 127.0.0.1 192.168.0.0/24
+    Allow from 127.0.0.1 192.168.10.0/24
 </Location>
 ```
 
@@ -332,7 +332,18 @@ location ~ /\.(env)* {
 
 ```
 <Location /manager>
-    Require host  127.0.0.1 192.168.0.0/24
+    Require host  127.0.0.1 192.168.10.0/24
+</Location>
+```
+
+Proxy 를 사용하는 경우
+
+```
+SetEnvIF X-Forwarded-For "127.0.0.1" AllowIP
+SetEnvIF X-Forwarded-For "^192\.168\.10" AllowIP
+ 
+<Location /manager>
+    Require env AllowIP
 </Location>
 ```
 
@@ -359,3 +370,4 @@ location /manager {
 * [Nginx Server Configs](https://github.com/h5bp/server-configs-nginx) - nginx 설정 모음
 * [Apache Server Configs](https://github.com/h5bp/server-configs-apache) - apache httpd 설정 모음
 * [htaccess](https://github.com/phanan/htaccess) - apache .htaccess Snippets
+* [Apache2 block / allow IP – simple guide](http://dryja.info/apache2-block-allow-ip-simple-guide/)
