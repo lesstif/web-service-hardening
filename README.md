@@ -2,7 +2,7 @@
 
 인터넷으로 서비스를 제공하기 위해 챙겨야 할 실용적인 보안 가이드.
 
-[**github**](https://github.com/lesstif/web-service-hardening)에 공개되어 있으며 EBook은 **[gitbook](https://lesstif.gitbooks.io/web-service-hardening/content/)** 에서 읽으실 수 있으며 다음 포맷으로 다운로드 가능합니다.
+[**github**](https://github.com/lesstif/web-service-hardening)에 공개되어 있으며 EBook은 **[gitbook](https://lesstif.gitbooks.io/web-service-hardening/content/)** 또는 **[gitbook v2](https://lesstif.gitbook.io/web-service-hardening/)** 에서 읽으실 수 있으며 다음 포맷으로 다운로드 가능합니다.
 
 - [PDF](https://www.gitbook.com/download/pdf/book/lesstif/web-service-hardening)
 - [EPub](https://www.gitbook.com/download/epub/book/lesstif/web-service-hardening)
