@@ -12,8 +12,8 @@
 
 ```sh
 npm install gitbook-cli -g
-gitbook install
-gitbook serve
+gitbook build .
+gitbook serve .
 ```
 
 설치가 완료되면 브라우저로 http://localhost:4000/ 에 연결하면 됩니다.

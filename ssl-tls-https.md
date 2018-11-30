@@ -6,7 +6,8 @@
 
 TLS(Transport Layer Security)는 인터넷 상에서 통신할 때 주고받는 데이터를 보호하기 위한 표준화된 암호화 프로토콜입니다.
 
-TLS는 넷스케이프사에 의해 개발된 SSL(Secure Socket Layer) 3.0 버전을 기반으로 하며, 현재는 2008년 발표된 TLS버전 1.2가 최종 버전입니다.
+TLS는 넷스케이프사에 의해 개발된 SSL(Secure Socket Layer) 3.0 버전을 기반으로 하며, 현재는 [2018년 8월에 발표된 TLS버전 1.3](https://en.wikipedia.org/wiki/Transport_Layer_Security#TLS_1.3)이 최종 버전입니다.
+(이전 버전인 1.2는 2008년에 발표되었으므로 10년만에 업그레이드 되었습니다.)
 
 TLS는 전송계층(Transport Layer)의 암호화 방식이기 때문에 HTTP뿐만 아니라 FTP, XMPP등 
 응용 계층(Application Layer)프로토콜의 종류에 상관없이 사용할 수 있다는 장점이 있으며 기본적
@@ -337,15 +338,18 @@ Windows XP 와 JDK 6 은 SNI 를 지원하지 않으며 전체 목록은 [위키
 
 ### 최신 버전의 TLS 사용
 
-SSL 은 보안 취약점이 있으므로 사용하지 말고 TLS 를 사용해야 하며 TLS 도 최신 버전(TLS 1.2)을 사용하는 것이 좋습니다. ([TLS 1.1 이상은 openssl 1.0.1 이상이 필요.](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_protocols))
+SSL 은 보안 취약점이 있으므로 사용하지 말고 TLS 를 사용해야 하며 TLS 도 최신 버전(TLS 1.3)을 사용하는 것이 좋습니다.
 
-만약 예전 IE 를 사용하는 고객이 많아서 TLS 1.2 를 강제하기 곤란하다면 다음과 같이 v1, v1.1, v1.2 를 다 사용하도록 하면 브라우저의 지원 여부에 따라 자동으로 적절한 TLS 버전을 사용하여 세션이 구성됩니다. 
+만약 예전 Browser 를 사용하는 고객이 많아서 TLS 1.2 를 강제하기 곤란하다면 다음과 같이 v1, v1.1, v1.2, v1.3 을 다 사용하도록 하면 브라우저의 지원 여부에 따라 자동으로 적절한 TLS 버전을 사용하여 세션이 구성됩니다. 
 
 nginx 는 아래와 같이 사용할 버전을 지정할 수 있습니다.
 
 ```
-ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
+ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
 ```
+
+>**Info** 
+TLS1.3 은 [nginx 1.13.0]((http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_protocols) 이상과 [OpenSSL 1.1.1](https://www.openssl.org/news/openssl-1.1.1-notes.html) 이상이 필요합니다.
 
 **apache httpd** 는 아래와 같이 사용할 버전을 지정할 수 있습니다.
 
@@ -354,17 +358,19 @@ ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
 SSLProtocol all -SSLv2 -SSLv3 
 ```
 
-또는 사용할 프로토콜 버전을 명시적으로 지정해도 됩니다.
+이보다 좋은 방법은 사용할 프로토콜 버전을 명시적으로 지정하는 것입니다.
 
 ```
-SSLProtocol TLSv1 TLSv1.1 TLSv1.2
+SSLProtocol TLSv1 TLSv1.1 TLSv1.2 TLSv1.3
 ```
+>**Info** 
+TLS1.3 은 [apache 2.4.36](https://github.com/apache/httpd/blob/2.4.36/CHANGES) 이상과 [OpenSSL 1.1.1](https://www.openssl.org/news/openssl-1.1.1-notes.html) 이상이 필요합니다.
 
 ### 강력한 알고리즘 사용
 
 TLS 는 암호화 통신을 위해 사용할 알고리즘을 협상후 결정하는데 RC4 나 Triple DES 같은 오래된 알고리즘을 사용하면 암호화 통신을 하는 이유가 반감됩니다.
 
-크롬의 경우 TLS V1.2 를 사용하더라도 예전 알고리즘이 사용 가능하면 사이트 정보 보기에서 아래와 같은 메시지를 출력하게 됩니다.
+크롬의 경우 TLS V1.3 를 사용하더라도 예전 알고리즘이 사용 가능하면 사이트 정보 보기에서 아래와 같은 메시지를 출력하게 됩니다.
 
 ![약한 알고리즘 사용 경고](https://cloud.githubusercontent.com/assets/404534/12735884/cd7c5eae-c98e-11e5-84d5-315927f8147b.png "약한 알고리즘 사용 경고")
 
