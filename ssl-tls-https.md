@@ -340,7 +340,7 @@ Windows XP 와 JDK 6 은 SNI 를 지원하지 않으며 전체 목록은 [위키
 
 SSL 은 보안 취약점이 있으므로 사용하지 말고 TLS 를 사용해야 하며 TLS 도 최신 버전(TLS 1.3)을 사용하는 것이 좋습니다.
 
-만약 예전 Browser 를 사용하는 고객이 많아서 TLS 1.2 를 강제하기 곤란하다면 다음과 같이 v1, v1.1, v1.2, v1.3 을 다 사용하도록 하면 브라우저의 지원 여부에 따라 자동으로 적절한 TLS 버전을 사용하여 세션이 구성됩니다. 
+만약 예전 Browser 를 사용하는 고객이 많아서 최신 버전을 강제하기 곤란하다면 다음과 같이 v1, v1.1, v1.2, v1.3 을 다 사용하도록 하면 브라우저의 지원 여부에 따라 자동으로 적절한 TLS 버전을 사용하여 세션이 구성됩니다. 
 
 nginx 는 아래와 같이 사용할 버전을 지정할 수 있습니다.
 
@@ -349,7 +349,7 @@ ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
 ```
 
 >**Info** 
-TLS1.3 은 [nginx 1.13.0]((http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_protocols) 이상과 [OpenSSL 1.1.1](https://www.openssl.org/news/openssl-1.1.1-notes.html) 이상이 필요합니다.
+TLS1.3 은 [nginx 1.13.0](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_protocols) 이상과 [OpenSSL 1.1.1](https://www.openssl.org/news/openssl-1.1.1-notes.html) 이상이 필요합니다.
 
 **apache httpd** 는 아래와 같이 사용할 버전을 지정할 수 있습니다.
 
