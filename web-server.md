@@ -228,7 +228,8 @@ chmod -R 755 /var/www/mycontents
 
 특히 파일에 실행 권한을 주는 경우 웹 서버를 통해 실행할 경우 문제가 될 수 있으므로 주의깊게 설정해야 합니다.
 
-> **Info** [SELinux](selinux.html)가 켜져 있을 경우 실행 속성을 주어도 *httpd_sys_script_exec_t* 컨텍스트가 설정되어 있지 않으면 웹 서버가 실행할 수 없습니다.
+> [!WARNING] 
+> [SELinux](selinux.html)가 켜져 있을 경우 실행 속성을 주어도 *httpd_sys_script_exec_t* 컨텍스트가 설정되어 있지 않으면 웹 서버가 실행할 수 없습니다.
 
 웹 서버는 루트로 구동해야 하므로 보안을 위해 구동후 별도의 계정으로 전환하며 배포판마다 전환하는 계정이 다릅니다.
 그러므로 웹 서버가 쓰기 권한과 실행 권한을 가져야 하는 폴더와 파일은 웹 서버 구동후 전환 계정으로 설정하는 게 권한 문제를 방지할 수 있습니다.
@@ -310,7 +311,8 @@ location ~ /\.(env)* {
 }
 ```
 
-> **Info** *Require all denied*(apache) 나 *deny all*(nginx) 를 사용할 경우 HTTP 403 Forbidden 응답이 가게되며 공격자는 이 경우 해당 컨텐츠가 있으므로 적절한 권한을 얻기위해 추가 공격을 실행할 수 있습니다. 그러나 HTTP 404 Not Found 응답을 받으면 컨텐츠가 없다고 생각할 것이므로 더 적절한 설정입니다.
+> [!WARNING] 
+> *Require all denied*(apache) 나 *deny all*(nginx) 를 사용할 경우 HTTP 403 Forbidden 응답이 가게되며 공격자는 이 경우 해당 컨텐츠가 있으므로 적절한 권한을 얻기위해 추가 공격을 실행할 수 있습니다. 그러나 HTTP 404 Not Found 응답을 받으면 컨텐츠가 없다고 생각할 것이므로 더 적절한 설정입니다.
 
 ## 관리자 서비스 접근 제한
 

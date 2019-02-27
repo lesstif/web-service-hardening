@@ -4,8 +4,8 @@
 
 **한 줄 요약**
 
->**Hint** 
-SELinux 는 여러분을 불편하게 하지만 여러분의 시스템을 장악해서 악의적인 용도로 사용하려는 크래커들에게는 큰 좌절을 맛보게 하니 꼭 사용하세요.
+> [!TIP] 
+> SELinux 는 여러분을 불편하게 하지만 여러분의 시스템을 장악해서 악의적인 용도로 사용하려는 크래커들에게는 큰 좌절을 맛보게 하니 꼭 사용하세요.
 
 
 SELinux 는 RHEL/CentOS 사용자들이 가장 증오하는 기능일 겁니다.
@@ -100,9 +100,8 @@ NSA는 구현한 소스를 리눅스 커뮤니티에 기증해서 2.6 버전부�
 
 RHEL 기반의 배포판에는 4 버전부터 공식적으로 포함되었으며 이제는 다양한 제품들이 SELinux를 지원하고 있으므로 기본적인 SELinux 개념과 설정을 알고 있다면 사용하는게 크게 어렵지는 않습니다.
 
-> **Note** Android도 보안 문제가 대두되자 최신 버전부터는 SELinux 를 포팅한 SE Android 가 기본 탑재되어 있습니다.
-> 
-> 
+> [!NOTE] 
+> Android도 보안 문제가 대두되자 최신 버전부터는 SELinux 를 포팅한 SE Android 가 기본 탑재되어 있습니다.
 
 **SELinux 는 기존 접근 통제 규칙보다 먼저 동작**하므로 SELinux 의 보안 정책에 맞지 않을 경우 차단해 버리게 됩니다.
 
@@ -196,7 +195,8 @@ SELINUX=disabled
 ```
 
 
-> **Info** SELinux 를 껐다가 다시 활성화하려면 재부팅이 필요하며 모든 리소스에 대해 보안 레이블을 추가해야 하므로 부팅 시간이 오래 걸릴 수 있습니다.
+> [!WARNING] 
+> SELinux 를 껐다가 다시 활성화하려면 재부팅이 필요하며 모든 리소스에 대해 보안 레이블을 추가해야 하므로 부팅 시간이 오래 걸릴 수 있습니다.
 
 
 ### Security Context 
@@ -456,8 +456,9 @@ type=AVC msg=audit(1463625135.602:32366): avc:  denied  { name_connect } for  pi
 audit2why 는 모든 로그를 보여주므로 로그가 많이 쌓 여있을 경우 보기가 어렵습니다.
 커널 로그를 검색할 수 있는 ausearch 명령어를 사용하면 기간별, 타입별로 로그를 조회할 수 있습니다.
 
->**Hint** 
-ausearch 를 사용하려면 아래 패키지를 설치해야 합니다.
+> [!NOTE] 
+> ausearch 를 사용하려면 아래 패키지를 설치해야 합니다.
+
 ```
 yum install audit
 ```
@@ -471,8 +472,9 @@ yum install audit
 ausearch -m AVC,USER_AVC -ts 05/13/2016
 ```
 
->**Hint** 
-날자 지정 포맷은 locale 설정에 따라 달라지며 위와 같이 Month/Day/Year 형식으로 지정하려면 en_US 로 설정되어 있어야 합니다.
+> [!NOTE]
+> 날자 지정 포맷은 locale 설정에 따라 달라지며 위와 같이 Month/Day/Year 형식으로 지정하려면 en_US 로 설정되어 있어야 합니다.
+
 ```
 export LANG=en_US.utf8
 ```

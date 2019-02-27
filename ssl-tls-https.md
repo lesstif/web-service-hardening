@@ -96,8 +96,8 @@ HTTPS 용 인증서를 발급받으려면 Verisign 이나 thawte, Comodo 같은 
 
 AWS 를 사용한다면 [AWS Certificate Manager](https://aws.amazon.com/ko/certificate-manager/) 를 사용하여 무료로 인증서를 발급받을 수 있습니다.
 
->**Info** 
-현재 US East (Northern Virginia)리전에서만 사용 가능합니다.
+> [!NOTE] 
+> 현재 US East (Northern Virginia)리전에서만 사용 가능합니다.
 
 ### CSR 생성과 발급 
 
@@ -328,8 +328,8 @@ Accept: */*
 
 이런 문제를 해결하기 위해 "서버 이름 표시([SNI;Server Name Indication - RFC 4366](http://tools.ietf.org/html/rfc4366#page-9))" 규격이 있으며 대부분의 브라우저, 웹 서버, HTTPS 구현 라이브러리가 SNI 를 지원하므로 SSL/TLS에서도 가상 호스트를 사용할 수 있습니다.
 
->**Info** 
-Windows XP 와 JDK 6 은 SNI 를 지원하지 않으며 전체 목록은 [위키피디아의 SNI](https://en.wikipedia.org/wiki/Server_Name_Indication#Support)에서 확인할 수 있습니다.
+> [!NOTE]  
+> Windows XP 와 JDK 6 은 SNI 를 지원하지 않으며 전체 목록은 [위키피디아의 SNI](https://en.wikipedia.org/wiki/Server_Name_Indication#Support)에서 확인할 수 있습니다.
 
 
 ## SSL/TLS 보안 강화하기
@@ -348,8 +348,8 @@ nginx 는 아래와 같이 사용할 버전을 지정할 수 있습니다.
 ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
 ```
 
->**Info** 
-TLS1.3 은 [nginx 1.13.0](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_protocols) 이상과 [OpenSSL 1.1.1](https://www.openssl.org/news/openssl-1.1.1-notes.html) 이상이 필요합니다.
+> [!NOTE] 
+> TLS1.3 은 [nginx 1.13.0](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_protocols) 이상과 [OpenSSL 1.1.1](https://www.openssl.org/news/openssl-1.1.1-notes.html) 이상이 필요합니다.
 
 **apache httpd** 는 아래와 같이 사용할 버전을 지정할 수 있습니다.
 
@@ -363,8 +363,8 @@ SSLProtocol all -SSLv2 -SSLv3
 ```
 SSLProtocol TLSv1 TLSv1.1 TLSv1.2 TLSv1.3
 ```
->**Info** 
-TLS1.3 은 [apache 2.4.36](https://github.com/apache/httpd/blob/2.4.36/CHANGES) 이상과 [OpenSSL 1.1.1](https://www.openssl.org/news/openssl-1.1.1-notes.html) 이상이 필요합니다.
+> [!NOTE] 
+> TLS1.3 은 [apache 2.4.36](https://github.com/apache/httpd/blob/2.4.36/CHANGES) 이상과 [OpenSSL 1.1.1](https://www.openssl.org/news/openssl-1.1.1-notes.html) 이상이 필요합니다.
 
 ### 강력한 알고리즘 사용
 
@@ -402,9 +402,9 @@ SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
 
 HSTS 는 이런 문제를 해결하기 위해 HTTP 헤더에 **"Strict-Transport-Security"** 가 있으면 브라우저는 무조건 HTTPS 로만 연결하도록 하여 "SSL strip 공격"을 방지하는 표준입니다.
 
->**Warning**
-사이트에 HSTS 를 적용하면 브라우저가 더 엄격하게 동작하므로 서버 설정에 주의를 기울여야 합니다. 예로 HSTS 사이트의 SSL 인증서가 잘못되었을 경우 "위험을 감수하고 연결" 옵션이 없어집니다.
-![image](https://cloud.githubusercontent.com/assets/404534/15269802/dca102ec-1a45-11e6-9b46-685bf60b7098.png "잘못된 인증서가 설정된 HSTS 사이트")
+> [!Warning]
+> 사이트에 HSTS 를 적용하면 브라우저가 더 엄격하게 동작하므로 서버 설정에 주의를 기울여야 합니다. 예로 HSTS 사이트의 SSL 인증서가 잘못되었을 경우 "위험을 감수하고 연결" 옵션이 없어집니다.
+> ![image](https://cloud.githubusercontent.com/assets/404534/15269802/dca102ec-1a45-11e6-9b46-685bf60b7098.png "잘못된 인증서가 설정된 HSTS 사이트")
 
 HSTS 를 사용하려면 **"Strict-Transport-Security"** HTTP 헤더를 설정하면 되며 지시자로 세부적인 동작을 지정할 수 있습니다. 
 
