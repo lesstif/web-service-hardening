@@ -8,15 +8,17 @@
         "epub": "styles/epub.css"
     },
     "plugins": [
-        "toc",
+        "etoc",
         "flexible-alerts",
         "disqus",
         "ga"
     ],
     "pluginsConfig": {
-        "toc": {
-            "addClass": true,
-            "className": "toc"
+        "etoc": {
+            "h2lb": 3,
+            "mindepth": 3,
+            "maxdepth": 4,
+            "notoc": false
         },
         "disqus": {
             "shortName": "lesstif-gitbook-io"
