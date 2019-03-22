@@ -177,8 +177,8 @@ server {
     ssl_certificate      /etc/pki/tls/certs/example.com.crt;
     ssl_certificate_key  /etc/pki/tls/private/example.com.key;
     ssl_session_timeout  5m;
-    # SSLv2, SSLv3는 보안에 취약하므로 사용하지 마세요
-    ssl_protocols  TLSv1.2 TLSv1.1 TLSv1;
+    # TLS1, SSLv2, SSLv3는 보안에 취약하므로 사용하지 마세요
+    ssl_protocols  TLSv1.3 TLSv1.2 TLSv1.1;
     # 사용하지 않을 암호 알고리즘은 !로 명시적으로 지정할 수 있습니다.(블랙리스트 방식) 	
     ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
     ssl_prefer_server_ciphers   on;
@@ -207,7 +207,7 @@ RHEL/CentOS 의 아파치 웹 서버는 /etc/httpd/conf.d/ssl.conf 에 다음과
     ServerAlias www.example.com
     SSLEngine on
     # Dropping SSLv2, SSLv3, ref: POODLE
-    SSLProtocol all -SSLv2 -SSLv3 
+    SSLProtocol all -SSLv2 -SSLv3 -TLSv1
 
     SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
     #SSLCipherSuite HIGH:!aNULL:!MD5
@@ -345,7 +345,12 @@ SSL 은 보안 취약점이 있으므로 사용하지 말고 TLS 를 사용해�
 nginx 는 아래와 같이 사용할 버전을 지정할 수 있습니다.
 
 ```
-ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
+ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+```
+
+최신 브라우저만 지원하거나 [ssllabs](https://ssllabs.com) 에서 점수를 높게 받고 싶으면 1.2 이상만 지원하도록 설정합니다.
+```
+ssl_protocols TLSv1.2 TLSv1.3;
 ```
 
 > [!NOTE] 
