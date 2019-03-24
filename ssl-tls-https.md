@@ -196,6 +196,9 @@ server {
 -  *ssl_ciphers* : 사용할 암호 알고리즘을 지정합니다.
 -  *ssl_prefer_server_ciphers* : SSL-TLS 협상 과정에서 서버에 설정한 암호 알고리즘을 우선하며 off 일 경우 알고리즘을 약화시켜서 공격할 수가 있으므로 on 으로 설정합니다.
 
+> [!NOTE] 
+> 최신 버전의 nginx 에서는 *ssl on* 키워드가 deprecated 되어서 아래와 같은 경고가 나오므로 *listen 443 ssl* 만 사용하면 됩니다.
+> nginx: nginx: [warn] the "ssl" directive is deprecated, use the "listen ... ssl" directive instead in 
 
 ### apache 웹 서버
 
