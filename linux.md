@@ -149,10 +149,10 @@ auditd.service                            enabled
 
 불필요한 서비스는 *systemctl disable 서비스명* 을 사용하여 자동 시작을 중지할 수 있으며 활성화할 경우 *disable* 대신 *enable* 을 사용하면 됩니다.
 
-다음 명령어는 mariadb 서비스의 자동 실행을 중지합니다.
+예로 다음 명령어는 mariadb 서비스를 자동 실행하지 않습니다.
 
 ```bash
-systemctl enable mariadb
+systemctl disable mariadb
 ```
 
 특정 서비스의 자동 실행 여부는 *systemctl is-enabled 서비스명* 을 사용하면 되며 다음 명령어는 nginx 웹 서버의 자동 실행 여부를 출력합니다.
