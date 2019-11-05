@@ -29,7 +29,7 @@ FTP나 Samba, Bind 같이 사용하지 않는 서버 프로세스를 구동하�
 
 RHEL/CentOS 는 다음 저장소가 유명합니다.
 
-* [ELEL - Extra Packages for Enterprise Linux](http://fedoraproject.org/wiki/EPEL)
+* [EPEL - Extra Packages for Enterprise Linux](http://fedoraproject.org/wiki/EPEL)
 * [REMI](http://rpms.remirepo.net/)
 * [Web Tatic](http://www.webtatic.com/)
 
