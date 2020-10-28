@@ -210,7 +210,7 @@ RHEL/CentOS 의 아파치 웹 서버는 /etc/httpd/conf.d/ssl.conf 에 다음과
     ServerAlias www.example.com
     SSLEngine on
     # Dropping SSLv2, SSLv3, ref: POODLE
-    SSLProtocol all -SSLv2 -SSLv3 -TLSv1
+    SSLProtocol all -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
 
     SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
     #SSLCipherSuite HIGH:!aNULL:!MD5
@@ -220,9 +220,9 @@ RHEL/CentOS 의 아파치 웹 서버는 /etc/httpd/conf.d/ssl.conf 에 다음과
     SSLCertificateKeyFile /etc/pki/tls/private/example.com.key
     #SSLCertificateChainFile /etc/pki/tls/certs/server-chain.crt
 
-    ErrorLog logs/www-ssl-error_log
-    TransferLog logs/www-ssl-access_log
-    CustomLog logs/ssl_request_log \
+    ErrorLog logs/example.com-ssl-error_log
+    TransferLog logs/example.com-ssl-access_log
+    CustomLog logs/example.com-ssl_request_log \
         "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
 </VirtualHost>
 
