@@ -1,12 +1,17 @@
 # 같이 보기
 <!-- toc -->
 
+### KISA 주요정보통신기반시설 기술적 취약점 분석·평가 방법 상세가이드
+
+KISA 가 정기적으로 발표하는 "주요 정보통신 기반 시설 기술적 취약점 분석/평가 방법 가이드"를 보기 편하게 웹 페이지로 변환한 문서입니다.
+
+* [Github Pages 에서 보기](https://lesstif.github.io/KISA-Infra-security-guide/)
+
 ### OWASP 10 대 취약점
 
 오픈소스 웹 애플리케이션 보안 프로젝트인 OWASP(The Open Web Application Security Project) 에서 주기적으로 발표하는 10 취약점
 
-* [2013 10대 취약점](https://www.owasp.org/index.php/Top10#OWASP_Top_10_for_2013)
-* [한글 PDF](https://www.owasp.org/images/2/2c/OWASP_Top_10_-_2013_Final_-_Korean.pdf)
+* [2025 10대 취약점](https://owasp.org/www-project-top-ten/)
 
 ### 행정안전부 자료
 

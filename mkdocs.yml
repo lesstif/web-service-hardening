@@ -1,0 +1,77 @@
+site_name: 견고한 웹 서비스 만들기
+site_url: https://lesstif.github.io/web-service-hardening/
+site_description: 인터넷으로 서비스를 제공하기 위해 챙겨야 할 실용적인 보안 가이드.
+site_author: lesstif(정광섭)
+
+# ⭐ 중요: 서브 디렉토리 배포를 위한 설정
+use_directory_urls: true
+
+# Repository
+repo_name: lesstif/web-service-hardening
+repo_url: https://github.com/lesstif/web-service-hardening
+
+docs_dir: docs
+
+theme:
+  name: material
+  language: ko
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: 다크 모드로 전환
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: 라이트 모드로 전환
+  features:
+    - navigation.tabs          # 상단 탭
+    - navigation.tabs.sticky   # 탭 고정 (스크롤해도 보임)
+    - navigation.sections
+    - navigation.expand        # 사이드바 자동 확장
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+
+plugins:
+  - search:
+      lang: ko
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+
+# 간결한 nav 구조 (모든 항목 표시)
+nav:
+  - 홈: index.md
+  - 기본적인 보안: 01_security_basic/security-basic.md
+  - 리눅스 설치와 패키지 관리: 02_linux/linux.md
+  - 보안 강화 리눅스(SELinux): 03_selinux/selinux.md
+  - iptables/firewalld: 04_firewall/firewall.md
+  - ssh 서버: 05_sshserver/ssh-server.md
+  - 웹 서버: 06_webserver/web-server.md
+  - HTTPS(SSL/TLS): 07_tls_https/ssl-tls-https.md
+  - WAS: 08_web_app_server/web-app-server.md
+  - 대칭키 암호화: 09_encryption/encryption.md
+  - 공개키 암호화: 10_pub_key_encryption/public-key-encryption.md
+  - 시큐어 코딩: 11_secure_coding/secure-coding.md
+  - PHP 보안강화 하기: 12_programming_languages/php-security-checklist.md
+  - 저자 소개: author.md
+  - 용어 정리: GLOSSARY.md
+  - 같이 읽기: seealso.md
