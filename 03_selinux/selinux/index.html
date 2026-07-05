@@ -1,0 +1,2057 @@
+
+<!doctype html>
+<html lang="ko" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="인터넷으로 서비스를 제공하기 위해 챙겨야 할 실용적인 보안 가이드.">
+      
+      
+        <meta name="author" content="lesstif(정광섭)">
+      
+      
+        <link rel="canonical" href="https://lesstif.github.io/web-service-hardening/03_selinux/selinux/">
+      
+      
+        <link rel="prev" href="../../02_linux/linux/">
+      
+      
+        <link rel="next" href="../../04_firewall/firewall/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>보안 강화 리눅스(SELinux) - 견고한 웹 서비스 만들기</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#security-enhanced-linux" class="md-skip">
+          콘텐츠로 이동
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="상단/헤더">
+    <a href="../.." title="견고한 웹 서비스 만들기" class="md-header__button md-logo" aria-label="견고한 웹 서비스 만들기" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            견고한 웹 서비스 만들기
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              보안 강화 리눅스(SELinux)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="다크 모드로 전환"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="다크 모드로 전환" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="라이트 모드로 전환"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="라이트 모드로 전환" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="검색" placeholder="검색" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="검색">
+        
+        <button type="reset" class="md-search__icon md-icon" title="지우기" aria-label="지우기" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            검색 초기화
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/lesstif/web-service-hardening" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lesstif/web-service-hardening
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="탭" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  홈
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../01_security_basic/security-basic/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  기본적인 보안
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../02_linux/linux/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  리눅스 설치와 패키지 관리
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  보안 강화 리눅스(SELinux)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../04_firewall/firewall/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  iptables/firewalld
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../05_sshserver/ssh-server/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  ssh 서버
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../06_webserver/web-server/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  웹 서버
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../07_tls_https/ssl-tls-https/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  HTTPS(SSL/TLS)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../08_web_app_server/web-app-server/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  WAS
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../09_encryption/encryption/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  대칭키 암호화
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../10_pub_key_encryption/public-key-encryption/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  공개키 암호화
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../11_secure_coding/secure-coding/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  시큐어 코딩
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../12_programming_languages/php-security-checklist/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  PHP 보안강화 하기
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../author/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  저자 소개
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../GLOSSARY/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  용어 정리
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../seealso/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  같이 읽기
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="네비게이션" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="견고한 웹 서비스 만들기" class="md-nav__button md-logo" aria-label="견고한 웹 서비스 만들기" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    견고한 웹 서비스 만들기
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/lesstif/web-service-hardening" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lesstif/web-service-hardening
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    홈
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_security_basic/security-basic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    기본적인 보안
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_linux/linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    리눅스 설치와 패키지 관리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    보안 강화 리눅스(SELinux)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    보안 강화 리눅스(SELinux)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        접근 통제
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="접근 통제">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        임의 접근 통제
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="임의 접근 통제">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setuidsetgid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        setuid/setgid 문제
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#daemon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        잘 알려진 포트 daemon 문제
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        강제 접근 통제
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#selinux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SELinux 란
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SELinux 란">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        장점
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selinux_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SELinux 의 한계
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#selinux_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SELinux 사용하기
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SELinux 사용하기">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        동작 모드
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Context
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-enforcement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Type Enforcement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        context 정보 얻기
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="context 정보 얻기">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#seinfo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        seinfo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sesearch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sesearch
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#semanage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        semanage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        문제 해결
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="문제 해결">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#audit2why" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        audit2why
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ausearch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ausearch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sealert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sealert
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        요약
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        같이 읽기
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_firewall/firewall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    iptables/firewalld
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_sshserver/ssh-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ssh 서버
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_webserver/web-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    웹 서버
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_tls_https/ssl-tls-https/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTPS(SSL/TLS)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_web_app_server/web-app-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WAS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_encryption/encryption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    대칭키 암호화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_pub_key_encryption/public-key-encryption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    공개키 암호화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11_secure_coding/secure-coding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    시큐어 코딩
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12_programming_languages/php-security-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PHP 보안강화 하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../author/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    저자 소개
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../GLOSSARY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    용어 정리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../seealso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    같이 읽기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        접근 통제
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="접근 통제">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        임의 접근 통제
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="임의 접근 통제">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setuidsetgid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        setuid/setgid 문제
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#daemon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        잘 알려진 포트 daemon 문제
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        강제 접근 통제
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#selinux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SELinux 란
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SELinux 란">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        장점
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selinux_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SELinux 의 한계
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#selinux_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SELinux 사용하기
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SELinux 사용하기">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        동작 모드
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security Context
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-enforcement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Type Enforcement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        context 정보 얻기
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="context 정보 얻기">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#seinfo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        seinfo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sesearch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sesearch
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#semanage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        semanage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        문제 해결
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="문제 해결">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#audit2why" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        audit2why
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ausearch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ausearch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sealert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sealert
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        요약
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        같이 읽기
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="security-enhanced-linux">보안 강화 리눅스(Security-Enhanced Linux)</h1>
+<!-- toc -->
+
+<p><strong>한 줄 요약</strong></p>
+<blockquote>
+<p>[!TIP] 
+SELinux 는 여러분을 불편하게 하지만 여러분의 시스템을 장악해서 악의적인 용도로 사용하려는 크래커들에게는 큰 좌절을 맛보게 하니 꼭 사용하세요.</p>
+</blockquote>
+<p>SELinux 는 RHEL/CentOS 사용자들이 가장 증오하는 기능일 겁니다.
+설치후 제일 먼저 하는 일이 SELinux 를 끄는 것이고 검색 엔진에서도 SElinux 를 치면 끄기가 자동 완성되니까요.</p>
+<p>심지어 "리눅스에서 서비스를 운영하려면 SELinux를 꺼야 한다" 는 잘못된 지식이 널리 퍼져있습니다.</p>
+<p>이것은 우리나라만이 아니라 외국도 마찬가지이며 SELinux 의 장점과 중단했을 때의  문제점을 널리 알리기 위한 <a href="http://stopdisablingselinux.com/">stop disabling SELinux</a> 사이트도 생겨났습니다.</p>
+<p>이 글은 널리 퍼져있는 SELinux 에 대한 잘못된 정보를 바로 잡고 사용을 장려하기 위해서 작성했습니다.</p>
+<p>그러면 먼저 SELinux 를 이해하기 위해 필수적인 지식인 접근 통제에 대해서 알아 봅시다.</p>
+<h2 id="_1">접근 통제</h2>
+<p>운영체제에서 접근 통제(Access Control)은 디렉터리나 파일, 네트워크 소켓 같은 시스템 자원을 적절한 권한을 가진 사용자나 그룹이 접근하고 사용할 수 있게 통제하는 것을 의미합니다.</p>
+<p>접근 통제에서는 시스템 자원을 객체(Object)라고 하며 자원에 접근하는 사용자나 프로세스는 주체(Subject)라고 합니다.</p>
+<p>즉 <em>/etc/passwd</em> 파일은 객체이고 이 파일에 접근해서 암호를 변경하는 <em>passwd</em> 라는 명령어는 주체입니다.</p>
+<h3 id="_2">임의 접근 통제</h3>
+<p><strong>임의 접근 통제</strong>(DAC;Discretionary Access Control)는 시스템 객체에 대한 접근을 사용자나 또는 그룹의 신분을 기준으로 제한하는 방법입니다.</p>
+<p>사용자나 그룹이 객체의 소유자라면 다른 주체에 대해 이 객체에 대한 접근 권한을 설정할 수 있습니다.</p>
+<p>여기서 임의적이라는 말은 소유자는 자신의 판단에 의해서 권한을 줄 수 있다는 의미이며 구현이 용이하고 사용이 간편하기 때문에 전통적으로 유닉스나 윈도우등 대부분의 운영체제의 기본 접근 통제 모델로 사용되고 있습니다.</p>
+<p>임의적 접근 통제는 사용자가 임의로 접근 권한을 지정하므로 사용자의 권한을 탈취당하면 사용자가 소유하고 있는 모든 객체의 접근 권한을 가질 수 있게 되는 치명적인 문제가 있습니다.</p>
+<p>특히 <strong>root</strong> 계정은 모든 권한을 갖고 있으므로 root 권한을 탈취하면 시스템을 완벽하게 장악할 수 있으며 권한 탈취시 많이 사용되는 것은 아래에서 설명할 유닉스의 구조적인 2가지 보안 취약점입니다.</p>
+<h4 id="setuidsetgid">setuid/setgid 문제</h4>
+<p>사용자들의 암호는 /etc/shadow 에 저장되어 있으며 루트만 읽고 쓸수 있습니다.</p>
+<p>하지만 사용자들은 <em>passwd</em> 명령어를 실행하여 자신의 암호를 변경할 수 있고 이때 <em>/etc/shadow</em> 파일이 수정됩니다.</p>
+<p>상대방 호스트가 동작하는지 확인하기 위해 사용하는 <em>ping</em> 은 ICMP(Internet Control Message Protocol) 패킷을 사용하므로 루트 권한이 필요하지만 일반 사용자도 ping 명령어를 사용하여 상대 호스트의 이상 여부를 확인할 수 있습니다.</p>
+<p>유닉스 계열의 운영 체제는 실행 파일의 속성에 setuid(<strong>set</strong> <strong>u</strong>ser <strong>ID</strong> upon execution)또는 setgid(<strong>set</strong> <strong>g</strong>roup <strong>ID</strong> upon execution) 비트라는 것을 설정할 수 있으며 이 비트가 설정되어 있을 경우 해당 프로그램을 실행하면 실행 시점에 설정된 사용자(setuid), 또는 그룹(setgid) 권한으로 동작합니다.</p>
+<p>즉 passwd 나 ping 같이 실행시 루트 권한이 필요한 프로그램은 소유자를 root 로 하고 setuid를 설정하면 실행 시점에 root 사용자로 전환되므로 root 만 가능한 동작을 수행할 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ls -l /bin/ping/ /usr/bin/passwd
+</code></pre></div>
+<p><img alt="setuid 비트" src="https://www.lesstif.com/download/attachments/18219472/image2014-10-22%2023%3A28%3A26.png?version=1&amp;modificationDate=1413987928000&amp;api=v2" title="setuid 비트" /></p>
+<p>파일의 사용자 퍼미션 부분의 's' 표시는 setuid 비트이며 그룹 퍼미션 부분에 's' 표시가 있을 경우 setgid 비트로 <em>passwd</em> 와 <em>ping</em> 은 setuid 비트만 설정되어 있는 것을 알수 있습니다.</p>
+<p>하지만 setuid 비트가 붙은 프로그램에 보안 취약점이 있을 경우 공격자는 손쉽게 루트 권한을 획득할 수 있는 문제가 있습니다.</p>
+<p>이 때문에 setuid 비트는 필요하지만 유닉스 시스템의 주요 보안 취약점이었으며 시스템 관리자의 골칫 덩어리였습니다.</p>
+<p>시스템에 있는 setuid 비트가 붙은 프로그램은 다음 명령어로 찾을 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>find<span class="w"> </span>/bin<span class="w"> </span>/usr/bin<span class="w"> </span>/sbin<span class="w"> </span>-perm<span class="w"> </span>-4000<span class="w"> </span>-exec<span class="w"> </span>ls<span class="w"> </span>-ldb<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="se">\;</span>
+</code></pre></div>
+<h4 id="daemon">잘 알려진 포트 daemon 문제</h4>
+<p>잘 알려진 포트(well-known port) 는 특정한 쓰임새를 위해서 IANA에서 할당한 TCP 및 UDP 포트 번호의 일부로 1024 미만의 포트 번호를 갖게 됩니다.</p>
+<p>예로 웹에 사용되는 http(80), 메일 전송에 사용되는 smtp(25), 파일 전송에 사용되는 ftp(20, 21) 등이 잘 알려진 포트입니다.</p>
+<p>전통적으로 잘 알려진 포트는 루트만이 사용할 수 있으므로 데몬 서비스는 모두 루트의 권한으로 기동됩니다.</p>
+<p>보안 문제는 여기에서 발생하며 루트로 구동되었으므로 만약 서비스 데몬이 보안 취약점이 있거나 잘못된 설정이 있을 경우 서비스 데몬을 통해서 공격자는 루트 권한을 획득하게 되며 시스템의 모든 자원에 접근이 가능해 집니다.</p>
+<h3 id="_3">강제 접근 통제</h3>
+<p>강제 접근 통제(MAC; Mandatory Access Control)는 미리 정해진 정책과 보안 등급에 의거하여 주체에게 허용된 접근 권한과 객체에게 부여된 허용 등급을 비교하여 접근을 통제하는 모델입니다.</p>
+<p>높은 보안을 요구하는 정보는 낮은 보안 수준의 주체가 접근할 수 없으며 소유자라고 할 지라도 정책에 어긋나면 객체에 접근할 수 없으므로 강력한 보안을 제공합니다.</p>
+<p>MAC 정책에서는 루트로 구동한 http 서버라도 접근 가능한 파일과 포트가 제한됩니다.
+즉 취약점을 이용하여 httpd 의 권한을 획득했어도 <em>/var/www/html</em>, <em>/etc/httpd</em> 등의 사전에 허용한 폴더에만 접근 가능하며 80, 443, 8080 등의 포트만 접근이 허용되므로 ssh로 다른 서버로 접근을 시도하는등 이차 피해가 최소화 됩니다.</p>
+<p>단점으로는 구현이 복잡하고 어려우며 모든 주체와 객체에 대해서 보안 등급과 허용 등급을 부여하여야 하므로 설정이 복잡하고 시스템 관리자가 접근 통제 모델에 대해 잘 이해하고 있어야 합니다.</p>
+<h2 id="selinux">SELinux 란</h2>
+<p>SELinux는 미국 국가 안보국(NSA; National Security Agency; 또는 농담으로 No Such Agency 라고도 합니다.)에서 개발한 플라스크(Flask)라는 MAC 기반의 보안 커널을 리눅스에 이식한 커널 레벨의 보안 모듈입니다.</p>
+<p>NSA는 구현한 소스를 리눅스 커뮤니티에 기증해서 2.6 버전부터 커널에 공식 포함되었습니다. <sup id="fnref1"><a href="#footnote1">1</a></sup></p>
+<p>RHEL 기반의 배포판에는 4 버전부터 공식적으로 포함되었으며 이제는 다양한 제품들이 SELinux를 지원하고 있으므로 기본적인 SELinux 개념과 설정을 알고 있다면 사용하는게 크게 어렵지는 않습니다.</p>
+<blockquote>
+<p>[!NOTE] 
+Android도 보안 문제가 대두되자 최신 버전부터는 SELinux 를 포팅한 SE Android 가 기본 탑재되어 있습니다.</p>
+</blockquote>
+<p><strong>SELinux 는 기존 접근 통제 규칙보다 먼저 동작</strong>하므로 SELinux 의 보안 정책에 맞지 않을 경우 차단해 버리게 됩니다.</p>
+<p>이런 사실을 모를 경우 분명 파일의 소유자가 맞는데 <em>Permission Denied</em> 가 나거나 파일이 존재하는데 <em>File not Found</em> 등의 에러가 나는 원인을 찾지 못하고 SELinux 를 끄게 되고 정상 동작하는 것을 확인하고 SELinux 를 쓰면 안 된다는 생각을 갖게 됩니다.</p>
+<p>이는 자동차 주행중에 경고등에 불이 들어왔다고 전구를 빼는 것과 비슷한 행동입니다.
+실제 자동차에 문제가 생겼을 수도 있고 또는 경고등 자체가 고장났을수 있지만 가장 좋은 해결책은 원인을 찾고 적절한 조치를 취하는 것입니다. </p>
+<p>그동안 SELinux 에 대한 정보와 자료 부족때문에 그런 오해가 있었다면 이 글을 읽고 SELinux 에 대한 인식을 재고하고 왜 서비스가 SELinux 에 차단당했는지 원인을 찾고 적절한 조치를 취할 수 있는 계기가 되었으면 합니다.</p>
+<h3 id="_4">장점</h3>
+<p>SELinux 를 사용할 경우 다음과 같은 장점이 있습니다.</p>
+<ol>
+<li><strong>사전 정의된 접근 통제 정책 탑재</strong></li>
+</ol>
+<p>SELinux를 사용하면 사용자, 역할, 타입, 레벨등의 다양한 정보를 조합하여 어떤 프로세스가 어떤 파일, 디렉터리, 포트등에 접근 가능한지에 대해 사전에 잘 정의된 접근 통제 정책이 제공됩니다.</p>
+<p>그래서 MAC 적용을 위해 시스템 관리자가 할 일이 대폭 줄었고 애플리케이션의 변경없이 setuid와 1024 이하 포트를 사용하는 데몬을 안전하게 사용할 수 있습니다.</p>
+<ol>
+<li><strong>"Deny All, Permit Some" 정책으로 잘못된 설정 최소화</strong></li>
+</ol>
+<p>서두에 설명했듯 "모든 걸 차단하고 필요한 것만 허용"하는 정책은 단순하면서 강력한 정보 보호를 위한 최선의 정책입니다. SELinux 의 보안 정책도 이 방식으로 사전에 설정되어 있으므로 잘못된 설정이 기본 포함돼 있을 여지가 적습니다.</p>
+<ol>
+<li><strong>권한 상승 공격에 의한 취약점  감소</strong></li>
+</ol>
+<p>setuid 비트가 켜져 있거나 루트로 실행되는 프로세스처럼 위험한 프로그램들은 샌드박스안에서 별도의 도메인으로 격리되어 실행되므로 루트 권한을 탈취해도 해당 도메인에만 영향을 미치고 전체 시스템에 미치는 영향이 최소화됩니다.</p>
+<p>예로 아파치 httpd 서버의 보안 취약점을 통해 권한을 획득했어도 아파치같은 서버 데몬은 낮은 등급의 권한을 부여 받으므로 공격자는 일반 사용자의 홈 디렉터리를 읽을 수 없고 /tmp 임시 디렉터리에 파일을 쓸 수가 없습니다.</p>
+<ol>
+<li><strong>잘못된 설정과 버그로부터 시스템 보호</strong></li>
+</ol>
+<p>잘못된 설정이나 신뢰할 수 없는 입력을 악용한 공격에서 프로세스를 보호할 수 있습니다. </p>
+<p>예로 버퍼의 입력 길이등을 제대로 체크하지 않아서 발생하는 버퍼 오버 플로 공격(buffer overflow attack)의 경우 SELinux 는 어플리케이션이 메모리에 있는 코드를 실행할 수 없게 통제하므로 데몬 프로그램에 버퍼 오버 플로 버그가 있어도 쉘을 얻을 수가 없습니다.</p>
+<h3 id="selinux_1">SELinux 의 한계</h3>
+<p>SELinux 의 주요 목표는 잘못된 설정이나 프로그램의 보안 버그로 인해 시스템이 공격 당해도 시스템과 데이타를 보호하고 2차 피해를 막는 것입니다. </p>
+<p>SELinux 는 여러 가지 보안 요소중에 하나이며 SELinux 로 모든 보안 요건이 충족되지는 않습니다. </p>
+<p>SELinux 는 침입 차단 시스템(IPS; Intrusion Protection System), 침입 탐지 시스템(IDS; Intrusion Detection System)이나 바이러스 백신이 아니므로 여러 보안 요소와 혼용하여 사용해야 합니다.</p>
+<h2 id="selinux_2">SELinux 사용하기</h2>
+<h3 id="_5">동작 모드</h3>
+<p>SELinux는 그림과 같이 커널의 기본 기능으로 동작하며 모든 시스템 콜이 보안 정책을 확인해 접근 허용 여부를 판단하며  빠르게 처리하기 위해 보안 정책은 AVC(Access Vector Cache)라는 이름으로 커널 내부에서 캐싱합니다.</p>
+<p><img alt="SELinux 아키텍처" src="https://cloud.githubusercontent.com/assets/404534/12506805/d187db34-c134-11e5-85e3-76a71fd3ea9a.png" title="SELinux 아키텍처" /></p>
+<p>SELinux의 사용 여부는 <em>sestatus</em> 명령어를 통해 <em>Current mode</em> 에 enforcing 이 있는지 여부로 확인할 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a># sestatus
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>ELinux status:                 enabled
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>SELinuxfs mount:                /sys/fs/selinux
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>SELinux root directory:         /etc/selinux
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>Loaded policy name:             targeted
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>Current mode:                   enforcing
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>Mode from config file:          enforcing
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>Policy MLS status:              enabled
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>Policy deny_unknown status:     allowed
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>Max kernel policy version:      28
+</code></pre></div>
+<p>SELinux 는 enforce, permissive, disable 3 가지 모드가 있으며 기본 설정은 <em>enforce mode</em>이고 보안 정책에 위배되는 모든 액션이 차단됩니다.</p>
+<p><em>permissive mode</em> 는 경고 메시지를 내고 차단하지는 않습니다.</p>
+<p>모드의 전환은 <em>setenforce * 명령어를 사용하면 되며 옵션으로 1을 주면 </em><em>enforce mode</em><em> 로 0 일 경우 </em><em>permissive mode</em>* 로 전환할 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>setenforce 0
+</code></pre></div>
+<p><img alt="setenforce 0 결과" src="https://cloud.githubusercontent.com/assets/404534/14386181/be161840-fdde-11e5-86f8-603fccf0a14a.png" title="setenforce 0 결과" /></p>
+<p>마지막으로 disabled 는 SELinux 를 아예 사용하지 않도록 하는 설정입니다.</p>
+<blockquote>
+<p><strong>Danger</strong> SELinux 를 끄는 것은 절대 권장하지 않지만 /etc/selinux/config 의 SELinux 항목을 아래와 같이 설정하고 재부팅을 하면 됩니다.</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>SELINUX=disabled
+</code></pre></div>
+<blockquote>
+<p>[!WARNING] 
+SELinux 를 껐다가 다시 활성화하려면 재부팅이 필요하며 모든 리소스에 대해 보안 레이블을 추가해야 하므로 부팅 시간이 오래 걸릴 수 있습니다.</p>
+</blockquote>
+<h3 id="security-context">Security Context</h3>
+<p>SELinux 는 모든 프로세스와 객체마다 보안 컨텍스트(Security Context)<sup id="fnref2"><a href="#footnote2">2</a></sup>이라고 부르는 정보를 부여하여 관리하고 있습니다. </p>
+<p>이 정보는 접근 권한을 확인하는데 사용되고 있으며 SELinux 를 이해하기 위한 핵심 요소이며 다음 4가지 구성 요소로 이루어져 있습니다.</p>
+<table>
+<thead>
+<tr>
+<th>요소</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>사용자</td>
+<td>시스템의 사용자와는 별도의 SELinux 사용자이며 역할이나 레벨과 연계하여 접근 권한을 관리하는데 사용.</td>
+</tr>
+<tr>
+<td>역할(Role)</td>
+<td>하나 혹은 그 이상의 타입과 연결되어 SELinux 의 사용자의 접근을 허용할 지 결정하는데 사용</td>
+</tr>
+<tr>
+<td>타입(Type)</td>
+<td>Type Enforcement의 속성중 하나로 프로세스의 도메인이나 파일의 타입을 지정하고 이를 기반으로 접근 통제를 수행</td>
+</tr>
+<tr>
+<td>레벨(Level)</td>
+<td>레벨은 MLS(Multi Level System)에 필요하며 강제 접근 통제보다 더 강력한 보안이 필요할 때 사용하는 기능. 필자도 모릅니다.</td>
+</tr>
+</tbody>
+</table>
+<p>여기서 가장 중요하고 꼭 알아야 할 부분은 타입이며 이는 보안 컨텍스트의 핵심 부분으로 SELinux 를 활성화하면 파일이나 디렉터리등의 객체마다 보안 컨텍스트를 부여하고 있습니다.</p>
+<p>SELinux 가 도입되면서 ls, ps, cp, mv 등의 유틸리티에는 <em>-Z, --context</em> 옵션이 추가되었습니다.</p>
+<p>어떤 용도인지 알아보기 위해 <em>ls -ldz</em> 명령어를 실행해 봅시다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ls -ldZ /var/www
+</code></pre></div>
+<p><img alt="ls -ldZ 결과" src="https://cloud.githubusercontent.com/assets/404534/14387708/9a47acba-fde5-11e5-8c54-192db13c0fb0.png" title="ls -ldZ 결과" /></p>
+<p><em>-Z</em> 를 붙이면 위에서 설명한 컨텍스트를 확인할 수 있으며 특히 타입(httpd_sys_content_t) 항목을 눈여겨 봅시다.</p>
+<p>이제 <em>ps -Z|grep httpd</em>(또는 httpd 대신 nginx) 명령어를 실행해서 프로세스의 컨텍스트를 확인합시다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ps -Z|grep httpd
+</code></pre></div>
+<p><img alt="ps -Z 결과" src="https://cloud.githubusercontent.com/assets/404534/14387980/ccfcd81e-fde6-11e5-81f7-4660d3bdc8b4.png" title="ps -Z 결과" /></p>
+<p>httpd 프로세스는 httpd_t 라는 컨텍스트를 갖고 실행되는 것을 알 수 있습니다.</p>
+<h3 id="type-enforcement">Type Enforcement</h3>
+<p>TE(Type Enforcement)는 SELinux 의 기본적인 접근 통제를 처리하는 매커니즘으로 주체가 객체에 접근하려고 할 때 주체에 부여된 보안 컨텍스트가 객체에 접근할 권한이 있는지 판단하는 역할을 수행합니다. </p>
+<p>위의 예에서 아파치 웹 서버(httpd)가 /var/www/html/ 에 접근하려고 할 때 아파치 웹 서버는 주체가 되며 /var/www/html/ 는 객체가 되며 아파치 웹 서버에 부여된 보안 컨텍스트는 <em>httpd_t</em> 가 됩니다.</p>
+<p>객체에 부여된 보안 컨텍스트는 위에서 <em>ls -Z</em> 로 보았듯이 <em>httpd_sys_content_t</em> 이며 httpd_t 는 httpd_sys_content_t 보안 컨텍스트가 부여된 객체에 접근이 허용되므로 아파치 웹 서버는 /var/www/html/ 디렉터리에 있는 컨텐츠를 읽을 수 있습니다.</p>
+<p>SELinux 에 대한 오해는 바로 위의 Security Context 와 Type Enforcement 때문에 일어납니다.</p>
+<p>즉 사전에 탑재된 httpd 에 대한 정책에 의하면 <em>httpd_sys_content_t</em> 가 붙은 컨텐츠만 읽을 수 있고 /var/www 아래에 파일을 생성하면 자동으로 <em>httpd_sys_content_t</em> 가 붙게 됩니다.</p>
+<p>그러므로 /data/myweb-app 폴더를 만들고 이 안에 웹 서비스할 파일을 넣고 httpd 에 DocumentRoot 를 설정해도 SELinux 는 미리 허용된 경로가 아니므로 차단시켜서 <em>permission denied</em> 에러만 만나게 됩니다.</p>
+<p>마찬가지로 httpd 가 접근할 수 있게 사전에 허용된 context 는 http_port_t 이며 <em>semanage</em> 명령어로 해당 포트 목록을 조회할 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>semanage<span class="w"> </span>port<span class="w"> </span>-l<span class="p">|</span>grep<span class="w"> </span>http_port_t
+</code></pre></div>
+<p>기본적으로 허용된 포트는 아래와 같이 80, 443, 9000, 8000 등입니다.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>http_port_t                    tcp      9004, 8000, 8080, 10080, 8001, 80, 81, 443, 488, 8008, 8009, 8443, 9000 
+</code></pre></div></p>
+<p>Type Enforcement로 인해 공격자가 "제로 데이 취약점"을 사용하여 httpd 의 권한을 획득해도 다른 서버로 ssh 연결을 할 수 없습니다. 22번 포트는 허용되지 않았기 때문이며 이로 인해 2차 피해를 최소화할 수 있습니다.</p>
+<p>또 다른 예로 파일 공유 서비스인 삼바와 mysql DBMS 가 같이 구동되는 서버에서 삼바를 공격하여 권한을 탈취했다고 가정해 봅시다.</p>
+<p>이제 공격자는 삼바를 통해 mysql 데이타베이스 파일을 가져가려고 시도할 수 있습니다.</p>
+<p>```sh
+ ls -lZ /var/lib/mysql/</p>
+<p>-rw-rw----. mysql mysql system_u:object_r:mysqld_db_t:s0 ib_logfile0
+-rw-rw----. mysql mysql system_u:object_r:mysqld_db_t:s0 ib_logfile1
+-rw-rw----. mysql mysql system_u:object_r:mysqld_db_t:s0 ibdata1
+ ```</p>
+<p>SELinux 하에서는 삼바와 mysql 은 별도의 도메인으로 격리되어 동작하며 mysql 데이타는 <em>mysqld_db_t</em> context 가 설정되어 있고 삼바는 해당 객체에 접근할 수 없습니다</p>
+<p>하지만 위 정책으로 인해 웹 서버와 php-fpm 을 연동하는데 포트를 기본 fpm 포트(9000)가 아닌 9001을 사용했거나 톰캣과 연동하는데 8009, 8000이  아닌 포트를 사용했다면 SELinux 가 차단해서 서비스가 되지 않습니다.</p>
+<h3 id="context">context 정보 얻기</h3>
+<p>SELinux의 문제를 해결하기 위해서는 context 정보를 확인하고 이를 맞춰주는게 매우 중요합니다.
+이 작업을 용이하게 하기 위해 context 정보를 확인할 수 있는 유틸리티 사용법을 알아 봅시다.</p>
+<p>먼저 다음 패키지를 설치합니다. </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>yum install setools-console
+</code></pre></div>
+<h4 id="seinfo">seinfo</h4>
+<p>seinfo 는 policy를 조회하고 출력해주는 유틸리티입니다.</p>
+<p>다음 명령어로 현재 정책을 요약해서 볼 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>seinfo
+</code></pre></div>
+<p>-a 옵션으로 조회할 속성을 지정할 수 있으며 다음 예제는 전체 도메인을 출력합니다. </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>seinfo -adomain -x
+</code></pre></div>
+<h4 id="sesearch">sesearch</h4>
+<p><em>sesearch</em> 는 정책에서 지정한 룰을 조회할 수 있는 유틸리티입니다.</p>
+<p>다음 명령어는 httpd_sys_content_t 객체에 접근할 수 있는 롤 그룹을 표시합니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sesearch --role_allow -t httpd_sys_content_t 
+</code></pre></div>
+<p>--allow 옵션을 사용하면 특정 context에 허용된 액션을 알 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sesearch --allow -s httpd_t
+</code></pre></div>
+<p>첫 번째 라인의 출력의 의미는 다음과 같습니다. 
+ httpd_t 는 httpd_sys_content_t 가 설정된 파일에 대해 <em>ioctl, read, getattr, lock, open</em> system call 이 가능합니다. 
+ 즉 httpd_t 는 httpd_sys_content_t 컨텐츠를 읽을 수가 있습니다. </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a> allow httpd_t httpd_sys_content_t : file { ioctl read getattr lock open } ; 
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>   allow httpd_t zoneminder_log_t : file { ioctl getattr lock append open } ; 
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>   allow httpd_t httpd_sys_content_t : dir { ioctl read getattr lock search open } ; 
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>   allow httpd_t zoneminder_log_t : dir { getattr search open } ; 
+</code></pre></div>
+<p>SELinux 는 위와 같이 잘 정의된 사전 정책을 탑재하고 있으므로 꼭 사용하는 것이 좋습니다.</p>
+<h3 id="semanage">semanage</h3>
+<p>SELinux 에서 서비스가 안 도는 것은 보안 정책에 어긋나서이고 위에서 설명한 <em>seinfo, sesearch</em> 로 정책을 조회한 후에 조치해야 합니다.</p>
+<p>예로 mysql을 3307 로 구동했다면 허용된 포트가 아니므로 web 서버가 mysql에 연결할 수 없으며 허용된 포트를 사용하거나 정책을 수정하는 <a href="https://www.lesstif.com/pages/viewpage.action?pageId=18219476#SELinux사용하기-semange패키지">semanage</a> 명령어로 변경된 정보를 SELinux 에게 알려주면 됩니다.</p>
+<p><em>semanage</em>는 SELinux 의 보안 정책을 조회하고 추가/변경/삭제할 수 있는 명령행 기반의 유틸리티입니다.</p>
+<p>보안 컨텍스트는 파일이나 네트워크 포트, 네트워크 인터페이스등이며 이중에서 서비스 데몬이 SELinux 에서문제없이 동작하려면 꼭 알아 두어야 할 것이 파일과 네트워크 포트 컨텍스트입니다. </p>
+<p>semanage 는 아래 패키지를 설치해야 사용할 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>yum install -y policycoreutils-python
+</code></pre></div>
+<p><strong>포트 컨텍스트</strong></p>
+<p>먼저 포트 컨텍스트 사용법을 익히기 위해 httpd 가 연결할 수 있는 포트 정보를  알아 보겠습니다. </p>
+<p><em>semanage</em> 명령어의 첫 번째는 컨텍스트 이름이 와야 하며 이 경우 port 가 되며 오브젝트 리스트를 보는 -l 옵션을 추가하면 됩니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a># semanage port -l|grep http_port_t
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>http_port_t                    tcp      8081, 8080, 8090, 80, 81, 443, 488, 8008, 8009, 8443, 9000
+</code></pre></div>
+<p>http_port_t 라는 컨텍스트는 tcp 프로토콜로 8080, 80 등의 포트에 연결이 허용된 것을 알수 있습니다.</p>
+<p>만약 WAS 가 9876 포트를 사용할 경우 등록되지 않았으므로 SELinux 는 웹 서버가 9876 포트에 연결하지 못 하도록 차단하므로 정상적으로 서비스를 할 수 없습니다.</p>
+<p>이 때 SELinux 를 끄지 말고 semanage 명령어로 포트를 추가해 주면 웹 서버가 9876 포트에 연결할 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>semanage port -a -p tcp -t http_port_t 9876
+</code></pre></div>
+<p>시스템에 따라 다음과 같은 에러가 발생하는 경우가 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>/usr/sbin/semanage: tcp/9876에 대한 포트가 이미 지정되었습니다
+</code></pre></div>
+<p>이는 9876 에 이미 할당된 context 가 있는 것이므로 포트를 추가하는 <em>-a</em> 대신 변경하는 <em>-m</em> 옵션을 사용해야 합니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>semanage port -m -p tcp -t http_port_t 9876
+</code></pre></div>
+<p>포트를 삭제할 경우 <em>-d</em> 옵션을 사용하여 삭제할 프로토콜과 컨텍스트, 포트 번호를 명시해 주면 됩니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>semanage port -d -p tcp -t http_port_t 9876
+</code></pre></div>
+<p><strong>파일 컨텍스트</strong></p>
+<p>파일 컨텍스트는 fcontext 아규먼트를 추가하면 되며 웹 서버의 컨텐츠에 지정하는 httpd_sys_content_t가 할당된 파일 경로를 찾아 봅시다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a># semanage fcontext -l|grep httpd_sys_content_t
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>/var/lib/htdig(/.*)?                               all files          system_u:object_r:httpd_sys_content_t:s0 
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>/var/lib/trac(/.*)?                                all files          system_u:object_r:httpd_sys_content_t:s0 
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>/var/www(/.*)?                                     all files          system_u:object_r:httpd_sys_content_t:s0 
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>/var/www/icons(/.*)?                               all files          system_u:object_r:httpd_sys_content_t:s0 
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>/var/www/svn/conf(/.*)?                            all files          system_u:object_r:httpd_sys_content_t:s0 
+</code></pre></div>
+<p>아래에서 3번째 줄을 보면 <em>/var/www(/.</em>)?<em> 로 지정되어 있는데 의미는 /var/www 하단에 생성되는 모든 파일과 폴더는 </em>httpd_sys_content_t* 를 붙이라는 의미입니다.</p>
+<p>그러므로 웹 서버 컨텐츠가 /opt/mycontent 에 있다면 이후에 이 폴더에 생성한 모든 파일과 폴더에 <em>httpd_sys_content_t</em>  를 붙여야 정상적으로 서비스가 가능하므로 다음 semanage 로 fcontext 를 지정하면 됩니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>semanage fcontext -a -t httpd_sys_content_t &quot;/opt/mycontent(/.*)?&quot;
+</code></pre></div>
+<h2 id="_6">문제 해결</h2>
+<p>SELinux 를 사용하려고 할 때 가장 큰 어려움중 하나는 왜 문제가 발생하는지 로그는 어디에 쌓이는지 잘 모르고 로그 메시지 해석이 어려운 점입니다.</p>
+<p>SELinux 관련 로그는 <em>/var/log/audit/audit.log</em> 에 저장되며 root 만 볼수 있습니다.</p>
+<p><img alt="SELinux 문제해결 절차" src="https://cloud.githubusercontent.com/assets/404534/15462125/69f01cee-20fb-11e6-993e-ff5e2047116e.png" title="SELinux 문제해결 절차" /></p>
+<p>이번 장에서는 로그를 검색하고 원인을 찾도록 도와주는 유틸리티에 대해서 알아 보겠습니다.</p>
+<h3 id="audit2why">audit2why</h3>
+<p>SELinux 의 audit 로그를 왜 차단되었는지 설명과 함께 출력하는 유틸리티입니다. </p>
+<p>사용은 다음과 같이 옵션으로 audit 파일의 경로를 입력해 주면 됩니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>audit2why &lt; /var/log/audit/audit.log 
+</code></pre></div>
+<p>결과는 아래와 같이 차단된 process 와 원인, 간단한 해결책을 같이 표시합니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>type=AVC msg=audit(1463625135.602:32366): avc:  denied  { name_connect } for  pid=25862 comm=&quot;nginx&quot; dest=9001 scontext=unconfined_u:system_r:httpd_t:s0 tcontext=system_u:object_r:tor_port_t:s0 tclass=tcp_socket
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>        Was caused by:
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>        The boolean httpd_can_network_connect was set incorrectly. 
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>        Description:
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>        Allow HTTPD scripts and modules to connect to the network using TCP.
+<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a>
+<a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a>        Allow access by executing:
+<a id="__codelineno-24-9" name="__codelineno-24-9" href="#__codelineno-24-9"></a>        # setsebool -P httpd_can_network_connect 1
+</code></pre></div>
+<h3 id="ausearch">ausearch</h3>
+<p>audit2why 는 모든 로그를 보여주므로 로그가 많이 쌓 여있을 경우 보기가 어렵습니다.
+커널 로그를 검색할 수 있는 ausearch 명령어를 사용하면 기간별, 타입별로 로그를 조회할 수 있습니다.</p>
+<blockquote>
+<p>[!NOTE] 
+ausearch 를 사용하려면 아래 패키지를 설치해야 합니다.</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>yum install audit
+</code></pre></div>
+<p><em>-m</em> 옵션으로 메시지 타입을 지정할 수 있으며 콤마를 구분자로 여러 개를 지정할 수도 있습니다.
+<em>-ts, --start</em> 옵션으로 날자를 지정하면 해당 일 이후에 발생한 이벤트를 출력합니다.</p>
+<p>다음 명령어는 2016년 5월 13일 이후에 발생한 이벤트만 표시합니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>ausearch -m AVC,USER_AVC -ts 05/13/2016
+</code></pre></div>
+<blockquote>
+<p>[!NOTE]
+날자 지정 포맷은 locale 설정에 따라 달라지며 위와 같이 Month/Day/Year 형식으로 지정하려면 en_US 로 설정되어 있어야 합니다.</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>export LANG=en_US.utf8
+</code></pre></div>
+<p>또는 날자대신 now, recent, today, this-week, this-month, this-year 같은 문자열을 지정할 수 있습니다.</p>
+<p>다음 명령어는 이번 달에 발생한 이벤트 로그를 출력합니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>ausearch -m AVC,USER_AVC  -ts this-month
+</code></pre></div>
+<h3 id="sealert">sealert</h3>
+<p>audit2why 나 ausearch 가 출력하는 이벤트 로그는 익숙하지 않으면 해석과 조치가 어렵습니다. <em>sealert</em> 는 이를 쉽게 번역해 주는 유틸리티로 아래 패키지를 설치해야 사용할 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>yum install setroubleshoot-server
+</code></pre></div>
+<p>먼저 <em>-a</em> 옵션으로 현재 이벤트 로그를 분석할 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>sealert -a /var/log/audit/audit.log
+</code></pre></div>
+<p>분석이 끝나면 아래와 같이 차단 원인과 조치를 위한 명령어를 이해하기 쉽게 출력해 줍니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>SELinux is preventing /usr/sbin/nginx from name_connect access on the tcp_socket .
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>
+<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>*****  Plugin catchall_boolean (89.3 confidence) suggests  *******************
+<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>
+<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a>If you want to allow HTTPD scripts and modules to connect to the network using TCP.
+<a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a>Then you must tell SELinux about this by enabling the &#39;httpd_can_network_connect&#39;boolean.
+<a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a>Do
+<a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a>setsebool -P httpd_can_network_connect 1
+</code></pre></div>
+<h2 id="_7">요약</h2>
+<ul>
+<li>웹 서버같이 <a href="firewall.html#비무장지대dmz">DMZ</a>에 위치하는 서버는 꼭 SELinux 를 사용하는게 좋습니다.</li>
+<li>SELinux 보안 정책의 복잡도를 줄이기 위해 웹 서버는 static content 전송이나 Reverse Proxy 로만 사용하는 것을 권장하며 이럴 경우 SELinux 정책 수정이 거의 없이(필요시 port 컨텍스트 추가 정도) 사용할 수 있습니다.</li>
+<li>서비스에 문제가 있고 SELinux 가 원인으로 짐작될 경우 끄는 것보다는 <em>setenforce 0</em> 로 잠시 허용 모드로 돌려 놓고 <em>audit2why, ausearch, sealert</em> 등을 활용하여 원인을 찾는 것이 좋습니다.</li>
+</ul>
+<h2 id="_8">같이 읽기</h2>
+<ul>
+<li><a href="https://www.lesstif.com/pages/viewpage.action?pageId=18219470">SELinux 로 리눅스를 견고하게 하기</a></li>
+<li><a href="https://www.lesstif.com/pages/viewpage.action?pageId=12943496">SELinux 에러 메시지 및 문제 해결</a> - 자주 발생하는 에러와 해결책 모음</li>
+<li><a href="https://access.redhat.com/articles/2191331">Basic SELinux Troubleshooting in CLI</a>  - Redhat Customer Portal</li>
+<li><a href="https://www.lesstif.com/pages/viewpage.action?pageId=14090283">cp/mv 와 SELinux security context</a> - cp 와 mv 명령어가 SELinux 에서 어떻게 동작하는지 설명</li>
+</ul>
+<p><a name="footnote1" href="#fnref1">[1]</a> NSA 는 전 세계적인 감청망을 운용하고 있는 것으로 드러나서 SELinux 에 어떤 백도어가 있는 것 아니냐는 우려가 있을수 있지만 다행히 소스를 기증했기 때고 레드햇사와 리눅스 커뮤니티에서 오랫 기간 검증을 거쳐서 백도어 우려는 안 해도 됩니다.</p>
+<p><a name="footnote2" href="#fnref2">[2]</a> 보안 레이블(Security label) 이라고도 합니다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  맨위로
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\ud074\ub9bd\ubcf4\ub4dc\uc5d0 \ubcf5\uc0ac\ub428", "clipboard.copy": "\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", "search.result.more.one": "\uc774 \ubb38\uc11c\uc5d0\uc11c 1\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.more.other": "\uc774 \ubb38\uc11c\uc5d0\uc11c #\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.none": "\uac80\uc0c9\uc5b4\uc640 \uc77c\uce58\ud558\ub294 \ubb38\uc11c\uac00 \uc5c6\uc2b5\ub2c8\ub2e4", "search.result.one": "1\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.other": "#\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.placeholder": "\uac80\uc0c9\uc5b4\ub97c \uc785\ub825\ud558\uc138\uc694", "search.result.term.missing": "\ud3ec\ud568\ub418\uc9c0 \uc54a\uc740 \uac80\uc0c9\uc5b4", "select.version": "\ubc84\uc804 \uc120\ud0dd"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

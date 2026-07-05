@@ -1,0 +1,1551 @@
+
+<!doctype html>
+<html lang="ko" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="인터넷으로 서비스를 제공하기 위해 챙겨야 할 실용적인 보안 가이드.">
+      
+      
+        <meta name="author" content="lesstif(정광섭)">
+      
+      
+        <link rel="canonical" href="https://lesstif.github.io/web-service-hardening/02_linux/linux/">
+      
+      
+        <link rel="prev" href="../../01_security_basic/security-basic/">
+      
+      
+        <link rel="next" href="../../03_selinux/selinux/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>리눅스 설치와 패키지 관리 - 견고한 웹 서비스 만들기</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          콘텐츠로 이동
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="상단/헤더">
+    <a href="../.." title="견고한 웹 서비스 만들기" class="md-header__button md-logo" aria-label="견고한 웹 서비스 만들기" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            견고한 웹 서비스 만들기
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              리눅스 설치와 패키지 관리
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="다크 모드로 전환"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="다크 모드로 전환" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="라이트 모드로 전환"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="라이트 모드로 전환" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="검색" placeholder="검색" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="검색">
+        
+        <button type="reset" class="md-search__icon md-icon" title="지우기" aria-label="지우기" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            검색 초기화
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/lesstif/web-service-hardening" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lesstif/web-service-hardening
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="탭" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  홈
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../01_security_basic/security-basic/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  기본적인 보안
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  리눅스 설치와 패키지 관리
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../03_selinux/selinux/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  보안 강화 리눅스(SELinux)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../04_firewall/firewall/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  iptables/firewalld
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../05_sshserver/ssh-server/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  ssh 서버
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../06_webserver/web-server/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  웹 서버
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../07_tls_https/ssl-tls-https/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  HTTPS(SSL/TLS)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../08_web_app_server/web-app-server/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  WAS
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../09_encryption/encryption/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  대칭키 암호화
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../10_pub_key_encryption/public-key-encryption/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  공개키 암호화
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../11_secure_coding/secure-coding/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  시큐어 코딩
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../12_programming_languages/php-security-checklist/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  PHP 보안강화 하기
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../author/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  저자 소개
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../GLOSSARY/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  용어 정리
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../seealso/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  같이 읽기
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="네비게이션" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="견고한 웹 서비스 만들기" class="md-nav__button md-logo" aria-label="견고한 웹 서비스 만들기" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    견고한 웹 서비스 만들기
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/lesstif/web-service-hardening" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lesstif/web-service-hardening
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    홈
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_security_basic/security-basic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    기본적인 보안
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    리눅스 설치와 패키지 관리
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    리눅스 설치와 패키지 관리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        패키지 최소 설치
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        패키지 매니저 사용
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        미사용 패키지 삭제
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#x-windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        X Windows 삭제
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        구동 프로세스 최소화
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="구동 프로세스 최소화">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rhelcentos-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RHEL/CentOS 6
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rhelcentos-7-ubutun-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RHEL/CentOS 7, Ubutun 15+
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ubutun-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ubutun 14
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        시스템을 최신 상태로 유지
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        참고 자료
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_selinux/selinux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    보안 강화 리눅스(SELinux)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_firewall/firewall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    iptables/firewalld
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_sshserver/ssh-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ssh 서버
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_webserver/web-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    웹 서버
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_tls_https/ssl-tls-https/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTPS(SSL/TLS)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_web_app_server/web-app-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WAS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_encryption/encryption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    대칭키 암호화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_pub_key_encryption/public-key-encryption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    공개키 암호화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11_secure_coding/secure-coding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    시큐어 코딩
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12_programming_languages/php-security-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PHP 보안강화 하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../author/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    저자 소개
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../GLOSSARY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    용어 정리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../seealso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    같이 읽기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        패키지 최소 설치
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        패키지 매니저 사용
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        미사용 패키지 삭제
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#x-windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        X Windows 삭제
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        구동 프로세스 최소화
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="구동 프로세스 최소화">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rhelcentos-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RHEL/CentOS 6
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rhelcentos-7-ubutun-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RHEL/CentOS 7, Ubutun 15+
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ubutun-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ubutun 14
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        시스템을 최신 상태로 유지
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        참고 자료
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="_1">리눅스 설치와 패키지 관리</h1>
+<!-- toc -->
+
+<h2 id="_2">패키지 최소 설치</h2>
+<p>리눅스를 설치할 때 보안을 위해 고려해야 할 사항은 <strong>운영 체제의 사용 용도</strong>(웹 서버, 애플리케이션 서버, DB 서버등)에 맞게 필요한 패키지만 설치하는 것입니다.</p>
+<p>예로 DB 전용 서버라면 Web Server 나 Samba 서버같은 사용하지 않는 패키지를 설치하지 않도록 해야 합니다.</p>
+<p>FTP나 Samba, Bind 같이 사용하지 않는 서버 프로세스를 구동하는 것은 보안상 문제를 일으킬 수 있으며 운영체제 업그레이드나 패치가 힘들어 지며 재부팅시 오래 걸리는 문제가 있습니다.</p>
+<p>특히 웹 서버나 메일 서버같이 DMZ 에 설치되는 서버는 최소 설치후 해당 패키지만 설치하는 것이 좋습니다.</p>
+<p><img alt="CentOS 최소 설치" src="https://cloud.githubusercontent.com/assets/404534/12508730/fe394fa8-c140-11e5-914c-ffc30fa64078.png" /></p>
+<p><strong>같이 보기</strong></p>
+<ul>
+<li><a href="https://www.lesstif.com/pages/viewpage.action?pageId=6979710">CentOS minimal 설치후 추가 패키지 설치</a></li>
+</ul>
+<h2 id="_3">패키지 매니저 사용</h2>
+<p>패키지를 설치할 때 source 를 다운 받아서 컴파일 해서 설치하는 것은 리눅스의 빌드 환경을 이해할 수 있고 최신 버전의 패키지를 사용할 수 있다는 장점이 있지만 버그나 보안 패치를 적용하기 어렵고 특히 서버의 대수가 늘어나면 많은 시간이 소요되는 단점이 있습니다.</p>
+<p>새로운 패키지가 필요하거나 높은 버전의 패키지가 필요하다면 외부 저장소에서 먼저 찾아보는 것을 권장합니다.</p>
+<p>저장소를 찾을 때는 제조사에서 직접 제공하는 저장소가 있는지 확인한 후에 없을 경우 3rd party 저장소를 찾는 것을 권장합니다.</p>
+<p>예로 nginx 나  <a href="https://dev.mysql.com/downloads/mysql/">MySQL</a> 은 RHEL/CentOS 와 Ubuntu용 저장소를 제공합니다.</p>
+<p>RHEL/CentOS 는 다음 저장소가 유명합니다.</p>
+<ul>
+<li><a href="http://fedoraproject.org/wiki/EPEL">EPEL - Extra Packages for Enterprise Linux</a></li>
+<li><a href="http://rpms.remirepo.net/">REMI</a></li>
+<li><a href="http://www.webtatic.com/">Web Tatic</a></li>
+</ul>
+<p>Ubuntu는 <a href="https://launchpad.net/ubuntu/+ppas">PPA - Personal Package Archives</a> 에서 패키지를 설치하면 됩니다. </p>
+<p><strong>같이 보기</strong></p>
+<ul>
+<li><a href="https://www.lesstif.com/pages/viewpage.action?pageId=6979743">RHEL에 EPEL 과 Remi/WebTatic Repository 설치하기</a></li>
+<li><a href="https://www.lesstif.com/pages/viewpage.action?pageId=25100304#RHEL/CentOS에nginx설치-NginxRepo에서설치(추천)">nginx 패키지로 설치</a></li>
+</ul>
+<h2 id="_4">미사용 패키지 삭제</h2>
+<p>이미 설치해서 사용중인 시스템이라면 사용하지 않는 패키지를 삭제하는 것이 좋으며 다음 명령어로 현재 설치된 패키지의 목록을 확인할 수 있습니다.</p>
+<p><strong>RHEL/CentOS</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>yum<span class="w"> </span>list<span class="w"> </span>installed
+</code></pre></div>
+<p><strong>Ubuntu</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>apt<span class="w"> </span>--installed<span class="w"> </span>list
+</code></pre></div>
+<p>특히 운영 시스템은 보안을 위해서 컴파일러등의 개발 도구를 삭제하는 것이 좋습니다.</p>
+<p><strong>RHEL/CentOS</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>yum<span class="w"> </span>groupremove<span class="w"> </span><span class="s2">&quot;Development tools&quot;</span>
+</code></pre></div></p>
+<p><strong>Ubuntu</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>purge<span class="w"> </span>gcc<span class="w"> </span>g++<span class="w"> </span>gdb
+</code></pre></div></p>
+<h2 id="x-windows">X Windows 삭제</h2>
+<p>이미 설치되어 운영을 하고 있는 서버라면 X-Windows 가 설치되어 있는지 확인하고 설치되어 있다면 삭제하는 게 좋습니다.</p>
+<p>X-Windows 는 용량이 크고 의존성 있는 패키지가 많으므로 잦은 업데이트가 발생하게 되며 XDM 은 보안상 문제가 발생할 수 있습니다.</p>
+<p>만약 X-Windows 가 없으면 명령어를 입력하지 못하는 운영자라면 계속 같이 일하는 것을 고민해 보기 바랍니다.</p>
+<p>X-Windows 가 설치되어 있다면 먼저 <em>telinit 3</em> 명령어로 런 레벨을 3으로 변경한 후에 삭제해야 합니다.</p>
+<p>우분투 서버는 X Windows 를 포함하고 있지 않으며 CentOS 에서는 다음 명령어로 X-Windows 패키지를 삭제할 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>yum<span class="w"> </span>groupremove<span class="w"> </span><span class="s2">&quot;X Window System&quot;</span>
+</code></pre></div>
+<p><strong>같이 보기</strong></p>
+<ul>
+<li><a href="https://www.lesstif.com/pages/viewpage.action?pageId=6979667">yum 주요 사용법 및 고급 사용법 (history 관리, plugin 사용, 트랜잭션 undo 등)</a></li>
+</ul>
+<h2 id="_5">구동 프로세스 최소화</h2>
+<p>부팅시 자동 구동되는 데몬 프로세스중 사용하지 않는 프로세스는 자동 구동을 끄는 것이 좋습니다.</p>
+<p>배포판 및 버전마다 자동 구동 프로세스 관리 방법이 다르므로 아래 내용을 참고해서 사용하는 배포판에 맞게 적용하십시요.</p>
+<h3 id="rhelcentos-6">RHEL/CentOS 6</h3>
+<p>RHEL/CentOS 6 에서는 chkconfig 명령으로 서비스를 제어할 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># chkconfig --list</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>auditd<span class="w">          </span><span class="m">0</span>:off<span class="w">   </span><span class="m">1</span>:off<span class="w">   </span><span class="m">2</span>:on<span class="w">    </span><span class="m">3</span>:on<span class="w">    </span><span class="m">4</span>:on<span class="w">    </span><span class="m">5</span>:on<span class="w">    </span><span class="m">6</span>:off
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>blk-availability<span class="w">        </span><span class="m">0</span>:off<span class="w">   </span><span class="m">1</span>:on<span class="w">    </span><span class="m">2</span>:on<span class="w">    </span><span class="m">3</span>:on<span class="w">    </span><span class="m">4</span>:on<span class="w">    </span><span class="m">5</span>:on<span class="w">    </span><span class="m">6</span>:off
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>cgconfig<span class="w">        </span><span class="m">0</span>:off<span class="w">   </span><span class="m">1</span>:off<span class="w">   </span><span class="m">2</span>:off<span class="w">   </span><span class="m">3</span>:off<span class="w">   </span><span class="m">4</span>:off<span class="w">   </span><span class="m">5</span>:off<span class="w">   </span><span class="m">6</span>:off
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>cgred<span class="w">           </span><span class="m">0</span>:off<span class="w">   </span><span class="m">1</span>:off<span class="w">   </span><span class="m">2</span>:off<span class="w">   </span><span class="m">3</span>:off<span class="w">   </span><span class="m">4</span>:off<span class="w">   </span><span class="m">5</span>:off<span class="w">   </span><span class="m">6</span>:off
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>crond<span class="w">           </span><span class="m">0</span>:off<span class="w">   </span><span class="m">1</span>:off<span class="w">   </span><span class="m">2</span>:on<span class="w">    </span><span class="m">3</span>:on<span class="w">    </span><span class="m">4</span>:on<span class="w">    </span><span class="m">5</span>:on<span class="w">    </span><span class="m">6</span>:off
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>exim<span class="w">            </span><span class="m">0</span>:off<span class="w">   </span><span class="m">1</span>:off<span class="w">   </span><span class="m">2</span>:on<span class="w">    </span><span class="m">3</span>:on<span class="w">    </span><span class="m">4</span>:on<span class="w">    </span><span class="m">5</span>:on<span class="w">    </span><span class="m">6</span>:off
+</code></pre></div>
+<p><em>0:off   1:off   2:on    3:on    4:on    5:on    6:off</em> 의 의미는 run level 이 0, 1 일때는 구동되지 않고 2,3,4,5 일때는 구동된다는 의미입니다.</p>
+<p>자동 시작을 끄려면 <em>chkconfig</em> 명령어 뒤에 서비스 명을 입력하고 off 옵션을 주면 됩니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>chkconfig<span class="w"> </span>mysqld<span class="w"> </span>off
+</code></pre></div>
+<h3 id="rhelcentos-7-ubutun-15">RHEL/CentOS 7, Ubutun 15+</h3>
+<p>RHEL/CentOS 7 과 ubunt 15, 16 은 systemd 관리 명령어인 <em>systemctl</em> 를 사용하여 서비스 목록을 확인할 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># systemctl list-unit-files</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>UNIT<span class="w"> </span>FILE<span class="w">                                 </span>STATE<span class="w">   </span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>proc-sys-fs-binfmt_misc.automount<span class="w">         </span>static<span class="w">  </span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>dev-hugepages.mount<span class="w">                       </span>static<span class="w">  </span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>dev-mqueue.mount<span class="w">                          </span>static<span class="w">  </span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>proc-fs-nfsd.mount<span class="w">                        </span>static<span class="w">  </span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>proc-sys-fs-binfmt_misc.mount<span class="w">             </span>static<span class="w">  </span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>sys-fs-fuse-connections.mount<span class="w">             </span>static<span class="w">  </span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>sys-kernel-config.mount<span class="w">                   </span>static<span class="w">  </span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>sys-kernel-debug.mount<span class="w">                    </span>static<span class="w">  </span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>tmp.mount<span class="w">                                 </span>masked
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>var-lib-nfs-rpc_pipefs.mount<span class="w">              </span>static<span class="w">  </span>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>brandbot.path<span class="w">                             </span>disabled
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>systemd-ask-password-console.path<span class="w">         </span>static<span class="w">  </span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>systemd-ask-password-wall.path<span class="w">            </span>static<span class="w">  </span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>session-1.scope<span class="w">                           </span>static<span class="w">  </span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>session-3.scope<span class="w">                           </span>static<span class="w">  </span>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>arp-ethers.service<span class="w">                        </span>disabled
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>auditd.service<span class="w">                            </span>enabled<span class="w"> </span>
+</code></pre></div>
+<p>불필요한 서비스는 <em>systemctl disable 서비스명</em> 을 사용하여 자동 시작을 중지할 수 있으며 활성화할 경우 <em>disable</em> 대신 <em>enable</em> 을 사용하면 됩니다.</p>
+<p>예로 다음 명령어는 mariadb 서비스를 자동 실행하지 않습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>systemctl<span class="w"> </span>disable<span class="w"> </span>mariadb
+</code></pre></div>
+<p>특정 서비스의 자동 실행 여부는 <em>systemctl is-enabled 서비스명</em> 을 사용하면 되며 다음 명령어는 nginx 웹 서버의 자동 실행 여부를 출력합니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>&gt;<span class="w"> </span>systemctl<span class="w"> </span>is-enabled<span class="w"> </span>nginx
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>disabled
+</code></pre></div>
+<h3 id="ubutun-14">Ubutun 14</h3>
+<p>우분투 14.04 는 <em>sysv-rc-conf</em> 명령어로 프로세스를 확인할 수 있습니다</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>$<span class="w"> </span>sudo<span class="w"> </span>sysv-rc-conf<span class="w"> </span>--list<span class="w">             </span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>apparmor<span class="w">     </span>S:on
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>beanstalkd<span class="w">   </span><span class="m">0</span>:off<span class="w">      </span><span class="m">1</span>:off<span class="w">   </span><span class="m">2</span>:on<span class="w">    </span><span class="m">3</span>:on<span class="w">    </span><span class="m">4</span>:on<span class="w">    </span><span class="m">5</span>:on<span class="w">    </span><span class="m">6</span>:off
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>blackfire-ag<span class="w"> </span><span class="m">0</span>:off<span class="w">      </span><span class="m">1</span>:off<span class="w">   </span><span class="m">2</span>:on<span class="w">    </span><span class="m">3</span>:on<span class="w">    </span><span class="m">4</span>:on<span class="w">    </span><span class="m">5</span>:on<span class="w">    </span><span class="m">6</span>:off
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>console-setu
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>cron<span class="w">        </span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>cryptdisks<span class="w">  </span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>cryptdisks-e<span class="w"> </span><span class="m">0</span>:on<span class="w">       </span><span class="m">6</span>:on<span class="w">    </span>S:on
+</code></pre></div>
+<p>자동 실행 여부는 <em>sudo update-rc.d SERVICENAME defaults</em> 를 사용하면 되며 다음은 nginx 를 부팅시 자동 실행하도록 설정합니다.  </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>update-rc.d<span class="w"> </span>nginx<span class="w"> </span>defaults<span class="w"> </span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w"> </span>Adding<span class="w"> </span>system<span class="w"> </span>startup<span class="w"> </span><span class="k">for</span><span class="w"> </span>/etc/init.d/nginx<span class="w"> </span>...
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">   </span>/etc/rc0.d/K20nginx<span class="w"> </span>-&gt;<span class="w"> </span>../init.d/nginx
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">   </span>/etc/rc1.d/K20nginx<span class="w"> </span>-&gt;<span class="w"> </span>../init.d/nginx
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">   </span>/etc/rc6.d/K20nginx<span class="w"> </span>-&gt;<span class="w"> </span>../init.d/nginx
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">   </span>/etc/rc2.d/S20nginx<span class="w"> </span>-&gt;<span class="w"> </span>../init.d/nginx
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">   </span>/etc/rc3.d/S20nginx<span class="w"> </span>-&gt;<span class="w"> </span>../init.d/nginx
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">   </span>/etc/rc4.d/S20nginx<span class="w"> </span>-&gt;<span class="w"> </span>../init.d/nginx
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="w">   </span>/etc/rc5.d/S20nginx<span class="w"> </span>-&gt;<span class="w"> </span>../init.d/nginx
+</code></pre></div>
+<p>자동 실행 제외는 <em>sudo update-rc.d -f SERVICENAME remove</em> 를 사용하면 되며 다음은 nginx 를 자동 실행에서 제외합니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sudo<span class="w"> </span>update-rc.d<span class="w"> </span>-f<span class="w"> </span>nginx<span class="w"> </span>remove<span class="w"> </span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w"> </span>Removing<span class="w"> </span>any<span class="w"> </span>system<span class="w"> </span>startup<span class="w"> </span>links<span class="w"> </span><span class="k">for</span><span class="w"> </span>/etc/init.d/nginx<span class="w"> </span>...
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">   </span>/etc/rc0.d/K20nginx
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">   </span>/etc/rc1.d/K20nginx
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">   </span>/etc/rc2.d/S20nginx
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">   </span>/etc/rc3.d/S20nginx
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">   </span>/etc/rc4.d/S20nginx
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w">   </span>/etc/rc5.d/S20nginx
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="w">   </span>/etc/rc6.d/K20nginx
+</code></pre></div>
+<h2 id="_6">시스템을 최신 상태로 유지</h2>
+<p>패키지 관리자를 사용하여 시스템을 상시 업데이트하여 최신 상태로 유지해야 보안 취약점을 통한 공격에 대응할 수 있습니다.</p>
+<p>RHEL은 yum 으로 시스템을 최신 상태로 유지할 수 있습니다. </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>yum<span class="w"> </span>update
+</code></pre></div>
+<p>우분투는 아래 명령으로 패키지를 업데이트 할 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>apt-get<span class="w"> </span>update
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>apt-get<span class="w"> </span>upgrade
+</code></pre></div>
+<h2 id="_7">참고 자료</h2>
+<ul>
+<li><a href="http://www.cyberciti.biz/tips/linux-security.html">20 Linux Server Hardening Security Tips</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  맨위로
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\ud074\ub9bd\ubcf4\ub4dc\uc5d0 \ubcf5\uc0ac\ub428", "clipboard.copy": "\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", "search.result.more.one": "\uc774 \ubb38\uc11c\uc5d0\uc11c 1\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.more.other": "\uc774 \ubb38\uc11c\uc5d0\uc11c #\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.none": "\uac80\uc0c9\uc5b4\uc640 \uc77c\uce58\ud558\ub294 \ubb38\uc11c\uac00 \uc5c6\uc2b5\ub2c8\ub2e4", "search.result.one": "1\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.other": "#\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.placeholder": "\uac80\uc0c9\uc5b4\ub97c \uc785\ub825\ud558\uc138\uc694", "search.result.term.missing": "\ud3ec\ud568\ub418\uc9c0 \uc54a\uc740 \uac80\uc0c9\uc5b4", "select.version": "\ubc84\uc804 \uc120\ud0dd"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

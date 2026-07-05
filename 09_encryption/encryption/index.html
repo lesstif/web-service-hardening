@@ -1,0 +1,1745 @@
+
+<!doctype html>
+<html lang="ko" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="인터넷으로 서비스를 제공하기 위해 챙겨야 할 실용적인 보안 가이드.">
+      
+      
+        <meta name="author" content="lesstif(정광섭)">
+      
+      
+        <link rel="canonical" href="https://lesstif.github.io/web-service-hardening/09_encryption/encryption/">
+      
+      
+        <link rel="prev" href="../../08_web_app_server/web-app-server/">
+      
+      
+        <link rel="next" href="../../10_pub_key_encryption/public-key-encryption/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>대칭키 암호화 - 견고한 웹 서비스 만들기</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          콘텐츠로 이동
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="상단/헤더">
+    <a href="../.." title="견고한 웹 서비스 만들기" class="md-header__button md-logo" aria-label="견고한 웹 서비스 만들기" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            견고한 웹 서비스 만들기
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              대칭키 암호화
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="다크 모드로 전환"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="다크 모드로 전환" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="라이트 모드로 전환"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="라이트 모드로 전환" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="검색" placeholder="검색" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="검색">
+        
+        <button type="reset" class="md-search__icon md-icon" title="지우기" aria-label="지우기" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            검색 초기화
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/lesstif/web-service-hardening" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lesstif/web-service-hardening
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="탭" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  홈
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../01_security_basic/security-basic/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  기본적인 보안
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../02_linux/linux/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  리눅스 설치와 패키지 관리
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../03_selinux/selinux/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  보안 강화 리눅스(SELinux)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../04_firewall/firewall/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  iptables/firewalld
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../05_sshserver/ssh-server/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  ssh 서버
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../06_webserver/web-server/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  웹 서버
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../07_tls_https/ssl-tls-https/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  HTTPS(SSL/TLS)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../08_web_app_server/web-app-server/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  WAS
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  대칭키 암호화
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../10_pub_key_encryption/public-key-encryption/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  공개키 암호화
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../11_secure_coding/secure-coding/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  시큐어 코딩
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../12_programming_languages/php-security-checklist/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  PHP 보안강화 하기
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../author/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  저자 소개
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../GLOSSARY/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  용어 정리
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../seealso/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  같이 읽기
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="네비게이션" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="견고한 웹 서비스 만들기" class="md-nav__button md-logo" aria-label="견고한 웹 서비스 만들기" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    견고한 웹 서비스 만들기
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/lesstif/web-service-hardening" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lesstif/web-service-hardening
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    홈
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_security_basic/security-basic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    기본적인 보안
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_linux/linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    리눅스 설치와 패키지 관리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_selinux/selinux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    보안 강화 리눅스(SELinux)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_firewall/firewall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    iptables/firewalld
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_sshserver/ssh-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ssh 서버
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_webserver/web-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    웹 서버
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_tls_https/ssl-tls-https/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTPS(SSL/TLS)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_web_app_server/web-app-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WAS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    대칭키 암호화
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    대칭키 암호화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        대칭키 알고리즘
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#padding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        블록 암호 패딩(Padding)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operation-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        블록 암호 운영 모드(Operation mode)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="블록 암호 운영 모드(Operation mode)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ecbelectronic-codebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECB(electronic codebook)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cbccipher-block-chaining" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CBC(cipher-block chaining)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        암호화 해시 함수
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        비밀번호 암호화
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="비밀번호 암호화">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pbkdf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBKDF
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bcrypt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bcrypt
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        키 관리
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        데이타 암호화 프로세스
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="데이타 암호화 프로세스">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        사용자가 복호화
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        서버에서 복호화
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        데이타 암호화 예제
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="데이타 암호화 예제">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#java" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Java
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#php" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PHP
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_pub_key_encryption/public-key-encryption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    공개키 암호화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11_secure_coding/secure-coding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    시큐어 코딩
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12_programming_languages/php-security-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PHP 보안강화 하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../author/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    저자 소개
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../GLOSSARY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    용어 정리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../seealso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    같이 읽기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        대칭키 알고리즘
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#padding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        블록 암호 패딩(Padding)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operation-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        블록 암호 운영 모드(Operation mode)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="블록 암호 운영 모드(Operation mode)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ecbelectronic-codebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECB(electronic codebook)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cbccipher-block-chaining" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CBC(cipher-block chaining)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        암호화 해시 함수
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        비밀번호 암호화
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="비밀번호 암호화">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pbkdf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PBKDF
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bcrypt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bcrypt
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        키 관리
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        데이타 암호화 프로세스
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="데이타 암호화 프로세스">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        사용자가 복호화
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        서버에서 복호화
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        데이타 암호화 예제
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="데이타 암호화 예제">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#java" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Java
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#php" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PHP
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="_1">대칭키 암호화</h1>
+<!-- toc -->
+
+<h2 id="_2">대칭키 알고리즘</h2>
+<p>대칭키(Symmetric key) 방식은 암호문을 생성(암호화)할 때 사용하는 키와 암호문으로부터 평문을 복원(복호화)할 때 사용하는 키가 동일한 암호 시스템으로 일반적으로 알고 있는 암호 시스템입니다.</p>
+<p>하나의 키로 암호화와 복호화를 수행하므로 대칭키(Symmetric key) 또는 비밀키(Secret Key) 방식의 암호화라고 합니다.</p>
+<p>대칭키 방식의 암호화는 데이타를 블록(Block) 단위로 처리하는 Block cipher 와 연속된 스트림으로 처리하는 Stream cipher 가 있으며 일반적으로 대칭키 암호화라고 하면 블록 방식의 암호화를 의미합니다.</p>
+<p>블록 방식의 주요 알고리즘으로는 예전에 유닉스의 패스워드 파일을 암호화하는데 사용했지만 오래전에 뚫려서 이제는 절대 사용하면 안 되는 DES(Data Encryption Standard)와 현재 미국의 표준 암호 알고리즘인 AES가 있으며 국내에서 개발한 SEED와 ARIA , 그리고 유럽에서 개발한 IDEA 알고리즘 등이 있습니다.</p>
+<blockquote>
+<p>[!NOTE]
+미국의 국가표준기술원(NIST)에서는 미정부와 군에서 사용할 암호화 알고리즘을 공모했습니다.
+벨기에의 암호학자 둘이 자신들이 설계한 Rijndael 알고리즘을 제출했고 미국은 이를 표준 알고리즘으로 채택하고 개선하여 AES(Advanced Encryption Standard)가 되었습니다.
+정부가 사용할 암호 알고리즘을 공모하고 외국인이 개발한 제품을 채택하는 열린 자세가 미국의 강력함의 원천인듯 합니다.</p>
+</blockquote>
+<p>블록 암호화는 정해진 길이, 또는 가변 길이의 암/복호화 키를 사용하며 알고리즘마다 다릅니다.</p>
+<p>예로 AES 는 128, 192, 256 비트의 키를 사용할 수 있으며 SEED 는 128를 OpenBSD 에서 많이 사용하는 Blowfish 는 32 ~ 448 비트의 키 길이를 사용합니다.</p>
+<p>대칭키 암호는 공개키 방식에 대비하여 구현이 용이하고 CPU/메모리를 적게 사용하고 매우 빠른 암/복호화 속도를 장점으로 갖고 있으며 Windows의 BitLocker 와 OS X 의 FileVault 같이 디스크 전체를 암호화할 때도 대칭키 방식(AES) 을 사용합니다. </p>
+<p>하지만 대칭키 방식은 하나의 키만 사용하므로 상대방과 대칭키 기반으로 암호화 통신을 할 경우 상대방도 사전에 같은 키를 갖고 있어야 합니다.</p>
+<p><a href="http://movie.daum.net/moviedb/main?movieId=984">U-571</a>이라는 영화는 2차 대전때 연합군이 독일군의 암호화 통신을 해독하기 위해 <a href="https://upload.wikimedia.org/wikipedia/commons/3/3e/EnigmaMachineLabeled.jpg">에니그마 장비</a>를 탈취하는 특수 작전에 대해서 다루고 있습니다.</p>
+<p>이처럼 대칭키 방식의 최대 단점은 암호화 통신을 위한 키 전달과 관리가 어려운 점입니다. </p>
+<p>가령 대칭키를 보내는 중간에 유출될 우려가 있고 이로 인해 암호화 통신을 도감청 당할 수 있으며 여러 상대방과 통신할 경우 각각의 대칭키를 관리하기(생성, 전달, 유출시 폐기)가 어렵고 여러 상대방과 같은 키를 사용할 경우 키가 노출되면 모든 채널과 새로 키를 전달해야 하는 치명적인 단점이 있습니다.</p>
+<h2 id="padding">블록 암호 패딩(Padding)</h2>
+<p>블록 알고리즘은 입력 데이타를 정해진 블록으로 잘라서 암/복호화를 수행하며 블록의 크기는 알고리즘마다 다릅니다.
+예로 AES 는 128 bit(16 byte)를 하나의 블록으로 처리합니다.</p>
+<p>하지만 입력 데이타가 항상 블록의 배수일리는 없으므로 입력데이타를 블록 크기에 맞춰주는 작업이 필요하며 이를 패딩이라고 합니다.</p>
+<p>즉 AES 를 사용할 경우 암호화할 데이타가 19 바이트일 경우 최소 공배수인 32 byte 로 맞춰주어야 하며 이 작업을 패딩이라고 지칭하며 여러 가지 패딩 방법이 있습니다.</p>
+<h2 id="operation-mode">블록 암호 운영 모드(Operation mode)</h2>
+<p>암호화를 수행할 때 개별 블록으로 나눠진 데이타를 처리하는 방식을 블록 암호 운영 모드라고 하며 여러 가지 모드가 있으며 대표적인 2가지 모드를 소개하겠습니다.</p>
+<h3 id="ecbelectronic-codebook">ECB(electronic codebook)</h3>
+<p>가장 간단한 방식이며 나눠진 블록을 각각 암호화하는 방식으로 각 블록마다 같은 암호화 키를 사용하므로 보안이 취약한 문제가 있습니다.</p>
+<p><img alt="ECB 방식" src="https://upload.wikimedia.org/wikipedia/commons/c/c4/Ecb_encryption.png" /></p>
+<h3 id="cbccipher-block-chaining">CBC(cipher-block chaining)</h3>
+<p>CBC 는 ECB 의 단점을 해결하기 위한 방법으로 각 블록은 암호화되기 전에 이전 블록과 XOR 연산을 거치며 유추가 힘들도록 최초의 입력은 IV(initial vector) 라는 데이타와 연산을 하게 됩니다.</p>
+<p>이때문에 CBC 암호화를 사용할 경우 대칭키와 IV 가 필요합니다.</p>
+<p><img alt="CBC 방식" src="https://upload.wikimedia.org/wikipedia/commons/d/d3/Cbc_encryption.png" /></p>
+<p>아래의 펭귄 그림이 암호화할 원본 데이타라고 생각해 봅시다.</p>
+<p><img alt="원본 데이타" src="https://upload.wikimedia.org/wikipedia/commons/5/56/Tux.jpg" title="원본 데이타" /></p>
+<p>좌측은 <strong>ECB</strong>, 우측은 <strong>CBC</strong> 방식으로 암호화한 결과이며 그림처럼 ECB 는 원문의 흔적이 남기 때문에 원문을 유추할 수 있으며 특히 원문에 같은 내용의 블록이 있을 경우 키를 알아내고 원문을 손쉽게 해독할 수 있는 취약점이 존재합니다.</p>
+<p><img alt="ECB 암호화" src="https://upload.wikimedia.org/wikipedia/commons/f/f0/Tux_ecb.jpg" title="ECB 암호화" />
+<img alt="CBC 암호화" src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Tux_secure.jpg" title="CBC 암호화" /></p>
+<h2 id="_3">암호화 해시 함수</h2>
+<p>암호화 해시 함수(Cryptographic hash function)는 해시 함수의 일종으로 입력에 대해 정해진 길이의 출력을 내주며 해시 값으로부터 원래 값을 유추하기 어렵게 설계된 함수입니다.</p>
+<p>즉 'abc' 라는 입력이 있을 경우 SHA 256 은 'edeaaff3f1774ad2888673770c6d64097e391bc362d7d6fb34982ddf0efd18cb' 라는 출력을 내게 됩니다.</p>
+<p>임의의 입력이 있을 경우 정해진 길이의 출력을 하는 일방향 함수(One Way function)를 의미하며 동일한 입력에 대해 동일한 출력을 내야 하며 다른 값인데 동일한 출력을 내는 경우(해시 충돌)가 극히 드물어야 합니다.</p>
+<p>유명한 알고리즘으로는 MD5(보안 문제때문에 암호용으로는 사용 되지 않음), SHA1(현재는 안전하지 않음), SHA-2(SHA256, SHA384, SHA512) 등이 있습니다.</p>
+<h2 id="_4">비밀번호 암호화</h2>
+<p>비밀 번호 암호화는 일반적인 암호화와는 달리 <strong>복호화를 할 필요가 없습</strong>니다.</p>
+<p>비밀 번호 암호화는 PBKDF 같은 함수를 사용하거나 또는 bcrypt 알고리즘을 구현한 메서드를 사용하면 됩니다,</p>
+<p>직접 비밀번호 암호화하는 기능을 구현할 수 있겠지만 검증된 라이브러리를 사용하는 것을 권장하며 직접 만들어 쓸 경우 다음 사항을 꼭 지키십시요.</p>
+<ul>
+<li>안전한 해시 함수(SHA2 이상) 사용</li>
+<li>Random 값을 생성한 후에 Salt 첨가.</li>
+</ul>
+<h3 id="pbkdf">PBKDF</h3>
+<p>PBKDF(Password-Based Key Derivation Function) 는 사용자에게 문자열을 입력받아서 random 길이의 salt 를 추가하고 정해진 반복횟수만큼의 해시 함수를 돌려서 일정한 길이의 결과를 내주는 함수입니다. </p>
+<p>단방향 함수이므로 결과로 부터 원문을 유추할 수 없으므로 사용자 암호에 적용하기 좋은 알고리즘입니다.</p>
+<p>PHP 는 <a href="http://php.net/manual/en/function.hash-pbkdf2.php">hash_pbkdf2</a> 를 사용하면 됩니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">&lt;?php</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nv">$password</span> <span class="o">=</span> <span class="s2">&quot;mypasswd&quot;</span><span class="p">;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nv">$iterations</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1">// $salt = null; 이면 동일한 hash 출력</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="nv">$salt</span> <span class="o">=</span> <span class="nb">openssl_random_pseudo_bytes</span><span class="p">(</span><span class="mi">16</span><span class="p">);</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="nv">$hash</span> <span class="o">=</span> <span class="nb">hash_pbkdf2</span><span class="p">(</span><span class="s2">&quot;sha256&quot;</span><span class="p">,</span> <span class="nv">$password</span><span class="p">,</span> <span class="nv">$salt</span><span class="p">,</span> <span class="nv">$iterations</span><span class="p">,</span> <span class="nv">$length</span> <span class="o">=</span> <span class="mi">20</span><span class="p">);</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="k">echo</span> <span class="nv">$hash</span> <span class="o">.</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="bcrypt">bcrypt</h3>
+<p>bcrypt 는 비밀번호 해시에 사용하기 위해 만들어진 알고리즘으로 OpenBSD 에 기본 탑재되어 있습니다.</p>
+<p>PHP 는 <a href="http://php.net/manual/en/function.password-hash.php">password_hash</a> 의 두 번째 파라미터를 <em>PASSWORD_BCRYPT</em> 로 지정하면 됩니다.</p>
+<blockquote>
+<p>[!NOTE]
+PHP 5.5 이상은 기본 값이 bcrypt 이므로 <em>PASSWORD_DEFAULT</em> 로 설정해도 됩니다.</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="cp">&lt;?php</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">echo</span> <span class="nb">password_hash</span><span class="p">(</span><span class="s2">&quot;strong_password&quot;</span><span class="p">,</span> <span class="nx">PASSWORD_DEFAULT</span> <span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</code></pre></div>
+<p>Java 는 <a href="https://docs.spring.io/spring-security/site/docs/current/apidocs/org/springframework/security/crypto/bcrypt/BCrypt.html">spring security 에 BCrypt</a> 가 구현되어 있으므로 이것을 사용하면 됩니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">import</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">security</span><span class="p">.</span><span class="na">crypto</span><span class="p">.</span><span class="na">bcrypt</span><span class="p">.</span><span class="na">BCrypt</span><span class="p">;</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1">// 사용자 입력 암호</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">String</span><span class="w"> </span><span class="n">plain_password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;password_1234&quot;</span><span class="p">;</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1">// pw_hash 는 bcrypt 로 암호화된 비밀번호가 저장되며 이 값을 DB 에 저장하면 됩니다.</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">String</span><span class="w"> </span><span class="n">pw_hash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BCrypt</span><span class="p">.</span><span class="na">hashpw</span><span class="p">(</span><span class="n">plain_password</span><span class="p">,</span><span class="w"> </span><span class="n">BCrypt</span><span class="p">.</span><span class="na">gensalt</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="c1">// 사용자가 입력한 암호 검증</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="n">String</span><span class="w"> </span><span class="n">candidate_password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;password_123&quot;</span><span class="p">;</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="n">String</span><span class="w"> </span><span class="n">stored_hash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pw_hash</span><span class="p">;</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">BCrypt</span><span class="p">.</span><span class="na">checkpw</span><span class="p">(</span><span class="n">candidate_password</span><span class="p">,</span><span class="w"> </span><span class="n">stored_hash</span><span class="p">))</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;It matches&quot;</span><span class="p">);</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="k">else</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;It does not match&quot;</span><span class="p">);</span>
+</code></pre></div>
+<h2 id="_5">키 관리</h2>
+<p>데이타를 안전하게 관리하기 위해서 가장 중요한 부분중 하나는 암호화한 키를 어떻게 안전하게 보관하는지 입니다.</p>
+<p>키를 데이타 파일로 저장할 경우 키와 데이타만 손에 넣으면 모두 해독 가능한 위험이 있습니다.</p>
+<p>신용 카드 정보등 아주 중요한 데이타를 보관해야 한다면 HSM(Hardware Security Module) 처럼 키를 장비에서 생성하고 외부에 유출되지 않는 안전한 장비 도입을 검토해 볼 필요가 있습니다.</p>
+<p><img alt="Luna HSM" src="http://www.tssl.com/tsslweb/wp-content/uploads/2014/11/product_safenet_luna_sp2.png" title="Luna HSM" /></p>
+<p>유명한 HSM 제품인 LunaHSM 은 <a href="https://aws.amazon.com/ko/cloudhsm/">Amazon Web Service의 CloudHSM</a> 에 적용되어 있고 또 다른 제품인 Thales nShield 는 <a href="https://docs.microsoft.com/ko-kr/azure/key-vault/key-vault-hsm-protected-keys">MS Azure의 Key Vault</a> 에 적용되어 있습니다.</p>
+<h2 id="_6">데이타 암호화 프로세스</h2>
+<p>데이타 암호화와 복호화 작업을 누가 수행하는지에 따라 암호화 프로세스가 달라져야 합니다.</p>
+<h3 id="_7">사용자가 복호화</h3>
+<p>예로 사이트 로그인 정보를 관리해 주는 lastpass.com 서비스를 생각해 봅시다.
+로그인 정보는 lastpass 서버에 암호화해서 보관되며 lastpass가 복호화를 하면 안 됩니다.</p>
+<p>이때 필요한 방법은 PBKDF2같이 비밀번호 기반으로 암호화하는 방법으로 사용자로부터 마스터 암호를 입력받고 PBKDF2 함수를 수행해서 
+안전한 대칭키와 Initial Vector 를 생성해서 복호화합니다.</p>
+<p>암호화와 복호화는 사용자의 비밀번호를 기반으로 이루어지며 사용자만 수행해야 합니다..</p>
+<p>이 방법은 암호화된 사용자 데이타마다 비밀번호가 다르므로 서버는 키 관리가 힘들지 않고 실제 데이타/암복호화는 사용자 PC에서 이루어지는 경우가 많으므로 서버의 부담이 적습니다.</p>
+<h3 id="_8">서버에서 복호화</h3>
+<p>사용자의 신용 카드 정보를 보관하고 매 달마다 결제한다고 생각해 봅시다.</p>
+<p>서버는 정보를 암호화하여 안전하게 보관해야 하며 매달 결제일마다 복호화하여 카드 정보를 알아내야 합니다.</p>
+<p>데이타의 암호화/복호화가 서버에서 이루어지므로 보안에 매우 신경써야 하며 특히 암호화 키를 잘 관리해야 합니다.</p>
+<p>이 모델을 사용할 경우 HSM을 도입하여 안전하게 키 관리하는것이 좋습니다.</p>
+<h2 id="_9">데이타 암호화 예제</h2>
+<h3 id="java">Java</h3>
+<p>Java 는 JCE/JCA 라는 암복호를 하기 위한 표준이 있고 이를 구현한 JCE Provider 가 필요합니다.</p>
+<p>권장하는 JCE 프로바이더는 <a href="https://www.bouncycastle.org/java.html">Bouncy Castle</a> 입니다.</p>
+<blockquote>
+<p><strong>Tip</strong> 기본 JDK 의 JCE 정책은 미국외에서는 강력한 키 길이(AES256, RSA2048)를 사용할 수 없어서 <em>"java.lang.SecurityException: Unsupported keysize or algorithm parameters"</em> 또는 <em>"java.security.InvalidKeyException: Illegal key size"</em> 에러가 발생합니다.</p>
+</blockquote>
+<p>이를 해결하려면 Oracle 에서 "Unlimited Strength Jurisdiction Policy Files" 파일을 다운로드 받아서 $JRE/lib/security/ 에 복사해야 합니다.</p>
+<p><strong>AES 256 암호화</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">String</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Hello World&quot;</span><span class="p">;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">KeyGenerator</span><span class="w"> </span><span class="n">gen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">KeyGenerator</span><span class="p">.</span><span class="na">getInstance</span><span class="p">(</span><span class="s">&quot;AES&quot;</span><span class="p">);</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">gen</span><span class="p">.</span><span class="na">init</span><span class="p">(</span><span class="mi">256</span><span class="p">);</span><span class="w">  </span><span class="c1">// 256 key length</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1">// 대칭키 생성</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">SecretKey</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gen</span><span class="p">.</span><span class="na">generateKey</span><span class="p">();</span><span class="w"> </span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1">// Initial Vector 생성</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="n">SecureRandom</span><span class="w"> </span><span class="n">sr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SecureRandom</span><span class="p">.</span><span class="na">getInstance</span><span class="p">(</span><span class="s">&quot;SHA1PRNG&quot;</span><span class="p">);</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">iv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">byte</span><span class="o">[</span><span class="mi">16</span><span class="o">]</span><span class="p">;</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="n">sr</span><span class="p">.</span><span class="na">nextBytes</span><span class="p">(</span><span class="n">iv</span><span class="p">);</span><span class="w">       </span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="c1">// 암호화</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="n">Cipher</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Cipher</span><span class="p">.</span><span class="na">getInstance</span><span class="p">(</span><span class="s">&quot;AES/CBC/PKCS5Padding&quot;</span><span class="p">);</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="n">IvParameterSpec</span><span class="w"> </span><span class="n">spec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IvParameterSpec</span><span class="p">(</span><span class="n">iv</span><span class="p">);</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="n">c</span><span class="p">.</span><span class="na">init</span><span class="p">(</span><span class="n">Cipher</span><span class="p">.</span><span class="na">ENCRYPT_MODE</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">spec</span><span class="p">);</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>
+<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="c1">// 암호화된 데이타</span>
+<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">encData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="na">doFinal</span><span class="p">(</span><span class="n">input</span><span class="p">.</span><span class="na">getBytes</span><span class="p">());</span>
+<a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a>
+<a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="c1">// 복호화</span>
+<a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="n">Cipher</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Cipher</span><span class="p">.</span><span class="na">getInstance</span><span class="p">(</span><span class="s">&quot;AES/CBC/PKCS5Padding&quot;</span><span class="p">);</span>
+<a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a>
+<a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a><span class="n">d</span><span class="p">.</span><span class="na">init</span><span class="p">(</span><span class="n">Cipher</span><span class="p">.</span><span class="na">DECRYPT_MODE</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">spec</span><span class="p">);</span>
+<a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">decData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="na">doFinal</span><span class="p">(</span><span class="n">encData</span><span class="p">);</span>
+<a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a>
+<a id="__codelineno-3-30" name="__codelineno-3-30" href="#__codelineno-3-30"></a><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;ORG: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">input</span><span class="p">);</span>
+<a id="__codelineno-3-31" name="__codelineno-3-31" href="#__codelineno-3-31"></a><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;DEC: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="p">(</span><span class="n">decData</span><span class="p">));</span>
+</code></pre></div>
+<h3 id="php">PHP</h3>
+<p>PHP는 openssl extension 을 사용하여 대칭키 암호를 할 수 있습니다. (mcrypt 는 오래됐고 버그가 많아서 PHP 7 부터 지원이 중지됩니다.)</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="cp">&lt;?php</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="nv">$key</span> <span class="o">=</span> <span class="nb">openssl_random_pseudo_bytes</span><span class="p">(</span><span class="mi">32</span><span class="p">);</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="nv">$iv</span> <span class="o">=</span> <span class="nb">openssl_random_pseudo_bytes</span><span class="p">(</span><span class="mi">16</span><span class="p">);</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="nv">$data</span> <span class="o">=</span> <span class="s1">&#39;Hello World&#39;</span><span class="p">;</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="nv">$enc</span> <span class="o">=</span> <span class="nb">openssl_encrypt</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="s1">&#39;AES-256-CBC&#39;</span><span class="p">,</span> <span class="nv">$key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$iv</span><span class="p">);</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="k">echo</span> <span class="nb">base64_encode</span><span class="p">(</span><span class="nv">$enc</span><span class="p">)</span> <span class="o">.</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="nv">$dec</span> <span class="o">=</span>  <span class="nb">openssl_decrypt</span><span class="p">(</span><span class="nv">$enc</span><span class="p">,</span> <span class="s1">&#39;aes-256-cbc&#39;</span><span class="p">,</span> <span class="nv">$key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$iv</span><span class="p">);</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="k">echo</span> <span class="nv">$dec</span> <span class="o">.</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</code></pre></div>
+<h1 id="_10">참고 자료</h1>
+<ul>
+<li><a href="http://seed.kisa.or.kr/iwt/ko/guide/EgovGuideDetail.do?bbsId=BBSMSTR_000000000011&amp;nttId=83&amp;pageIndex=1&amp;searchCnd=&amp;searchWrd=">KISA 암호 키 관리 안내서</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  맨위로
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\ud074\ub9bd\ubcf4\ub4dc\uc5d0 \ubcf5\uc0ac\ub428", "clipboard.copy": "\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", "search.result.more.one": "\uc774 \ubb38\uc11c\uc5d0\uc11c 1\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.more.other": "\uc774 \ubb38\uc11c\uc5d0\uc11c #\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.none": "\uac80\uc0c9\uc5b4\uc640 \uc77c\uce58\ud558\ub294 \ubb38\uc11c\uac00 \uc5c6\uc2b5\ub2c8\ub2e4", "search.result.one": "1\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.other": "#\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.placeholder": "\uac80\uc0c9\uc5b4\ub97c \uc785\ub825\ud558\uc138\uc694", "search.result.term.missing": "\ud3ec\ud568\ub418\uc9c0 \uc54a\uc740 \uac80\uc0c9\uc5b4", "select.version": "\ubc84\uc804 \uc120\ud0dd"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

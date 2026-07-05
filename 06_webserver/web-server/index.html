@@ -1,0 +1,1800 @@
+
+<!doctype html>
+<html lang="ko" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="인터넷으로 서비스를 제공하기 위해 챙겨야 할 실용적인 보안 가이드.">
+      
+      
+        <meta name="author" content="lesstif(정광섭)">
+      
+      
+        <link rel="canonical" href="https://lesstif.github.io/web-service-hardening/06_webserver/web-server/">
+      
+      
+        <link rel="prev" href="../../05_sshserver/ssh-server/">
+      
+      
+        <link rel="next" href="../../07_tls_https/ssl-tls-https/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>웹 서버 - 견고한 웹 서비스 만들기</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          콘텐츠로 이동
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="상단/헤더">
+    <a href="../.." title="견고한 웹 서비스 만들기" class="md-header__button md-logo" aria-label="견고한 웹 서비스 만들기" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            견고한 웹 서비스 만들기
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              웹 서버
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="다크 모드로 전환"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="다크 모드로 전환" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="라이트 모드로 전환"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="라이트 모드로 전환" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="검색" placeholder="검색" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="검색">
+        
+        <button type="reset" class="md-search__icon md-icon" title="지우기" aria-label="지우기" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            검색 초기화
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/lesstif/web-service-hardening" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lesstif/web-service-hardening
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="탭" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  홈
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../01_security_basic/security-basic/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  기본적인 보안
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../02_linux/linux/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  리눅스 설치와 패키지 관리
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../03_selinux/selinux/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  보안 강화 리눅스(SELinux)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../04_firewall/firewall/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  iptables/firewalld
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../05_sshserver/ssh-server/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  ssh 서버
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  웹 서버
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../07_tls_https/ssl-tls-https/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  HTTPS(SSL/TLS)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../08_web_app_server/web-app-server/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  WAS
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../09_encryption/encryption/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  대칭키 암호화
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../10_pub_key_encryption/public-key-encryption/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  공개키 암호화
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../11_secure_coding/secure-coding/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  시큐어 코딩
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../12_programming_languages/php-security-checklist/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  PHP 보안강화 하기
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../author/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  저자 소개
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../GLOSSARY/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  용어 정리
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../seealso/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  같이 읽기
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="네비게이션" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="견고한 웹 서비스 만들기" class="md-nav__button md-logo" aria-label="견고한 웹 서비스 만들기" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    견고한 웹 서비스 만들기
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/lesstif/web-service-hardening" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    lesstif/web-service-hardening
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    홈
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01_security_basic/security-basic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    기본적인 보안
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_linux/linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    리눅스 설치와 패키지 관리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_selinux/selinux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    보안 강화 리눅스(SELinux)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_firewall/firewall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    iptables/firewalld
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_sshserver/ssh-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ssh 서버
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    웹 서버
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    웹 서버
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#3-tier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 Tier 아키텍처
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 Tier 아키텍처">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        시스템 구성
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reverse-proxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reverse Proxy 로 사용
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        민감한 데이타 웹 서버에 올리지 않기
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#http" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        보안 강화 HTTP 헤더 사용
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        웹서버 디렉터리 목록 비활성화
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        server 정보 숨기기
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="server 정보 숨기기">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#server-token-off" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server Token Off
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#x-powered-by" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        X Powered By 헤더 제거
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#utf-8-charset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UTF-8 charset 사용
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        폴더와 파일에 적절한 권한 부여
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        중요 파일 접근 차단
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        관리자 서비스 접근 제한
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        같이 읽기
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        참고 자료
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_tls_https/ssl-tls-https/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTPS(SSL/TLS)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_web_app_server/web-app-server/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WAS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09_encryption/encryption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    대칭키 암호화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10_pub_key_encryption/public-key-encryption/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    공개키 암호화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11_secure_coding/secure-coding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    시큐어 코딩
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12_programming_languages/php-security-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PHP 보안강화 하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../author/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    저자 소개
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../GLOSSARY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    용어 정리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../seealso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    같이 읽기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#3-tier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 Tier 아키텍처
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3 Tier 아키텍처">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        시스템 구성
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reverse-proxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reverse Proxy 로 사용
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        민감한 데이타 웹 서버에 올리지 않기
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#http" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        보안 강화 HTTP 헤더 사용
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        웹서버 디렉터리 목록 비활성화
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        server 정보 숨기기
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="server 정보 숨기기">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#server-token-off" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Server Token Off
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#x-powered-by" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        X Powered By 헤더 제거
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#utf-8-charset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UTF-8 charset 사용
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        폴더와 파일에 적절한 권한 부여
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        중요 파일 접근 차단
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        관리자 서비스 접근 제한
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        같이 읽기
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        참고 자료
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="_1">웹 서버 견고하게 하기</h1>
+<!-- toc -->
+
+<h2 id="3-tier">3 Tier 아키텍처</h2>
+<p>웹 서버는 인터넷에서 가장 중요한 인프라 SW중 하나로 HTTP 를 기반으로 사용자가 요청한 컨텐츠를 보내주고 사용자의 입력을 받아서 처리하는 역할을 수행합니다.</p>
+<p>웹이 발달하면서 동적 컨텐츠를 제공해야 하는 필요성이 대두되었고 이를 위해 다양한 웹용 언어와 프레임워크가 탄생하였고 이런 도구들은 웹 서버 위에서 바로 동작하는 경우가 많았습니다.</p>
+<p>대표적으로 PHP를 처리하는 <em>mod_php</em>, Perl 스크립트를 처리하는 <em>mod_perl</em>, python 용 <em>mod_python</em> 등이 웹 서버에서 동작하는 확장 모듈입니다.</p>
+<p>이런 모듈은 웹 서버를 바로 활용할 수 있으므로 설치와 설정이 쉽고 사용하기도 쉬운 장점이 있었지만 서비스의 규모가 커질 경우 확장이 힘들고 웹 서버가 해킹당하면 DBMS도 해킹 당하는 등의 문제점이 나타났습니다.</p>
+<p>이런 문제를 해결하기 위해서는 HTTP를 처리하는 Web Server, 웹 애플리케이션을 실행하는 WAS(Web Application Server), 그리고 DBMS 로 각각의 계층으로 분리하는 <strong>3 Tier</strong> 방식의 아키텍처로 구성하고 웹 서버의 역할은 최소화하는 것이 좋습니다.</p>
+<h3 id="_2">시스템 구성</h3>
+<p>웹 서버 <a href="firewall.html#비무장지대dmz">DMZ</a>에 위치시키고 수시로 보안패치와 버그패치를 해주어야 합니다.</p>
+<p><img alt="DMZ" src="https://cloud.githubusercontent.com/assets/404534/14389496/db118380-fded-11e5-8af7-9c2e0b2baec4.png" title="DMZ" /></p>
+<p>특히 웹 서버는 설치된 패키지가 적어야 패치 속도가 빠르므로 <a href="linux.html#미사용-패키지-삭제">사용하는 패키지만 최소로 설치해하고 사용하지 않는 패키지는 삭제하는 것이 좋으며 특히 컴파일러 같은 개발도구와 X-Windows 관련 패키지는 반드시 삭제</a>하는 것이  좋습니다.</p>
+<p>웹 서비스 포트(80, 443)를 제외하고는 웹 서버의 모든 포트를 막도록 Inbound 방화벽 규칙을 설정합니다.</p>
+<p>또 웹 서버는 내부망에 연결이 가능한 서버이므로 웹 서버에서 내부망으로 연결하는 방화벽 규칙은 WAS 의 서비스 포트만 연결 가능하도록 하는 것이 좋습니다.</p>
+<p>웹 서버에는 <a href="selinux.html">SELinux</a>나 AppArmor 같은 강제 접근 통제 기능을 적용하는 것이 필요하며 특히 SELinux 는 웹 서버에 대해서 엄격하게 통제하므로 웹 서버에는 꼭 적용하는 것이 좋습니다.</p>
+<p>예로 SELinux는 웹 서버는 연결 가능한 포트를 미리 정해두고 있으며 허용하는 포트는 다음 명령어로 확인 가능합니다.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># semanage port -l |grep http_port_t</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>http_port_t<span class="w">                    </span>tcp<span class="w">      </span><span class="m">9001</span>,<span class="w"> </span><span class="m">9004</span>,<span class="w"> </span><span class="m">8000</span>,<span class="w"> </span><span class="m">8080</span>,<span class="w"> </span><span class="m">10080</span>,<span class="w"> </span><span class="m">8001</span>,<span class="w"> </span><span class="m">80</span>,<span class="w"> </span><span class="m">81</span>,<span class="w"> </span><span class="m">443</span>,<span class="w"> </span><span class="m">488</span>,<span class="w"> </span><span class="m">8008</span>,<span class="w"> </span><span class="m">8009</span>,<span class="w"> </span><span class="m">8443</span>,<span class="w"> </span><span class="m">9000</span>
+</code></pre></div>
+위와 같은 제약을 통해 웹 서버가 해킹당해도 이를 통해 내부 네트워크에 ssh로 침입해서 2차 해킹을 시도하거나 또는 웹 서버를 경유지로 하여 스팸 메일을 보내거나 외부 서버에 연결하는 등의 피해를 최소화할 수 있습니다.</p>
+<h3 id="reverse-proxy">Reverse Proxy 로 사용</h3>
+<p>이제 웹 서버는 HTML/CSS/JavaScript 같은 정적 컨텐츠를 전송하거나 또는 내부망에 있는 WAS 에 연결하여 웹 애플리케이션의 실행 결과를 받아서 사용자에게 전달하는 Reverse Proxy 로 역할을 제한하는 것이 필요합니다.</p>
+<p><img alt="Reverse Proxy" src="https://www.lesstif.com/download/attachments/20776817/image2014-7-19%2022%3A39%3A39.png?version=1&amp;modificationDate=1405777029000&amp;api=v2" title="Reverse Proxy" /></p>
+<p>Reverse Proxy 로 사용할 경우 WAS가 사용하는 포트만 열어주면 되며 다른 포트는 모두 사용을 막는 것이 좋습니다.</p>
+<table>
+<thead>
+<tr>
+<th>WAS</th>
+<th>Default Port</th>
+<th>개발 언어</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tomcat</td>
+<td>8080(HTTP), 8009(AJP)</td>
+<td>Java</td>
+</tr>
+<tr>
+<td>jetty</td>
+<td>8080(HTTP)</td>
+<td>Java</td>
+</tr>
+<tr>
+<td>PHP-FPM</td>
+<td>9000</td>
+<td>PHP</td>
+</tr>
+<tr>
+<td>unicorn</td>
+<td>8080</td>
+<td>ruby</td>
+</tr>
+</tbody>
+</table>
+<p>만약 사용하는 WAS 의 포트가 SELinux에 등록되어 있지 않다면 차단되어 서비스가 불가능하므로 포트를 추가해야 하며 다음 명령어는 웹 서버가 9876 포트에 연결할 수 있도록 허용합니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>semanage port -a -p tcp -t http_port_t 9876
+</code></pre></div>
+<p>만약 <em>ValueError: Port tcp/9876 already defineㅇ</em> 와 같은 에러가 발생한다면 SELinux 포트 규칙이 이미 정의되어 발생한 것이며 정책을 추가하는 <em>-a</em> 옵션대신 변경하는  <em>-m</em> 옵션을 사용하면 됩니다.</p>
+<p>물리적인 구성에 대해서 알아보았으니 그러면 웹 서버를 견고하게 하기 위한 설정 방법을 알아 봅시다.</p>
+<h2 id="_3">민감한 데이타 웹 서버에 올리지 않기</h2>
+<p>각종 설정 파일이나 민감한 파일(sql, shell script) 등은 웹 서버의 Document Root 에 올리지 않아야 합니다.</p>
+<p>특히 디렉터리 목록이 활성화되어 있고 index 파일이 없을 경우 폴더의 전체 구조가 노출되므로 주의해야 합니다.</p>
+<h2 id="http">보안 강화 HTTP 헤더 사용</h2>
+<p>HTTP 헤더에는 <a href="https://www.owasp.org/index.php/List_of_useful_HTTP_headers">보안을 강화하기 위한  여러 헤더</a>가 있습니다.</p>
+<ul>
+<li><strong>X-Frame-Options</strong> : <a href="http://blog.ahnlab.com/ahnlab/tag/1058">클릭 하이재킹</a>을 방지하기 위한 헤더로 <em>deny</em>로 설정하면 iframe 에서 렌더링을 하지 않습니다. <em>sameorigin</em> 은 origin이 일치하지 않을 경우 렌더링을 하지 않습니다. </li>
+<li><strong>X-Content-Type-Options</strong>: <em>"nosniff"</em> 만 설정할 수 있으며 <a href="https://msdn.microsoft.com/ko-kr/library/gg622941(v=vs.85).aspx">잘못된 MIME 형식이 포함된 응답을 거부</a>합니다.</li>
+<li><strong>X-XSS-Protection</strong>: IE와 Chrome 브라우저가 지원하며 <a href="https://msdn.microsoft.com/ko-kr/library/dd565647(v=vs.85).aspx">특정 유형의 XSS(cross site script)공격</a>을 차단해 줍니다.</li>
+</ul>
+<p>apache httpd 는 Header 지시자로 보안 관련 헤더를 설정하면 됩니다. </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Header always set X-Frame-Options DENY
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Header always set X-Content-Type-Options nosniff
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Header set X-XSS-Protection &quot;1; mode=block&quot;
+</code></pre></div>
+<p>nginx 는 add_header 지시자로 설정합니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>add_header X-Frame-Options DENY;
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>add_header X-Content-Type-Options nosniff;
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>add_header X-XSS-Protection &quot;1; mode=block&quot;;
+</code></pre></div>
+<blockquote>
+<p><strong>Warning</strong>
+iframe 을 사용하여 서비스하는 페이지가 있을 경우 "<em>X-Frame-Option: Deny</em>" 헤더가 설정되면 제대로 동작하지 않습니다.</p>
+</blockquote>
+<h2 id="_4">웹서버 디렉터리 목록 비활성화</h2>
+<p>특정 배포판에 포함된 웹 서버의 기본 설정은 브라우저가 웹 서버에 요청한 리소스가 디렉터리이고 해당 디렉터에 인덱스 파일이 없을 경우 모든 파일과 디렉터리 목록을 보여 주게 됩니다.</p>
+<p>이렇게 서버의 모든 자원을 보여주는 것은 보안상 취약할 수 있으므로 웹 서버에 디렉터리의 인덱스를 처리할 확장자를 명시적으로 지정하고 없을 경우 목록을 보여주지 않도록 설정하는게 좋습니다.</p>
+<p>apache httpd 의 경우 <strong>DirectoryIndex</strong> 에 인덱스 파일을 지정할 수 있습니다.</p>
+<p><strong>Directory</strong> 지시자에 아래와 같이 Indexes 설정이 있을 경우 목록 출력이 가능하므로 삭제하는 게 좋습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>DirectoryIndex index index.php index.html index.html.var
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>&lt;Directory /path/to/directory&gt;
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>   Options  Indexes
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>&lt;/Directory&gt;
+</code></pre></div>
+<p>nginx 는 <strong>location</strong> 지시자에 autoindex 가 on 일 경우 요청 리소스가 목록을 출력하며 기본 설정은 off 이므로 명시적으로 설정할 필요가 없습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>index index.php index.html index.htm;
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>location / {
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    autoindex off;
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>}
+</code></pre></div>
+<h2 id="server">server 정보 숨기기</h2>
+<p>운영하는 서버의 자세한 정보는 공격자에게 유용한 정보를 제공합니다. 다음과 같이 curl 명령어로 서버가 보내오는 HTTP 응답 헤더를 살펴 봅시다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>curl -I myhost.com
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>HTTP/1.1 200 OK
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>Date: Thu, 17 Mar 2016 05:54:33 GMT
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>Server: Apache/2.2.24 (Unix) mod_ssl/2.2.24 OpenSSL/0.9.8e-fips-rhel5 PHP/5.2.17 mod_jk/1.2.41
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>X-Powered-By: PHP/5.2.17
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>Content-Length: 1861
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>Content-Type: text/html
+</code></pre></div>
+<p><strong>Server</strong> 헤더를 보면 현재 사용하는 서버 제품(Apache)과 버전(2.2.24), 모듈(mod_ssl, PHP, mod_jk ..)과 버전등 굉장히 상세한 정보를 보여주고 있으며 공격자는 해당 제품과 버전의 취약점을 찾아서 공격할 수 있습니다.</p>
+<blockquote>
+<p><strong>Tip</strong> 
+<a href="https://wappalyzer.com/">wappalyzer</a> 를 사용하면 크롬이나 파이어 폭스에서 서버에서 사용하는 기술을 확인할 수 있습니다.
+ <img alt="wappalyzer" src="https://cloud.githubusercontent.com/assets/404534/15269913/c64ac174-1a48-11e6-8dfd-0496bb2d3ec0.png" title="wappalyzer" /></p>
+</blockquote>
+<h3 id="server-token-off">Server Token Off</h3>
+<p>apache httpd 는 httpd.conf 에 다음과 같이 설정하면 표시 정보를 최소화할 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ServerTokens Prod
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>ServerSignature Off
+</code></pre></div>
+<p>nginx 는 nginx.conf 의 http 항목에 다음 내용을 추가합니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>http {
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    server_tokens off;
+</code></pre></div>
+<h3 id="x-powered-by">X Powered By 헤더 제거</h3>
+<p><em>X-Powered-By</em> 헤더는 서버 사이드에서 사용하는 기술(ASP.NET, PHP, JBoss 등)을 표시하는 비표준 헤더로 공격자에게 유용한 정보를 제공하므로 숨기는게 좋습니다.</p>
+<p>apache httpd 의 경우 Header 지시자를 사용하면 브라우저로 전송하기 전에 모든 X-Powered-By 헤더를 삭제할 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>Header unset X-Powered-By
+</code></pre></div>
+<p>nginx 는 <em>fastcgi_hide_header</em> 모듈을 사용하여 숨길 헤더를 지정하면 됩니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>http {
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    fastcgi_hide_header X-Powered-By;
+</code></pre></div>
+<p>PHP 를 사용한다면 php.ini 의 다음 항목을 off 로 설정하면 됩니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>expose_php = Off
+</code></pre></div>
+<h2 id="utf-8-charset">UTF-8 charset 사용</h2>
+<p>특별한 문제가 없다면 charset은 utf-8로 선언하고 사용하는 것이 서비스의 확장성 측면과 보안성 측면(<em>"UTF-7 XSS"</em> 같은 취약점 방지)에 좋습니다.</p>
+<p>웹 서버에 기본 인코딩을 설정하면 HTTP의 <em>Content-Type</em> 헤더에 <em>charset=UTF-8</em> 을 자동으로 추가하므로 개별 컨텐츠마다 다음과 같이 <em>meta</em> 태그로 인코딩을 지정하지 않아도 되는 장점이 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;</span>
+</code></pre></div>
+<p>웹 서버에 기본 인코딩을 설정하려면 <strong>apache httpd</strong>는 다음과 같이  <em>AddDefaultCharset</em> 지시자를 사용하여 설정하면 됩니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>AddDefaultCharset utf-8
+</code></pre></div>
+<p><strong>nginx</strong> 는 <em>charset</em> 키워드로 기본 인코딩을 설정할 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>http {
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>    charset utf-8;
+</code></pre></div>
+<blockquote>
+<p><strong>Danger</strong> 
+웹 서버에 인코딩을 설정한 경우 브라우저는 개별 컨텐츠에 <em>meta</em> 키워드로 설정한 인코딩은 무시하므로 다른 인코딩(예: EUC-KR)을 사용하는 컨텐츠가 있을 경우 오작동할 수 있습니다.
+자세한 내용은 아래의 블로그를 참고하세요.</p>
+</blockquote>
+<ul>
+<li><a href="https://www.lesstif.com/pages/viewpage.action?pageId=20775179">Web Browser 가 Web Content 의 character set encoding 을 처리하는 순서 (HTTP Header charset과 meta charset)</a></li>
+</ul>
+<h2 id="_5">폴더와 파일에 적절한 권한 부여</h2>
+<p>웹 컨텐츠 폴더와 파일은 적절한 권한이 부여해야 하며 폴더는 755(또는 775), 파일은 644(또는 664) 권한이 적절합니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>chmod -R 755 /var/www/mycontents
+</code></pre></div>
+<p>특히 파일에 실행 권한을 주는 경우 웹 서버를 통해 실행할 경우 문제가 될 수 있으므로 주의깊게 설정해야 합니다.</p>
+<blockquote>
+<p>[!WARNING] 
+<a href="selinux.html">SELinux</a>가 켜져 있을 경우 실행 속성을 주어도 <em>httpd_sys_script_exec_t</em> 컨텍스트가 설정되어 있지 않으면 웹 서버가 실행할 수 없습니다.</p>
+</blockquote>
+<p>웹 서버는 루트로 구동해야 하므로 보안을 위해 구동후 별도의 계정으로 전환하며 배포판마다 전환하는 계정이 다릅니다.
+그러므로 웹 서버가 쓰기 권한과 실행 권한을 가져야 하는 폴더와 파일은 웹 서버 구동후 전환 계정으로 설정하는 게 권한 문제를 방지할 수 있습니다.</p>
+<p>예를 들어 ubuntu 에서 <em>PHP-FPM</em>을 도메인 소켓 방식으로 사용할 경우 nginx 구동 계정(www-data)의 소유이고 쓰기 권한이 있어야 정상적으로 서비스를 할 수 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>$<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/var/run/php/php7.0-fpm.sock<span class="w"> </span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>srw-rw----<span class="w"> </span><span class="m">1</span><span class="w"> </span>www-data<span class="w"> </span>www-data<span class="w"> </span><span class="m">0</span><span class="w"> </span>May<span class="w">  </span><span class="m">9</span><span class="w"> </span><span class="m">06</span>:18<span class="w"> </span>/var/run/php/php7.0-fpm.sock
+</code></pre></div>
+<p>RHEL/CentOS 의 apache의 경우 <em>/etc/httpd/conf/httpd.conf</em>에 구동 계정이 정의되어 있습니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>User apache
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>Group apache
+</code></pre></div>
+<p>nginx 는 <em>/etc/nginx/nginx.conf</em> 에 <em>user</em> 키워드로 구동 계정이 정의되어 있으며 ubuntu는 <em>www-data</em>를 RHEL/CentOS는 <em>nginx</em> 계정을 사용합니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>user  nginx;
+</code></pre></div>
+<h2 id="_6">중요 파일 접근 차단</h2>
+<p>웹 서버의 컨텐츠 디렉터리에는 URL Re-writing 을 처리하는 <em>.htaccess</em> 나 워드프레스의 <em>wp-config.php</em>, git이나 subversion의 형상 관리 메타 정보(.git, .svn), 설정 파일(<em>.inc, </em>.ini, <em>.cfg, </em>.conf)등의 중요 정보가 있을 수 있습니다.</p>
+<p>공격자는 이런 파일을 내려 받아서 서버의 정보를 파악할 수 있으므로 다음 설정으로 중요 파일을 보호할 수 있습니다.</p>
+<p><strong>httpd 2.2, 2.4</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>&lt;DirectoryMatch .*\.(git|svn)/.*&gt;
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>    Redirect 404 /
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>&lt;/DirectoryMatch&gt;
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>&lt;FilesMatch &quot;^(htaccess|wp-config)&quot;&gt;
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>    Redirect 404 /
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>&lt;/FilesMatch&gt;
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>&lt;FilesMatch &quot;\.(inc|ini|conf|cfg)$&quot;&gt;
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a>    Redirect 404 /
+<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a>&lt;/FilesMatch&gt;
+<a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a>
+<a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a>## java property
+<a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a>&lt;FilesMatch &quot;\.(xml|properties)$&quot;&gt;
+<a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a>    Redirect 404 /
+<a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a>&lt;/FilesMatch&gt;
+<a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a>
+<a id="__codelineno-20-18" name="__codelineno-20-18" href="#__codelineno-20-18"></a>## laravel .env*
+<a id="__codelineno-20-19" name="__codelineno-20-19" href="#__codelineno-20-19"></a>&lt;FilesMatch &quot;^(.env)&quot;&gt;
+<a id="__codelineno-20-20" name="__codelineno-20-20" href="#__codelineno-20-20"></a>    Redirect 404 /
+<a id="__codelineno-20-21" name="__codelineno-20-21" href="#__codelineno-20-21"></a>&lt;/FilesMatch&gt;
+</code></pre></div>
+<p><strong>nginx</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>location ~ /\.(ht|git|svn) {
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>    return 404;
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>}
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>location ~ /wp-conf* {
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>    return 404;
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>}
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>location ~ /.*\.(inc|ini|conf|cfg)$ {
+<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a>    return 404;
+<a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a>}
+<a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a>
+<a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a>## java property
+<a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a>location ~ /.*\.(xml|properties)$ {
+<a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a>    return 404;
+<a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a>}
+<a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a>
+<a id="__codelineno-21-16" name="__codelineno-21-16" href="#__codelineno-21-16"></a>## laravel .env*
+<a id="__codelineno-21-17" name="__codelineno-21-17" href="#__codelineno-21-17"></a>location ~ /\.(env)* {
+<a id="__codelineno-21-18" name="__codelineno-21-18" href="#__codelineno-21-18"></a>    return 404;
+<a id="__codelineno-21-19" name="__codelineno-21-19" href="#__codelineno-21-19"></a>}
+</code></pre></div>
+<blockquote>
+<p>[!WARNING] 
+<em>Require all denied</em>(apache) 나 <em>deny all</em>(nginx) 를 사용할 경우 HTTP 403 Forbidden 응답이 가게되며 공격자는 이 경우 해당 컨텐츠가 있으므로 적절한 권한을 얻기위해 추가 공격을 실행할 수 있습니다. 그러나 HTTP 404 Not Found 응답을 받으면 컨텐츠가 없다고 생각할 것이므로 더 적절한 설정입니다.</p>
+</blockquote>
+<h2 id="_7">관리자 서비스 접근 제한</h2>
+<p>웹 애플리케이션에서 설정할수도  있지만 웹 서버에서도 관리자 영역등 특정 패턴의 url 을 차단할 수 있습니다.</p>
+<p>다음은 아파치 톰캣의 관리자 context 인 /manager 에 127.0.0.1과 192.168.10.0 대역을 제외하고는 접근을 차단하는 예제입니다.</p>
+<p><strong>httpd 2.2</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>&lt;Location /manager&gt;
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>    Order deny,allow
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>    Deny from all
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>    Allow from 127.0.0.1 192.168.10.0/24
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>&lt;/Location&gt;
+</code></pre></div>
+<p><strong>httpd 2.4</strong> 는 다음과 같이 설정합니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>&lt;Location /manager&gt;
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>    Require host  127.0.0.1 192.168.10.0/24
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>&lt;/Location&gt;
+</code></pre></div>
+<p>Proxy 를 사용하는 경우</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>SetEnvIF X-Forwarded-For &quot;127.0.0.1&quot; AllowIP
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>SetEnvIF X-Forwarded-For &quot;^192\.168\.10&quot; AllowIP
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>&lt;Location /manager&gt;
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>    Require env AllowIP
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>&lt;/Location&gt;
+</code></pre></div>
+<p><strong>nginx</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>location /manager {
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>    satisfy any;
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>    allow 192.168.0.0/24;
+<a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a>    deny  all;
+<a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a>}
+</code></pre></div>
+<h2 id="_8">같이 읽기</h2>
+<ul>
+<li>[Ubuntu Server의 보안을 위해서 해야 할 것들]</li>
+<li><a href="https://davidhyk.github.io/blog/things-you-should-do-to-secure-ubuntu-part1">Part 1</a></li>
+<li><a href="https://davidhyk.github.io/blog/things-you-should-do-to-secure-ubuntu-part2">Part 2</a></li>
+<li><a href="http://www.shako.net/blog/ubuntu-server-14-04-initial-setup-guide/">Ubuntu 서버 14.04 초기설정 가이드</a></li>
+</ul>
+<h2 id="_9">참고 자료</h2>
+<ul>
+<li><a href="https://httpd.apache.org/docs/2.4/mod/core.html#servertokens">apache ServerTokens Directive</a></li>
+<li><a href="https://www.nginx.com/resources/admin-guide/restricting-access/">nginx RESTRICTING ACCESS</a></li>
+<li><a href="https://github.com/h5bp/server-configs-nginx">Nginx Server Configs</a> - nginx 설정 모음</li>
+<li><a href="https://github.com/h5bp/server-configs-apache">Apache Server Configs</a> - apache httpd 설정 모음</li>
+<li><a href="https://github.com/phanan/htaccess">htaccess</a> - apache .htaccess Snippets</li>
+<li><a href="http://dryja.info/apache2-block-allow-ip-simple-guide/">Apache2 block / allow IP – simple guide</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  맨위로
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\ud074\ub9bd\ubcf4\ub4dc\uc5d0 \ubcf5\uc0ac\ub428", "clipboard.copy": "\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", "search.result.more.one": "\uc774 \ubb38\uc11c\uc5d0\uc11c 1\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.more.other": "\uc774 \ubb38\uc11c\uc5d0\uc11c #\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.none": "\uac80\uc0c9\uc5b4\uc640 \uc77c\uce58\ud558\ub294 \ubb38\uc11c\uac00 \uc5c6\uc2b5\ub2c8\ub2e4", "search.result.one": "1\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.other": "#\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.placeholder": "\uac80\uc0c9\uc5b4\ub97c \uc785\ub825\ud558\uc138\uc694", "search.result.term.missing": "\ud3ec\ud568\ub418\uc9c0 \uc54a\uc740 \uac80\uc0c9\uc5b4", "select.version": "\ubc84\uc804 \uc120\ud0dd"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
